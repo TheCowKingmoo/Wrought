@@ -1,4 +1,4 @@
-package com.thecowking.shaftdriller.blocks;
+package com.thecowking.wrought.blocks;
 
 public interface IMultiBlockControllerBlock {
 }

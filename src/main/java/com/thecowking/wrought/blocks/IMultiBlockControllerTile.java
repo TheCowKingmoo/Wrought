@@ -1,4 +1,4 @@
-package com.thecowking.shaftdriller.blocks;
+package com.thecowking.wrought.blocks;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

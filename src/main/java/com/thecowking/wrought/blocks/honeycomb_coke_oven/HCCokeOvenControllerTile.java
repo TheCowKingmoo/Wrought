@@ -3,10 +3,12 @@ package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
 import com.thecowking.wrought.blocks.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
+import com.thecowking.wrought.blocks.MultiBlockFrameTile;
 import net.minecraft.block.*;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +36,13 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private final int CENTRAL_BODY_HEIGHT = 3;
     private final int TOTAL_HEIGHT = 5;
     private final int TOTAL_WIDTH = 7;
+    private final int TICKSPEROPERATION = 20;
+    private int tickCounter = 0;
+
+    public HCCokeOvenControllerTile() {
+        super(null);
+    }
+
 
     public HCCokeOvenControllerTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -41,10 +50,22 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void tick() {
+        if(world.isRemote)  {return;}
+        if(!isFormed(world))  {return;}
+        if(tickCounter < TICKSPEROPERATION)  {
+            tickCounter++;
+            return;
+        }
+        tickCounter = 0;
         // work
-
+        ovenOperation();
     }
 
+    private void ovenOperation()  {
+    }
+
+
+    // TODO - util or bubble up?
     @Override
     public void tryToFormMultiBlock(World worldIn, BlockPos pos) {
         Direction facing = getDirectionFacing(worldIn);
@@ -52,7 +73,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         int modZ = findModZ(worldIn, facing);
         BlockPos centerPoint = new BlockPos(pos.getX() + modX, pos.getY(), pos.getZ() + modZ);
         BlockPos lowCorner = new BlockPos(pos.getX()-3 + modX, pos.getY()-1, pos.getZ() - 3);
-
+        List<BlockPos> multiblockMembers = new ArrayList();
 
         // checks the central slice part of the structure to ensure the correct blocks exist
         for(int y = 0; y < CENTRAL_BODY_HEIGHT; y++)  {
@@ -63,6 +84,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         if( correctBlock == null)  {                                // skip the "null" positions (don't care whats in here)
                         continue;
                     }
+
                     // get current block
                     BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
 
@@ -92,21 +114,38 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                             return;
                         }
                     }
+                    // add correct blocks to array
+                    multiblockMembers.add(current);
 
                     }
                 }
             }  //end loop
 
+        // get this far and we should form multi block
+        setFormed(worldIn, true);
+        updateMultiBlockMemberTiles(multiblockMembers);
 
-        // get this far and we should form multiblock
+        }  //end trytoform
 
+    /*
+      Updates all information in all multiblock members
+     */
+    private void updateMultiBlockMemberTiles(List<BlockPos> memberArray)  {
+        for(int i = 0; i < memberArray.size(); i++)  {
+            BlockPos current = memberArray.get(i);
+            Block currentBlock = world.getBlockState(current).getBlock();
+            if(currentBlock instanceof HCCokeOvenFrameBlock)  {
+                HCCokeOvenFrameBlock castedCurrent = (HCCokeOvenFrameBlock)currentBlock;
+            }
         }
+    }
 
-
-
-
-
-
+    // override the always return true method
+    // TODO - learn a better way to throw this info upward
+    @Override
+    public boolean checkIfCorrectFrame(Block block)  {
+        return (block instanceof HCCokeOvenFrameBlock);
+    }
 
     /*
       Calculates if the x-coord should be negative or not based on what direction the

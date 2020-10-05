@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -25,10 +26,6 @@ public class MultiBlockControllerTile extends TileEntity implements IMultiBlockC
     // sets the blockstate "formed" for the multiblocks controller
     public void setFormed(World worldIn, boolean b)  {worldIn.setBlockState(pos, getBlockState().with(Multiblock.FORMED, b));}
 
-    public boolean isValidMultiBlockFormer(Item item) {
-        return false;
-    }
-
     public Direction getDirectionFacing(World worldIn)  {return worldIn.getBlockState(pos).get(BlockStateProperties.FACING);}
 
 
@@ -39,6 +36,8 @@ public class MultiBlockControllerTile extends TileEntity implements IMultiBlockC
 
     public void setDirty(boolean b) {
     }
+
+
 
     // TODO - bubbleup
     public MultiBlockFrameTile getFrameTile(BlockPos posIn)  {
@@ -68,9 +67,32 @@ public class MultiBlockControllerTile extends TileEntity implements IMultiBlockC
     }
 
     /*
+      This is called when a controller is right clicked by a player when the multi-block is not formed
+      Checks to make sure that the player is holding the correct item in hand to form the multi-block.
+     */
+    public boolean isValidMultiBlockFormer(Item item)  {
+        return item == Items.STICK;
+    }
+
+    /*
       Should be overwritten by extending subclasses
      */
     public boolean checkIfCorrectFrame(Block block)  {
         return true;
     }
+
+    /*
+  West = -x
+  East = +X
+  North = -Z
+  South = +Z
+  this function will return the North-Western corner of the multi block to be formed
+ */
+    public BlockPos findLowsestValueCorner(BlockPos centerPos, int xLength, int yLength, int zLength)  {
+        return new BlockPos(centerPos.getX() - (xLength / 2), centerPos.getY() - (yLength / 2), centerPos.getZ() - (zLength / 2));
+
+    }
+
+
+
 }

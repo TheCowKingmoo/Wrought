@@ -11,11 +11,11 @@ public class MultiBlockFrameTile extends TileEntity {
     private static String NBT_CZ = "CZ";
     private BlockPos controllerPos;
 
-
     public MultiBlockFrameTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
-
+    public BlockPos getControllPos()  {return controllerPos;}
+    public void setControllerPos(BlockPos posIn) {controllerPos = posIn;}
 }
 
 

@@ -32,6 +32,7 @@ public class HCCokeOvenContainer extends Container {
         this.playerEntity = player;
         this.playerInventory = new InvWrapper(playerInventory);
 
+
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 int y_level = 0;

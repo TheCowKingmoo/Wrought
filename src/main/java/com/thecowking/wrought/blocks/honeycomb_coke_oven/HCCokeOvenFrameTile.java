@@ -24,8 +24,6 @@ import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_TILE;
 public class HCCokeOvenFrameTile extends TileEntity {
     private static final Logger LOGGER = LogManager.getLogger();
 
-
-
     private static String NBT_CX = "CX";
     private static String NBT_CY = "CY";
     private static String NBT_CZ = "CZ";
@@ -34,13 +32,11 @@ public class HCCokeOvenFrameTile extends TileEntity {
     private BlockPos controllerPos;
     private String job;
 
-
     public HCCokeOvenFrameTile() {
         super(H_C_COKE_FRAME_TILE.get());
     }
     public BlockPos getController()  {return controllerPos;}
     public void setController(BlockPos pos)  {controllerPos = pos;}
-
 
     public HCCokeOvenControllerTile getControllerTile()  {
         if(controllerPos != null) {
@@ -52,7 +48,6 @@ public class HCCokeOvenFrameTile extends TileEntity {
         }
         return null;
     }
-
 
     public void setupMultiBlock(BlockPos posIn)  {
         world.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, true));
@@ -67,6 +62,8 @@ public class HCCokeOvenFrameTile extends TileEntity {
     }
 
     public void setFormed(World worldIn, boolean b)  {worldIn.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, b));}
+    public boolean isFormed(World worldIn) {return worldIn.getBlockState(pos).get(Multiblock.FORMED);}
+
 
     public void setJob(String job)  {
         this.job = job;
@@ -88,8 +85,6 @@ public class HCCokeOvenFrameTile extends TileEntity {
     }
 
     public BlockPos getBlockPos()  {return pos;}
-
-
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {

@@ -41,39 +41,6 @@ public class MultiBlockControllerBlock extends Block implements IMultiBlockContr
         return true;
     }
 
-    // creates the tile entity
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        LOGGER.info("made a TE");
-        return new HCCokeOvenControllerTile();
-    }
-
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
-        if (player instanceof ServerPlayerEntity) {
-            TileEntity tileEntity = worldIn.getTileEntity(posIn);
-            if (tileEntity instanceof IMultiBlockControllerTile) {
-                IMultiBlockControllerTile controllerTile = (IMultiBlockControllerTile) tileEntity;
-                if(controllerTile.isFormed(worldIn) )  {
-                    controllerTile.openGUI(worldIn, posIn, player, controllerTile);
-                }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
-                    LOGGER.info("no gui- attempt to form");
-                    // attempts to form the multi-block
-                    controllerTile.tryToFormMultiBlock(worldIn, posIn);
-                }  else  {
-                    controllerTile.openGUI(worldIn, posIn, player, controllerTile);
-                }
-            } else {
-                LOGGER.info(posIn);
-                LOGGER.info(tileEntity);
-                throw new IllegalStateException("Our named container provider is missing!");
-            }
-        }
-        return ActionResultType.SUCCESS;
-    }
 
 
 

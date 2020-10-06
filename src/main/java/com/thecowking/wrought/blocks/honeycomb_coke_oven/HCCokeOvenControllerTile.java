@@ -1,6 +1,7 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
 import com.thecowking.wrought.blocks.*;
+import com.thecowking.wrought.util.Util;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -8,9 +9,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -30,6 +31,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_CONTROLLER_TILE;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_BLOCK;
 
@@ -89,21 +91,26 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     private void ovenOperation()  {
+
     }
 
+    /*
+      This attempts to find all the frame blocks in the multi-block to determine if we should form the multi-block or used to update frame blocks
+      that the multi-block is being destoryed.
 
+      posIn - if null then we are using this method to form a multi block. This means that if we find a non
+            - frame block then we stop the method and return null.
+            - if not null then its for destroying, and we want to continue if we find an error in case of
+            - some strange issue such as an explosion wiped away other blocks.
+     */
 
-
-    // TODO - util or bubble up?
-    @Override
-    public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
+    public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn)  {
         Direction facing = getDirectionFacing(worldIn);
         BlockPos centerPos = findMultiBlockCenter();
         BlockPos correctLowCorner = findLowsestValueCorner(centerPos, TOTAL_X_LENGTH, TOTAL_HEIGHT, TOTAL_Z_LENGTH);
         BlockPos lowCorner = new BlockPos(correctLowCorner.getX(), correctLowCorner.getY()+1, correctLowCorner.getZ());
-        LOGGER.info(pos);
+        LOGGER.info(getControllerPos());
         List<BlockPos> multiblockMembers = new ArrayList();
-
 
         // checks the central slice part of the structure to ensure the correct blocks exist
         for(int y = 0; y < CENTRAL_BODY_HEIGHT; y++)  {
@@ -123,8 +130,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
                     LOGGER.info(current);
 
-                    if(current.equals(pos))  {                                           // skip the controller
-                        LOGGER.info("at controller");
+                    if(current.equals(getControllerPos()) || current.equals(posIn))  {                                           // skip the controller
                         continue;
                     }
 
@@ -135,14 +141,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         LOGGER.info(currentBlock);
                         LOGGER.info(" should be ");
                         LOGGER.info(correctBlock);
-
-
-
-                        return;
+                        if(posIn == null)  {
+                            return null;
+                        }
                     }
                     // add this block to correct
                     multiblockMembers.add(current);
-
 
                     // this if-elif checks verify that the bottom and top are covered by frame blocks
                     if(correctBlock == Blocks.AIR && y == 0)  {
@@ -151,8 +155,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         currentBlock = world.getBlockState(current).getBlock();
                         if(currentBlock != frameBlock) {
                             LOGGER.info("wrong block - got at lower");
-                            return;
-                        }
+                            if(posIn == null)  {
+                                return null;
+                            }                        }
                         multiblockMembers.add(current);
                     }  else if(correctBlock == Blocks.AIR && y == CENTRAL_BODY_HEIGHT-1) {
                         // TODO - check for world upper limit
@@ -160,34 +165,65 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         currentBlock = world.getBlockState(current).getBlock();
                         if(currentBlock != frameBlock) {
                             LOGGER.info("wrong block - got at upper");
-                            return;
-                        }
+                            if(posIn == null)  {
+                                return null;
+                            }                        }
                         multiblockMembers.add(current);
                     }
                     // add correct blocks to array
-
-                    }
                 }
-            }  //end loop
+            }
+        }  //end loop
+        return multiblockMembers;
+    }
 
-        // get this far and we should form multi block
-        LOGGER.info("FORM MULTIBLOCK");
-        setFormed(worldIn, true);
-        updateMultiBlockMemberTiles(multiblockMembers);
+    // TODO - util or bubble up?
+    @Override
+    public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null);
+        if(multiblockMembers != null)  {
+            // get this far and we should form multi block
+            LOGGER.info("FORM MULTIBLOCK");
+            setFormed(worldIn, true);
+            updateMultiBlockMemberTiles(multiblockMembers, false);
+        }
+    }
 
-        }  //end trytoform
+    public void destroyMultiBlock(World worldIn, BlockPos posIn)  {
+        if(!isFormed(worldIn))  {
+            return;
+        }
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn);
+        if(multiblockMembers != null)  {
+            updateMultiBlockMemberTiles(multiblockMembers, true);
+            setFormed(worldIn, false);
+            LOGGER.info("Multiblock Destroyed");
+        }  else  {
+            LOGGER.info("failed to destory multiblock -> list was null");
+        }
+    }
 
     /*
       Updates all information in all multiblock members
      */
-    private void updateMultiBlockMemberTiles(List<BlockPos> memberArray)  {
+    private void updateMultiBlockMemberTiles(List<BlockPos> memberArray, boolean destroy)  {
         for(int i = 0; i < memberArray.size(); i++)  {
             BlockPos current = memberArray.get(i);
-            Block currentBlock = world.getBlockState(current).getBlock();
-            if(currentBlock instanceof HCCokeOvenFrameBlock)  {
-                HCCokeOvenFrameBlock castedCurrent = (HCCokeOvenFrameBlock)currentBlock;
+            TileEntity currentTile = getTileFromPos(world, current);
+            if(currentTile instanceof HCCokeOvenFrameTile)  {
+                HCCokeOvenFrameTile castedCurrent = (HCCokeOvenFrameTile) currentTile;
+                if(destroy)  {
+                    castedCurrent.destroyMultiBlock();
+                }  else  {
+                    castedCurrent.setupMultiBlock(getControllerPos());
+                }
             }
         }
+    }
+
+
+    private BlockPos getControllerPos()  {
+        return pos;
     }
 
     // override the always return true method
@@ -207,7 +243,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, pos, playerInventory, playerEntity);
+                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, playerEntity);
             }
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile)tileEntity).getPos());
@@ -222,9 +258,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
     public BlockPos findMultiBlockCenter()  {
         Direction facing = getDirectionFacing(world);
-        int xCoord = pos.getX();
-        int yCoord = pos.getY();
-        int zCoord = pos.getZ();
+        int xCoord = getControllerPos().getX();
+        int yCoord = getControllerPos().getY();
+        int zCoord = getControllerPos().getZ();
         BlockPos centerPos = null;
 
         if(facing == Direction.NORTH)  {
@@ -318,9 +354,5 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             markDirty();
         }
     }
-
-
-
-
 
 }

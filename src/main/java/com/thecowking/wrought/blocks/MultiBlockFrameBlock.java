@@ -40,7 +40,6 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        LOGGER.info("made a TE");
         return new HCCokeOvenFrameTile();
     }
 

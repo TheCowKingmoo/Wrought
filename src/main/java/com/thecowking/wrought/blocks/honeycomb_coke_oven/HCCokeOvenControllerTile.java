@@ -79,6 +79,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void tick() {
+
         if(world.isRemote)  {return;}
         if(!isFormed(world))  {return;}
         if(tickCounter < TICKSPEROPERATION)  {
@@ -223,7 +224,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     private BlockPos getControllerPos()  {
-        return pos;
+        return this.pos;
     }
 
     // override the always return true method

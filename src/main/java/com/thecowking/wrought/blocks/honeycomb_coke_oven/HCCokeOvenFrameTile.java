@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_TILE;
 
 
-public class HCCokeOvenFrameTile extends TileEntity {
+public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String NBT_CX = "CX";
@@ -36,7 +36,6 @@ public class HCCokeOvenFrameTile extends TileEntity {
         super(H_C_COKE_FRAME_TILE.get());
     }
     public BlockPos getController()  {return controllerPos;}
-    public void setController(BlockPos pos)  {controllerPos = pos;}
 
     public HCCokeOvenControllerTile getControllerTile()  {
         if(controllerPos != null) {
@@ -51,7 +50,7 @@ public class HCCokeOvenFrameTile extends TileEntity {
 
     public void setupMultiBlock(BlockPos posIn)  {
         world.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, true));
-        setController(posIn);
+        setControllerPos(posIn);
     }
     public void destroyMultiBlock()  {
         if(world.isRemote)  {
@@ -60,9 +59,6 @@ public class HCCokeOvenFrameTile extends TileEntity {
         clearNBT();
         setFormed(world, false);
     }
-
-    public void setFormed(World worldIn, boolean b)  {worldIn.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, b));}
-    public boolean isFormed(World worldIn) {return worldIn.getBlockState(pos).get(Multiblock.FORMED);}
 
 
     public void setJob(String job)  {

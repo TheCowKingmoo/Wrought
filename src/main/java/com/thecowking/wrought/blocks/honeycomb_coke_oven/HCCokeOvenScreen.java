@@ -19,9 +19,25 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.ySize = 240;
     }
 
+
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    public void render(MatrixStack stack, int x, int y, float partialTicks)  {
+        this.renderBackground(stack);
+        super.render(stack, x, y, partialTicks);
+        this.renderHoveredTooltip(stack, x, y);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
+        int xStart = (this.width - this.xSize) / 2;
+        int yStart = (this.height - this.ySize) / 2;
+
+        this.minecraft.getTextureManager().bindTexture(GUI);
+        this.blit(stack, xStart, yStart, 0,0, this.xSize, this.ySize);
 
     }
+
+
+
 
 }

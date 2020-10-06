@@ -1,11 +1,14 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
+import com.thecowking.wrought.blocks.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
@@ -27,6 +30,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
         updateMultiBlock(worldIn, posIn);
     }
 
+    // TODO - doesn't seem to actually work
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos posIn, Explosion explosionIn) {
         updateMultiBlock(worldIn, posIn);
@@ -59,5 +63,44 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
 
     }
 
-
+    @SuppressWarnings("deprecation")
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
+        // make sure correct side
+        if (player instanceof ServerPlayerEntity) {
+            // get TE
+            TileEntity tileEntity = worldIn.getTileEntity(posIn);
+            // make sure TE is correct TE
+            if (tileEntity instanceof MultiBlockFrameTile) {
+                // cast
+                MultiBlockFrameTile frameTile = (MultiBlockFrameTile) tileEntity;
+                // check if the multi-structure is even formed
+                if(frameTile.isFormed(worldIn))  {
+                    // contorller pos
+                    BlockPos controllerPos = frameTile.getControllerPos();
+                    if(controllerPos != null)  {
+                        // get the TE at controller pos
+                        tileEntity = worldIn.getTileEntity(controllerPos);
+                        // make sure correct tile
+                        if(tileEntity instanceof HCCokeOvenControllerTile)  {
+                            HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
+                            // call controllers screen
+                            controllerTile.openGUI(worldIn, posIn, player, controllerTile);
+                        }  else  {
+                            LOGGER.info("block at contr pos is not correct TE");
+                        }
+                    }  else  {
+                        LOGGER.info("no controller pos");
+                    }
+                }  else  {
+                    LOGGER.info("frame is not formed");
+                }
+            } else {
+                LOGGER.info(posIn);
+                LOGGER.info(tileEntity);
+                throw new IllegalStateException("Our named container provider is missing!");
+            }
+        }
+        return ActionResultType.SUCCESS;
+    }
 }

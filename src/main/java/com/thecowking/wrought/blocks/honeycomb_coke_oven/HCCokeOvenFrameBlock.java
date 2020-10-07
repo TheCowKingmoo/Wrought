@@ -42,11 +42,11 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
 
         if(tileEntity instanceof HCCokeOvenFrameTile)  {
             HCCokeOvenFrameTile castedTile = (HCCokeOvenFrameTile) tileEntity;
-            if(!(castedTile.isFormed(worldIn)))  {
+            if(!(castedTile.isFormed()))  {
                 LOGGER.info("multiblock is not formed");
                 return;
             }
-            BlockPos controllerPos = castedTile.getController();
+            BlockPos controllerPos = castedTile.getControllerPos();
             // if this is null then we have some serious problems
             if(controllerPos == null)  {
                 LOGGER.info("err - does not have controller pos");
@@ -75,7 +75,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
                 // cast
                 MultiBlockFrameTile frameTile = (MultiBlockFrameTile) tileEntity;
                 // check if the multi-structure is even formed
-                if(frameTile.isFormed(worldIn))  {
+                if(frameTile.isFormed())  {
                     // contorller pos
                     BlockPos controllerPos = frameTile.getControllerPos();
                     if(controllerPos != null)  {

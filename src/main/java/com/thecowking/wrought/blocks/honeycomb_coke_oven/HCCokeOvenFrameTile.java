@@ -29,17 +29,14 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
     private static String NBT_CZ = "CZ";
     private static String NBT_JOB = "JOB";
 
-    private BlockPos controllerPos;
-    private String job;
 
     public HCCokeOvenFrameTile() {
         super(H_C_COKE_FRAME_TILE.get());
     }
-    public BlockPos getController()  {return controllerPos;}
 
     public HCCokeOvenControllerTile getControllerTile()  {
-        if(controllerPos != null) {
-            TileEntity te = this.world.getTileEntity(controllerPos);
+        if(getControllerPos() != null) {
+            TileEntity te = this.world.getTileEntity(getControllerPos());
             if (te instanceof HCCokeOvenControllerTile) {
                 HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) te;
                 return controllerTile;
@@ -57,41 +54,35 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
             return;
         }
         clearNBT();
-        setFormed(world, false);
+        setFormed(false);
     }
 
-
-    public void setJob(String job)  {
-        this.job = job;
-    }
     public void clearNBT()  {
-        controllerPos = null;
-        job = null;
+        setControllerPos(null);
+        setJob(null);
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
         if(nbt.contains(NBT_CX))  {
-            controllerPos = new BlockPos(nbt.getInt(NBT_CX), nbt.getInt(NBT_CY), nbt.getInt(NBT_CZ));
+            setControllerPos(new BlockPos(nbt.getInt(NBT_CX), nbt.getInt(NBT_CY), nbt.getInt(NBT_CZ)));
         }
         if (nbt.contains(NBT_JOB)) {
-            job = nbt.getString(NBT_JOB);
+            setJob(nbt.getString(NBT_JOB));
         }
     }
-
-    public BlockPos getBlockPos()  {return pos;}
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
-        if(controllerPos != null)  {
-            tag.putInt(NBT_CX, controllerPos.getX());
-            tag.putInt(NBT_CY, controllerPos.getY());
-            tag.putInt(NBT_CZ, controllerPos.getZ());
+        if(getControllerPos() != null)  {
+            tag.putInt(NBT_CX, getControllerPos().getX());
+            tag.putInt(NBT_CY, getControllerPos().getY());
+            tag.putInt(NBT_CZ, getControllerPos().getZ());
         }
-        if(job != null)  {
-            tag.putString(NBT_JOB, job);
+        if(getJob() != null)  {
+            tag.putString(NBT_JOB, getJob());
         }
         return tag;
     }
@@ -103,7 +94,7 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
 
         // note that controllerTile will be null unless multiblock is formed
         if(controllerTile != null)  {
-            if (cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) && job == Multiblock.JOB_ITEM_IN) {
+            if (cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) && getJob() == Multiblock.JOB_ITEM_IN) {
                 return controllerTile.handler.cast();
             }
         }

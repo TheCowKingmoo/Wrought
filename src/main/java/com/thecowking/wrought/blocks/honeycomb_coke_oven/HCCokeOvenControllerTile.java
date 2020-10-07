@@ -81,7 +81,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public void tick() {
 
         if(world.isRemote)  {return;}
-        if(!isFormed(world))  {return;}
+        if(!isFormed())  {return;}
         if(tickCounter < TICKSPEROPERATION)  {
             tickCounter++;
             return;
@@ -108,7 +108,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn)  {
         Direction facing = getDirectionFacing(worldIn);
         BlockPos centerPos = findMultiBlockCenter();
-        BlockPos correctLowCorner = findLowsestValueCorner(centerPos, TOTAL_X_LENGTH, TOTAL_HEIGHT, TOTAL_Z_LENGTH);
+        BlockPos correctLowCorner = Multiblock.findLowsestValueCorner(centerPos, TOTAL_X_LENGTH, TOTAL_HEIGHT, TOTAL_Z_LENGTH);
         BlockPos lowCorner = new BlockPos(correctLowCorner.getX(), correctLowCorner.getY()+1, correctLowCorner.getZ());
         LOGGER.info(getControllerPos());
         List<BlockPos> multiblockMembers = new ArrayList();
@@ -178,26 +178,24 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return multiblockMembers;
     }
 
-    // TODO - util or bubble up?
-    @Override
     public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
         List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null);
         if(multiblockMembers != null)  {
             // get this far and we should form multi block
             LOGGER.info("FORM MULTIBLOCK");
-            setFormed(worldIn, true);
+            setFormed(true);
             updateMultiBlockMemberTiles(multiblockMembers, false);
         }
     }
 
     public void destroyMultiBlock(World worldIn, BlockPos posIn)  {
-        if(!isFormed(worldIn))  {
+        if(!isFormed())  {
             return;
         }
         List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn);
         if(multiblockMembers != null)  {
             updateMultiBlockMemberTiles(multiblockMembers, true);
-            setFormed(worldIn, false);
+            setFormed(false);
             LOGGER.info("Multiblock Destroyed");
         }  else  {
             LOGGER.info("failed to destory multiblock -> list was null");
@@ -209,6 +207,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
     private void updateMultiBlockMemberTiles(List<BlockPos> memberArray, boolean destroy)  {
         for(int i = 0; i < memberArray.size(); i++)  {
+            LOGGER.info("up");
             BlockPos current = memberArray.get(i);
             TileEntity currentTile = getTileFromPos(world, current);
             if(currentTile instanceof HCCokeOvenFrameTile)  {
@@ -234,8 +233,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return (block instanceof HCCokeOvenFrameBlock);
     }
 
-    @Override
-    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, IMultiBlockControllerTile tileEntity)  {
+    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity)  {
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {

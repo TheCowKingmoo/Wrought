@@ -2,6 +2,7 @@ package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
+import com.thecowking.wrought.blocks.MultiBlockControllerTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -39,9 +40,9 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
         if (player instanceof ServerPlayerEntity) {
             TileEntity tileEntity = worldIn.getTileEntity(posIn);
-            if (tileEntity instanceof IMultiBlockControllerTile) {
-                IMultiBlockControllerTile controllerTile = (IMultiBlockControllerTile) tileEntity;
-                if(controllerTile.isFormed(worldIn) )  {
+            if (tileEntity instanceof HCCokeOvenControllerTile) {
+                HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
+                if(controllerTile.isFormed() )  {
                     controllerTile.openGUI(worldIn, posIn, player, controllerTile);
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");

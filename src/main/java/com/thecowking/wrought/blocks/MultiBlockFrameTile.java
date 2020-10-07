@@ -8,25 +8,20 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MultiBlockFrameTile extends TileEntity {
+public class MultiBlockFrameTile extends MultiBlockTile {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private BlockPos controllerPos;
+    private String job;
+
 
     public MultiBlockFrameTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
     public BlockPos getControllerPos()  {return this.controllerPos;}
-    public void setControllerPos(BlockPos posIn) {
-        LOGGER.info("setting controllerPos for frame at - ");
-        LOGGER.info(this.pos);
-        LOGGER.info(" with ");
-        LOGGER.info(posIn);
-        this.controllerPos = posIn;
-    }
-
-    public void setFormed(World worldIn, boolean b)  {worldIn.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, b));}
-    public boolean isFormed(World worldIn) {return worldIn.getBlockState(pos).get(Multiblock.FORMED);}
+    public void setControllerPos(BlockPos posIn) {this.controllerPos = posIn;}
+    public String getJob()  {return this.job;}
+    public void setJob(String s)  {this.job = s;}
 }
 
 

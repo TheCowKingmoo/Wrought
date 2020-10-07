@@ -2,6 +2,7 @@ package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.honeycomb_coke_oven.*;
+import com.thecowking.wrought.items.ItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -27,7 +28,6 @@ public class RegistryHandler {
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-
     }
 
     //Honey Comb Coke Controller
@@ -46,5 +46,8 @@ public class RegistryHandler {
         World world = inv.player.getEntityWorld();
         return new HCCokeOvenContainer(windowId, world, pos, inv, inv.player);
     }));
+
+    //Coke Item
+    public static final RegistryObject<Item> COKE = ITEMS.register("coke", ItemBase::new);
 
 }

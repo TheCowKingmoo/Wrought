@@ -36,6 +36,8 @@ public class HCCokeOvenContainer extends Container {
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 addSlot(new SlotItemHandler(h, 0, 64, 24));
+                addSlot(new SlotItemHandler(h, 1, 64, 48));
+                addSlot(new SlotItemHandler(h, 2, 128, 48));
             });
         }
         layoutPlayerInventorySlots(10, 70);

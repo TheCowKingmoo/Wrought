@@ -11,8 +11,12 @@ public class Multiblock {
     public static final String JOB_REDSTONE_IN = "R_IN";
     public static final String JOB_REDSTONE_OUT = "R_OUT";
     public static final String JOB_ITEM_IN = "I_IN";
+    public static final String JOB_ITEM_OUT = "I_OUT";
     public static final String JOB_FLUID_IN = "F_IN";
     public static final String JOB_FLUID_OUT = "F_OUT";
+    public static final int INDEX_ITEM_INPUT = 0;
+    public static final int INDEX_ITEM_OUTPUT = 1;
+    public static final int INDEX_ITEM_EXTRA_OUTPUT = 2;
     public static TileEntity getTileFromPos(World worldIn, BlockPos posIn)  {return worldIn.getTileEntity(posIn);}
     /*
 West = -x

@@ -1,6 +1,8 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
 import com.thecowking.wrought.blocks.*;
+
+import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.util.Util;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,6 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -79,20 +82,21 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void tick() {
-
-        if(world.isRemote)  {return;}
+        if(this.world.isRemote)  {return;}
         if(!isFormed())  {return;}
-        if(tickCounter < TICKSPEROPERATION)  {
-            tickCounter++;
-            return;
-        }
+        if(tickCounter++ < TICKSPEROPERATION)  {return;}
         tickCounter = 0;
-        // work
+        if(itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getCount() >= itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getMaxStackSize())  {return;}
         ovenOperation();
     }
 
     private void ovenOperation()  {
-
+        ItemStack stack = itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_INPUT);
+        if(stack.getItem() == Items.COAL)  {
+            itemHandler.extractItem(Multiblock.INDEX_ITEM_INPUT, 1, false);
+            itemHandler.insertItem(Multiblock.INDEX_ITEM_OUTPUT, new ItemStack(RegistryHandler.COKE.get(), 1), false);
+            markDirty();
+        }
     }
 
     /*
@@ -185,8 +189,33 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             LOGGER.info("FORM MULTIBLOCK");
             setFormed(true);
             updateMultiBlockMemberTiles(multiblockMembers, false);
+            assignJobs();
         }
     }
+
+    public void assignJobs()  {
+        BlockPos center = findMultiBlockCenter();
+        BlockPos inputPos = new BlockPos(center.getX(), center.getY()+2, center.getZ());
+        BlockPos outputPos = new BlockPos(center.getX(), center.getY()-2, center.getZ());
+        TileEntity te = Multiblock.getTileFromPos(this.world, inputPos);
+        if(te instanceof HCCokeOvenFrameTile)  {
+            LOGGER.info("assigned input to");
+            LOGGER.info(inputPos);
+            ((HCCokeOvenFrameTile)te).setJob(Multiblock.JOB_ITEM_IN);
+        }  else  {
+            LOGGER.info("error - could not assign input item job");
+        }
+        te = Multiblock.getTileFromPos(this.world, outputPos);
+        if(te instanceof HCCokeOvenFrameTile)  {
+            LOGGER.info("assigned output to");
+            LOGGER.info(outputPos);
+            ((HCCokeOvenFrameTile)te).setJob(Multiblock.JOB_ITEM_OUT);
+        }  else  {
+            LOGGER.info("error - could not assign output item job");
+        }
+
+    }
+
 
     public void destroyMultiBlock(World worldIn, BlockPos posIn)  {
         if(!isFormed())  {

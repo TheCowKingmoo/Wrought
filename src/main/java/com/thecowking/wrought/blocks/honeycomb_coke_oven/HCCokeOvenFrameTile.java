@@ -91,15 +91,14 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         HCCokeOvenControllerTile controllerTile = getControllerTile();
-
-        // note that controllerTile will be null unless multiblock is formed
         if(controllerTile != null)  {
-            if (cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) && getJob() == Multiblock.JOB_ITEM_IN) {
+            if (getJob() == Multiblock.JOB_ITEM_IN && cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
                 return controllerTile.handler.cast();
             }
         }
         return super.getCapability(cap, side);
     }
+
 
 
 

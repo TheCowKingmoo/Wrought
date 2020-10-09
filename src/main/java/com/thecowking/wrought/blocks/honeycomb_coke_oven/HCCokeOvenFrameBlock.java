@@ -28,13 +28,9 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
             return;
         }
         updateMultiBlock(worldIn, posIn);
+        super.onBlockHarvested(worldIn, posIn, state, player);
     }
 
-    // TODO - doesn't seem to actually work
-    @Override
-    public void onExplosionDestroy(World worldIn, BlockPos posIn, Explosion explosionIn) {
-        updateMultiBlock(worldIn, posIn);
-    }
 
     private void updateMultiBlock(World worldIn, BlockPos posIn)  {
         // We need the Tile Entity to grab the controller position
@@ -42,7 +38,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
 
         if(tileEntity instanceof HCCokeOvenFrameTile)  {
             HCCokeOvenFrameTile castedTile = (HCCokeOvenFrameTile) tileEntity;
-            if(!(castedTile.isFormed()))  {
+            if(!(castedTile.isFormed(castedTile.getPos())))  {
                 LOGGER.info("multiblock is not formed");
                 return;
             }
@@ -75,7 +71,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
                 // cast
                 MultiBlockFrameTile frameTile = (MultiBlockFrameTile) tileEntity;
                 // check if the multi-structure is even formed
-                if(frameTile.isFormed())  {
+                if(frameTile.isFormed(frameTile.getPos()))  {
                     // contorller pos
                     BlockPos controllerPos = frameTile.getControllerPos();
                     if(controllerPos != null)  {
@@ -101,6 +97,6 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
         }
-        return ActionResultType.SUCCESS;
+        return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
     }
 }

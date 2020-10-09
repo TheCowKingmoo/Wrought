@@ -1,10 +1,13 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.*;
 
 import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.util.Util;
+import com.thecowking.wrought.util.WroughtItemHandler;
 import net.minecraft.block.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,39 +15,50 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RangedWrapper;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_CONTROLLER_TILE;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_BLOCK;
 
 
-
-
-public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements ITickableTileEntity {
+public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements ITickableTileEntity, INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
+
+
+    private final Direction[] POSSIBLE_DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
 
     private final Block[][] posArray = {
             {null, null, frameBlock, frameBlock,  frameBlock, null, null, null},
@@ -56,7 +70,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             {null, null, frameBlock, frameBlock,  frameBlock, null, null, null}
     };
 
-    private final int RADIUS = 3;
     private final int CENTRAL_BODY_HEIGHT = 3;
     private final int TOTAL_HEIGHT = 5;
     private final int TOTAL_X_LENGTH = 7;
@@ -66,12 +79,19 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private int tickCounter = 0;
 
 
+    private Direction facingDirection;
     private BlockPos itemInputBlock;
     private BlockPos itemOutputBlock;
+    private BlockPos redstoneInBlock;
+    private BlockPos redstoneOutBlock;
+    private boolean isSmelting = false;
+    private int smeltTime = 0;
 
 
-    private ItemStackHandler itemHandler = createHandler();
+    private WroughtItemHandler itemHandler = createHandler();
     public LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemHandler);
+    private final LazyOptional<IItemHandlerModifiable> inventoryCapabilityInput = LazyOptional.of(() -> new RangedWrapper(this.itemHandler, Multiblock.INDEX_ITEM_INPUT, Multiblock.INDEX_ITEM_INPUT + 1));
+    private final LazyOptional<IItemHandlerModifiable> inventoryCapabilityOutput = LazyOptional.of(() -> new RangedWrapper(this.itemHandler, Multiblock.INDEX_ITEM_OUTPUT, Multiblock.INDEX_ITEM_OUTPUT + 2));
 
 
 
@@ -82,19 +102,42 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void tick() {
-        if(this.world.isRemote)  {return;}
-        if(!isFormed())  {return;}
+        // check if we have a multiblock
+        if(!isFormed(this.pos))  {return;}
+        // check if we are in correct instance
+        if(this.world == null || this.world.isRemote)  {return;}
+        // Check if enough time passed for an operation
+        this.markDirty();
         if(tickCounter++ < TICKSPEROPERATION)  {return;}
         tickCounter = 0;
-        if(itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getCount() >= itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getMaxStackSize())  {return;}
+        // check if redstone is turning machine off
+        if(this.world.isBlockPowered(this.pos))  {machineChangeOperation(false); return; }
+        // get input item -> if no recipe exists then jump out
+        if(this.getRecipe(itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_INPUT)) == null)  {machineChangeOperation(false); return; }
+        // check to make sure output is not full before starting another operation
+        if(itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getCount() >= itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_OUTPUT).getMaxStackSize())  {machineChangeOperation(false); return;}
         ovenOperation();
+    }
+
+    private void machineChangeOperation(boolean online)  {
+        if(online == isSmelting)  {return;}
+        this.isSmelting = online;
+        setLit(online);
+        blockUpdate();
+    }
+
+    private void blockUpdate()  {
+        this.world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
     }
 
     private void ovenOperation()  {
         ItemStack stack = itemHandler.getStackInSlot(Multiblock.INDEX_ITEM_INPUT);
-        if(stack.getItem() == Items.COAL)  {
+        ItemStack outputStack = getRecipe(stack);
+
+        if(outputStack != null)  {
+            machineChangeOperation(true);
             itemHandler.extractItem(Multiblock.INDEX_ITEM_INPUT, 1, false);
-            itemHandler.insertItem(Multiblock.INDEX_ITEM_OUTPUT, new ItemStack(RegistryHandler.COKE.get(), 1), false);
+            itemHandler.insertItem(Multiblock.INDEX_ITEM_OUTPUT, outputStack, false);
             markDirty();
         }
     }
@@ -109,32 +152,23 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             - some strange issue such as an explosion wiped away other blocks.
      */
 
-    public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn)  {
-        Direction facing = getDirectionFacing(worldIn);
-        BlockPos centerPos = findMultiBlockCenter();
+    public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn, Direction direction)  {
+        BlockPos centerPos = findMultiBlockCenter(direction);
         BlockPos correctLowCorner = Multiblock.findLowsestValueCorner(centerPos, TOTAL_X_LENGTH, TOTAL_HEIGHT, TOTAL_Z_LENGTH);
         BlockPos lowCorner = new BlockPos(correctLowCorner.getX(), correctLowCorner.getY()+1, correctLowCorner.getZ());
-        LOGGER.info(getControllerPos());
         List<BlockPos> multiblockMembers = new ArrayList();
 
         // checks the central slice part of the structure to ensure the correct blocks exist
         for(int y = 0; y < CENTRAL_BODY_HEIGHT; y++)  {
             for(int x = 0; x < TOTAL_WIDTH; x++)  {
                 for(int z = 0; z < TOTAL_WIDTH; z++)  {
-                    LOGGER.info(x);
-                    LOGGER.info(y);
-                    LOGGER.info(z);
-
                     Block correctBlock = posArray[x][z];                            // get the block that should be at these coord's
                     if( correctBlock == null)  {                                // skip the "null" positions (don't care whats in here)
-                        LOGGER.info("skipping block - dont care");
                         continue;
                     }
 
                     // get current block
                     BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
-                    LOGGER.info(current);
-
                     if(current.equals(getControllerPos()) || current.equals(posIn))  {                                           // skip the controller
                         continue;
                     }
@@ -183,18 +217,26 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null);
-        if(multiblockMembers != null)  {
-            // get this far and we should form multi block
-            LOGGER.info("FORM MULTIBLOCK");
-            setFormed(true);
-            updateMultiBlockMemberTiles(multiblockMembers, false);
-            assignJobs();
+        for(int i = 0; i < POSSIBLE_DIRECTIONS.length; i++)  {
+
+            Direction currentDirection = POSSIBLE_DIRECTIONS[i];
+            LOGGER.info(currentDirection);
+
+            List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, currentDirection);
+            if(multiblockMembers != null)  {
+                this.facingDirection = currentDirection;
+                // get this far and we should form multi block
+                LOGGER.info("FORM MULTIBLOCK");
+                setFormed(true);
+                updateMultiBlockMemberTiles(multiblockMembers, false);
+                assignJobs();
+                return;
+            }
         }
     }
 
     public void assignJobs()  {
-        BlockPos center = findMultiBlockCenter();
+        BlockPos center = findMultiBlockCenter(this.facingDirection);
         BlockPos inputPos = new BlockPos(center.getX(), center.getY()+2, center.getZ());
         BlockPos outputPos = new BlockPos(center.getX(), center.getY()-2, center.getZ());
         TileEntity te = Multiblock.getTileFromPos(this.world, inputPos);
@@ -218,13 +260,15 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     public void destroyMultiBlock(World worldIn, BlockPos posIn)  {
-        if(!isFormed())  {
+        if(!isFormed(this.pos))  {
             return;
         }
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn);
+        LOGGER.info(this.facingDirection);
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn, this.facingDirection);
         if(multiblockMembers != null)  {
             updateMultiBlockMemberTiles(multiblockMembers, true);
             setFormed(false);
+            setLit(false);
             LOGGER.info("Multiblock Destroyed");
         }  else  {
             LOGGER.info("failed to destory multiblock -> list was null");
@@ -236,7 +280,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
     private void updateMultiBlockMemberTiles(List<BlockPos> memberArray, boolean destroy)  {
         for(int i = 0; i < memberArray.size(); i++)  {
-            LOGGER.info("up");
             BlockPos current = memberArray.get(i);
             TileEntity currentTile = getTileFromPos(world, current);
             if(currentTile instanceof HCCokeOvenFrameTile)  {
@@ -284,8 +327,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
       South = +Z
       this function will return the center most point
      */
-    public BlockPos findMultiBlockCenter()  {
-        Direction facing = getDirectionFacing(world);
+    public BlockPos findMultiBlockCenter(Direction facing)  {
         int xCoord = getControllerPos().getX();
         int yCoord = getControllerPos().getY();
         int zCoord = getControllerPos().getZ();
@@ -310,68 +352,61 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
-        itemHandler.deserializeNBT(nbt.getCompound("inv"));
         super.read(state, nbt);
+        itemHandler.deserializeNBT(nbt.getCompound("inv"));
+        this.tickCounter = nbt.getInt("NUMTICKS");
+
+
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
         tag.put("inv", itemHandler.serializeNBT());
+        tag.putInt("NUMTICKS", tickCounter);
         return tag;
     }
 
-    private ItemStackHandler createHandler() {
-        return new ItemStackHandler(64) {
-
-            @Override
-            protected void onContentsChanged(int slot) {
-                // To make sure the TE persists when the chunk is saved later we need to
-                // mark it dirty every time the item handler changes
-                markDirty();
-            }
-
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return true;
-            }
-
-            @Nonnull
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                return super.insertItem(slot, stack, simulate);
-            }
-        };
+    private WroughtItemHandler createHandler() {
+        return new WroughtItemHandler(3);
     }
 
 
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            if (cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
-                return handler.cast();
-            }
-            //if (cap.equals(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)) {
-            //    return this.fluidTank.cast();
 
-            //}
-            //if (cap.equals(CapabilityEnergy.ENERGY)) {
-            //    return energy.cast();
-            // }
-            return super.getCapability(cap, side);
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side)
+    {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (side == null)
+                return handler.cast();
+            switch (side) {
+                case DOWN:
+                    return inventoryCapabilityOutput.cast();
+                case UP:
+                    return inventoryCapabilityInput.cast();
+                case NORTH:
+                case SOUTH:
+                case WEST:
+                case EAST:
+                    return handler.cast();
+            }
         }
+        return super.getCapability(cap, side);
+    }
+
 
     public BlockPos getItemInputBlockPos()  {
-        if(itemInputBlock == null)  {
-            BlockPos center = findMultiBlockCenter();
+        if(itemInputBlock == null && this.facingDirection != null)  {
+            BlockPos center = findMultiBlockCenter(this.facingDirection);
             itemInputBlock = new BlockPos(center.getX(), center.getY() + (TOTAL_HEIGHT / 2), center.getZ());
         }
         return itemInputBlock;
     }
 
     public BlockPos getItemOutputBlockPos()  {
-        if(itemOutputBlock == null)  {
-            BlockPos center = findMultiBlockCenter();
+        if(itemOutputBlock == null && this.facingDirection != null)  {
+            BlockPos center = findMultiBlockCenter(this.facingDirection);
             itemOutputBlock = new BlockPos(center.getX(), center.getY() - (TOTAL_HEIGHT / 2), center.getZ());
         }
         return itemOutputBlock;
@@ -382,5 +417,56 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             markDirty();
         }
     }
+
+    @Nullable
+    @Override
+    public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
+        return new HCCokeOvenContainer(windowID, this.world, this.pos, playerInv, playerIn);
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return null;
+    }
+
+    @Nullable
+    private ItemStack getRecipe(ItemStack stack)  {
+        if(stack.getItem() == Items.COAL)  {
+           return new ItemStack(RegistryHandler.COKE.get(), 1);
+        }
+        return null;
+    }
+
+    public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn, World world) {
+        return world != null ? world.getRecipeManager().getRecipes().stream()
+                .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
+    }
+
+    @SuppressWarnings("resource")
+    @OnlyIn(Dist.CLIENT)
+    public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn) {
+        ClientWorld world = Minecraft.getInstance().world;
+        return world != null ? world.getRecipeManager().getRecipes().stream()
+                .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
+    }
+
+    public static Set<ItemStack> getAllRecipeInputs(IRecipeType<?> typeIn, World worldIn) {
+        Set<ItemStack> inputs = new HashSet<ItemStack>();
+        Set<IRecipe<?>> recipes = findRecipesByType(typeIn, worldIn);
+        for (IRecipe<?> recipe : recipes) {
+            NonNullList<Ingredient> ingredients = recipe.getIngredients();
+            ingredients.forEach(ingredient -> {
+                for (ItemStack stack : ingredient.getMatchingStacks()) {
+                    inputs.add(stack);
+                }
+            });
+        }
+        return inputs;
+    }
+
+    public final IItemHandlerModifiable getInvetory()  {
+        return this.itemHandler;
+    }
+
 
 }

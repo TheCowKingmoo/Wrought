@@ -22,8 +22,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
         super(tileEntityTypeIn);
     }
 
-    // sets the blockstate "formed" for the multiblocks controller
-    public Direction getDirectionFacing(World worldIn)  {return worldIn.getBlockState(pos).get(BlockStateProperties.FACING);}
+    public boolean isLit()  {return this.world.getBlockState(this.pos).get(Multiblock.LIT);}
+    public void setLit(boolean b)  {this.world.setBlockState(this.pos, getBlockState().with(Multiblock.LIT, b));}
 
     @Override
     public void setDirty(boolean b) {

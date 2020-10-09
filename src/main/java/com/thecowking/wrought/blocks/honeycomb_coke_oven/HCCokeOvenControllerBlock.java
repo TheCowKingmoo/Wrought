@@ -3,9 +3,15 @@ package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 import com.thecowking.wrought.blocks.IMultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
 import com.thecowking.wrought.blocks.MultiBlockControllerTile;
+import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.util.WroughtItemHandler;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -24,6 +30,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
     private static final Logger LOGGER = LogManager.getLogger();
 
 
+
     public HCCokeOvenControllerBlock() {
         super();
     }
@@ -35,6 +42,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
         return new HCCokeOvenControllerTile();
     }
 
+
     @SuppressWarnings("deprecation")
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
@@ -42,7 +50,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
             TileEntity tileEntity = worldIn.getTileEntity(posIn);
             if (tileEntity instanceof HCCokeOvenControllerTile) {
                 HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
-                if(controllerTile.isFormed() )  {
+                if(controllerTile.isFormed(controllerTile.getPos()) )  {
                     controllerTile.openGUI(worldIn, posIn, player, controllerTile);
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");
@@ -61,11 +69,12 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {
         TileEntity tileEntity = getTileFromPos(worldIn, posIn);
-        if(tileEntity instanceof HCCokeOvenControllerTile)  {
+        if(tileEntity instanceof HCCokeOvenControllerTile && !worldIn.isRemote)  {
             HCCokeOvenControllerTile castedTile = (HCCokeOvenControllerTile) tileEntity;
             castedTile.destroyMultiBlock(worldIn, posIn);
+            worldIn.removeTileEntity(posIn);
         }
     }
 
 
-    }
+}

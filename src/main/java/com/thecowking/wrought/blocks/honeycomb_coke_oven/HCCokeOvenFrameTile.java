@@ -93,7 +93,9 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
         HCCokeOvenControllerTile controllerTile = getControllerTile();
         if(controllerTile != null)  {
             if (getJob() == Multiblock.JOB_ITEM_IN && cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
-                return controllerTile.handler.cast();
+                return controllerTile.getCapability(cap, Direction.UP);
+            }  else if(getJob() == Multiblock.JOB_ITEM_OUT && cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY))  {
+                return controllerTile.getCapability(cap, Direction.DOWN);
             }
         }
         return super.getCapability(cap, side);

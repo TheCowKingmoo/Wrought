@@ -10,6 +10,5 @@ public interface IMultiBlockControllerTile {
     boolean isValidMultiBlockFormer(Item item);
     void tryToFormMultiBlock(World worldIn, BlockPos pos);
     void openGUI(World worldIn, BlockPos pos, PlayerEntity player, IMultiBlockControllerTile tileEntity);
-    Direction getDirectionFacing(World worldIn);
     void setDirty(boolean b);
 }

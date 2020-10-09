@@ -4,6 +4,8 @@ import com.thecowking.wrought.util.RegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
@@ -15,12 +17,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
 public class HCCokeOvenContainer extends Container {
     private TileEntity tileEntity;
-    private PlayerEntity playerEntity;
     private IItemHandler playerInventory;
     private static final Logger LOGGER = LogManager.getLogger();
     private int numSlots = 8;
@@ -29,7 +32,6 @@ public class HCCokeOvenContainer extends Container {
     public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
         super(H_C_CONTAINER.get(), windowId);
         tileEntity = world.getTileEntity(pos);
-        this.playerEntity = player;
         this.playerInventory = new InvWrapper(playerInventory);
 
 
@@ -71,6 +73,35 @@ public class HCCokeOvenContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerEntity, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
+        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
+    }
+    @Nonnull
+    @Override
+    public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {
+        ItemStack returnStack = ItemStack.EMPTY;
+        final Slot slot = this.inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            final ItemStack slotStack = slot.getStack();
+            returnStack = slotStack.copy();
+
+            final int containerSlots = this.inventorySlots.size() - player.inventory.mainInventory.size();
+            if (index < containerSlots) {
+                if (!mergeItemStack(slotStack, containerSlots, this.inventorySlots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!mergeItemStack(slotStack, 0, containerSlots, false)) {
+                return ItemStack.EMPTY;
+            }
+            if (slotStack.getCount() == 0) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+            if (slotStack.getCount() == returnStack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+            slot.onTake(player, slotStack);
+        }
+        return returnStack;
     }
 }

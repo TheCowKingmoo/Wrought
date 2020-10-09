@@ -16,10 +16,17 @@ public class Multiblock {
     public static final String JOB_ITEM_OUT = "I_OUT";
     public static final String JOB_FLUID_IN = "F_IN";
     public static final String JOB_FLUID_OUT = "F_OUT";
+    public static final String DIRECTION_FACING = "D_F";
+    public static final String NUM_TICKS = "N_TICKS";
+    public static final String INVENTORY = "inv";
+
+
+
     public static final int INDEX_ITEM_INPUT = 0;
     public static final int INDEX_ITEM_OUTPUT = 1;
     public static final int INDEX_ITEM_EXTRA_OUTPUT = 2;
-    public static final String CUSTOM_NAME ="CUSTOMNAME";
+
+
     public static TileEntity getTileFromPos(World worldIn, BlockPos posIn)  {return worldIn.getTileEntity(posIn);}
     /*
 West = -x

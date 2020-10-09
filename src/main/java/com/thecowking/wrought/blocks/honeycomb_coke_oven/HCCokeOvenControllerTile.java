@@ -79,7 +79,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private int tickCounter = 0;
 
 
-    private Direction facingDirection;
+    private int facingDirection = -1;
     private BlockPos itemInputBlock;
     private BlockPos itemOutputBlock;
     private BlockPos redstoneInBlock;
@@ -224,7 +224,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, currentDirection);
             if(multiblockMembers != null)  {
-                this.facingDirection = currentDirection;
+                this.facingDirection = i;
                 // get this far and we should form multi block
                 LOGGER.info("FORM MULTIBLOCK");
                 setFormed(true);
@@ -236,7 +236,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     public void assignJobs()  {
-        BlockPos center = findMultiBlockCenter(this.facingDirection);
+        BlockPos center = findMultiBlockCenter(getFacingDirection());
         BlockPos inputPos = new BlockPos(center.getX(), center.getY()+2, center.getZ());
         BlockPos outputPos = new BlockPos(center.getX(), center.getY()-2, center.getZ());
         TileEntity te = Multiblock.getTileFromPos(this.world, inputPos);
@@ -264,7 +264,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
         LOGGER.info(this.facingDirection);
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn, this.facingDirection);
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn, getFacingDirection());
         if(multiblockMembers != null)  {
             updateMultiBlockMemberTiles(multiblockMembers, true);
             setFormed(false);
@@ -353,25 +353,23 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
-        itemHandler.deserializeNBT(nbt.getCompound("inv"));
-        this.tickCounter = nbt.getInt("NUMTICKS");
-
-
+        itemHandler.deserializeNBT(nbt.getCompound(Multiblock.INVENTORY));
+        this.tickCounter = nbt.getInt(Multiblock.NUM_TICKS);
+        this.facingDirection = nbt.getInt(Multiblock.DIRECTION_FACING);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
-        tag.put("inv", itemHandler.serializeNBT());
-        tag.putInt("NUMTICKS", tickCounter);
+        tag.put(Multiblock.INVENTORY, itemHandler.serializeNBT());
+        tag.putInt(Multiblock.NUM_TICKS, tickCounter);
+        tag.putInt(Multiblock.DIRECTION_FACING, facingDirection);
         return tag;
     }
 
     private WroughtItemHandler createHandler() {
         return new WroughtItemHandler(3);
     }
-
-
 
     @Nonnull
     @Override
@@ -397,20 +395,28 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     public BlockPos getItemInputBlockPos()  {
-        if(itemInputBlock == null && this.facingDirection != null)  {
-            BlockPos center = findMultiBlockCenter(this.facingDirection);
+        if(itemInputBlock == null && this.facingDirection > 0)  {
+            BlockPos center = findMultiBlockCenter(getFacingDirection());
             itemInputBlock = new BlockPos(center.getX(), center.getY() + (TOTAL_HEIGHT / 2), center.getZ());
         }
         return itemInputBlock;
     }
 
     public BlockPos getItemOutputBlockPos()  {
-        if(itemOutputBlock == null && this.facingDirection != null)  {
-            BlockPos center = findMultiBlockCenter(this.facingDirection);
+        if(itemOutputBlock == null && this.facingDirection > 0)  {
+            BlockPos center = findMultiBlockCenter(getFacingDirection());
             itemOutputBlock = new BlockPos(center.getX(), center.getY() - (TOTAL_HEIGHT / 2), center.getZ());
         }
         return itemOutputBlock;
     }
+
+    private Direction getFacingDirection()  {
+        if(this.facingDirection < 0)  {
+            return null;
+        }
+        return POSSIBLE_DIRECTIONS[this.facingDirection];
+    }
+
 
     public void setDirty(boolean b)  {
         if(b)  {

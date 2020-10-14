@@ -19,6 +19,8 @@ public class MultiBlockTile extends TileEntity {
     public void setFormed(boolean b)  {this.world.setBlockState(pos, getBlockState().with(Multiblock.FORMED, b));}
 
 
+
+
     public BlockPos getBlockPostion()  {return this.pos;}
 
 }

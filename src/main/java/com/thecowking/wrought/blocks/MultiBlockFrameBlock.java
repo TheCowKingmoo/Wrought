@@ -17,9 +17,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.Nullable;
 
+import static com.thecowking.wrought.blocks.Multiblock.FORMED;
+import static com.thecowking.wrought.blocks.Multiblock.REDSTONE;
+import static net.minecraft.util.Direction.DOWN;
+
 public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock {
-    public static final BooleanProperty FORMED = BooleanProperty.create("formed");
-    public static final IntegerProperty REDSTONE = BlockStateProperties.POWER_0_15;
 
     public MultiBlockFrameBlock() {
         super(Properties.create(Material.IRON)
@@ -49,10 +51,23 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock
         builder.add(REDSTONE);
     }
 
+
+    /*
+      Will send out a downwards redstone signal
+     */
     @SuppressWarnings("deprecation")
     @Override
     public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        return blockState.get(REDSTONE);
+         if(side == Direction.UP)   {
+             return blockState.get(REDSTONE);
+         }
+         return 0;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+        return getWeakPower(blockState, blockAccess, pos, side);
     }
 
     @SuppressWarnings("deprecation")

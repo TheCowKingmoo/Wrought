@@ -1,6 +1,8 @@
 package com.thecowking.wrought.blocks;
 
 import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -8,6 +10,8 @@ import net.minecraft.world.World;
 public class Multiblock {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
+    public static final IntegerProperty REDSTONE = BlockStateProperties.POWER_0_15;
+
 
     public static final String JOB_ENERGY_IN = "E_IN";
     public static final String JOB_REDSTONE_IN = "R_IN";
@@ -18,7 +22,17 @@ public class Multiblock {
     public static final String JOB_FLUID_OUT = "F_OUT";
     public static final String DIRECTION_FACING = "D_F";
     public static final String NUM_TICKS = "N_TICKS";
-    public static final String INVENTORY = "inv";
+    public static final String INVENTORY_IN = "inv_in";
+    public static final String INVENTORY_OUT = "inv_out";
+
+
+
+    public static final String REDSTONE_IN_X = "R_IN_X";
+    public static final String REDSTONE_OUT_X = "R_OUT_X";
+    public static final String REDSTONE_IN_Y = "R_IN_Y";
+    public static final String REDSTONE_OUT_Y = "R_OUT_Y";
+    public static final String REDSTONE_IN_Z = "R_IN_Z";
+    public static final String REDSTONE_OUT_Z = "R_OUT_Z";
 
 
 

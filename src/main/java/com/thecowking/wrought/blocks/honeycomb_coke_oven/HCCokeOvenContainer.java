@@ -1,6 +1,7 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
 import com.thecowking.wrought.util.RegistryHandler;
+import com.thecowking.wrought.util.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -19,6 +20,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
+import static com.thecowking.wrought.blocks.Multiblock.INDEX_ITEM_INPUT;
+import static com.thecowking.wrought.blocks.Multiblock.INDEX_ITEM_OUTPUT;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
@@ -37,13 +40,11 @@ public class HCCokeOvenContainer extends Container {
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                addSlot(new SlotItemHandler(h, 0, 64, 24));
-                addSlot(new SlotItemHandler(h, 1, 64, 48));
-                addSlot(new SlotItemHandler(h, 2, 128, 48));
+                addSlot(new SlotItemHandler(h, INDEX_ITEM_INPUT, 64, 24));
+                addSlot(new SlotOutput(h, INDEX_ITEM_OUTPUT, 64, 48));
             });
         }
         layoutPlayerInventorySlots(10, 70);
-
     }
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {

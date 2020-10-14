@@ -46,22 +46,7 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
         return null;
     }
 
-    public void setupMultiBlock(BlockPos posIn)  {
-        world.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, true));
-        setControllerPos(posIn);
-    }
-    public void destroyMultiBlock()  {
-        if(world.isRemote)  {
-            return;
-        }
-        clearNBT();
-        setFormed(false);
-    }
 
-    public void clearNBT()  {
-        setControllerPos(null);
-        setJob(null);
-    }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
@@ -69,9 +54,9 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
         if(nbt.contains(NBT_CX))  {
             setControllerPos(new BlockPos(nbt.getInt(NBT_CX), nbt.getInt(NBT_CY), nbt.getInt(NBT_CZ)));
         }
-        if (nbt.contains(NBT_JOB)) {
-            setJob(nbt.getString(NBT_JOB));
-        }
+        //if (nbt.contains(NBT_JOB)) {
+        //    setJob(nbt.getString(NBT_JOB));
+        //}
     }
 
     @Override
@@ -82,9 +67,9 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
             tag.putInt(NBT_CY, getControllerPos().getY());
             tag.putInt(NBT_CZ, getControllerPos().getZ());
         }
-        if(getJob() != null || getJob() != "")  {
-            tag.putString(NBT_JOB, getJob());
-        }
+        //if(getJob() != null)  {
+        //   tag.putString(NBT_JOB, getJob());
+        //}
         return tag;
     }
 
@@ -93,11 +78,7 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         HCCokeOvenControllerTile controllerTile = getControllerTile();
         if(controllerTile != null)  {
-            if (getJob() == Multiblock.JOB_ITEM_IN && cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) {
-                return controllerTile.getCapability(cap, Direction.UP);
-            }  else if(getJob() == Multiblock.JOB_ITEM_OUT && cap.equals(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY))  {
-                return controllerTile.getCapability(cap, Direction.DOWN);
-            }
+                return controllerTile.getCapability(cap, Direction.WEST);
         }
         return super.getCapability(cap, side);
     }

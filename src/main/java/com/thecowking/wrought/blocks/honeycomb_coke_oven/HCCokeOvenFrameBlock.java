@@ -9,12 +9,9 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-import java.util.logging.Logger;
-
-import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
     /*
@@ -80,8 +77,15 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
                         // make sure correct tile
                         if(tileEntity instanceof HCCokeOvenControllerTile)  {
                             HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
-                            // call controllers screen
-                            controllerTile.openGUI(worldIn, posIn, player, controllerTile);
+
+                            // we are changing job of block
+                            if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem()))  {
+                                jobSwitch(frameTile, controllerTile);
+                            }  else  {
+                                // OPEN GUI
+                                controllerTile.openGUI(worldIn, posIn, player, controllerTile);
+                            }
+
                         }  else  {
                             LOGGER.info("block at contr pos is not correct TE");
                         }
@@ -98,5 +102,28 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
             }
         }
         return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+    }
+
+    public void jobSwitch(MultiBlockFrameTile frameTile, MultiBlockControllerTile controllerTile)  {
+        String job = frameTile.getJob();
+        switch(job)  {
+            case JOB_ITEM_IN:
+                frameTile.setJob(JOB_ITEM_OUT);
+                break;
+            case JOB_ITEM_OUT:
+                frameTile.setJob(JOB_REDSTONE_IN);
+                break;
+            case JOB_REDSTONE_IN:
+                frameTile.setJob(JOB_REDSTONE_OUT);
+                break;
+            case JOB_REDSTONE_OUT:
+                frameTile.setJob(JOB_FLUID_OUT);
+                break;
+            case JOB_FLUID_OUT:
+                frameTile.setJob(null);
+                break;
+            default:
+                frameTile.setJob(JOB_ITEM_IN);
+        }
     }
 }

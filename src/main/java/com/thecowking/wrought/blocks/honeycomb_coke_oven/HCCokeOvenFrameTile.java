@@ -28,7 +28,6 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
     private static String NBT_CY = "CY";
     private static String NBT_CZ = "CZ";
     private static String NBT_JOB = "JOB";
-    private String job;
 
 
 
@@ -71,11 +70,9 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
             setControllerPos(new BlockPos(nbt.getInt(NBT_CX), nbt.getInt(NBT_CY), nbt.getInt(NBT_CZ)));
         }
         if (nbt.contains(NBT_JOB)) {
-            this.job = nbt.getString(NBT_JOB);
+            setJob(nbt.getString(NBT_JOB));
         }
     }
-    public String getJob()  {return this.job;}
-    public void setJob(String s)  {this.job = s;}
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
@@ -85,7 +82,7 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
             tag.putInt(NBT_CY, getControllerPos().getY());
             tag.putInt(NBT_CZ, getControllerPos().getZ());
         }
-        if(this.job != null || this.job != "")  {
+        if(getJob() != null || getJob() != "")  {
             tag.putString(NBT_JOB, getJob());
         }
         return tag;

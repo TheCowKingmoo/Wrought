@@ -40,6 +40,17 @@ public class RegistryHandler {
     public static final RegistryObject<Item> H_C_COKE_FRAME_BLOCK_ITEM = ITEMS.register("h_c_coke_frame_block", () -> new BlockItemBase(H_C_COKE_FRAME_BLOCK.get()));
     public static final RegistryObject<TileEntityType<HCCokeOvenFrameTile>> H_C_COKE_FRAME_TILE = TILES.register("h_c_coke_frame_block", () -> TileEntityType.Builder.create(HCCokeOvenFrameTile::new, H_C_COKE_FRAME_BLOCK.get()).build(null));
 
+    //Honey Comb Coke Frame Stairs
+    public static final RegistryObject<Block> H_C_COKE_FRAME_STAIR = BLOCKS.register("h_c_coke_frame_stair", HCCokeOvenFrameStairs::new);
+    public static final RegistryObject<Item> H_C_COKE_FRAME_STAIR_ITEM = ITEMS.register("h_c_coke_frame_stair", () -> new BlockItemBase(H_C_COKE_FRAME_STAIR.get()));
+
+
+    //Honey Comb Coke Frame Slab
+    public static final RegistryObject<Block> H_C_COKE_FRAME_SLAB = BLOCKS.register("h_c_coke_frame_slab", HCCokeOvenFrameSlab::new);
+    public static final RegistryObject<Item> H_C_COKE_FRAME_SLAB_ITEM = ITEMS.register("h_c_coke_frame_slab", () -> new BlockItemBase(H_C_COKE_FRAME_SLAB.get()));
+
+
+
     //Honey Comb Coke Multi-Block
     public static final RegistryObject<ContainerType<HCCokeOvenContainer>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();

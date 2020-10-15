@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "wrought:block/h_c_coke_frame_block",
+    "top": "wrought:block/h_c_coke_frame_block",
+    "side": "wrought:block/h_c_coke_frame_block"
+  }
+}

@@ -1,19 +1,17 @@
 package com.thecowking.wrought.blocks;
 
-import com.thecowking.wrought.blocks.honeycomb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.blocks.honeycomb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,14 +33,17 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return true;
+        return state.get(Multiblock.FORMED);
     }
 
     // creates the tile entity
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new HCCokeOvenFrameTile();
+        if(state.get(Multiblock.FORMED))  {
+            return new HCCokeOvenFrameTile();
+        }
+        return null;
     }
 
     @Override
@@ -75,6 +76,15 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock
     public boolean canProvidePower(BlockState state) {
         return true;
     }
+
+
+    public void addingToMultblock(BlockState blockState, World worldIn)  {
+        blockState.with(FORMED, true);
+        createTileEntity(blockState, worldIn);
+    }
+
+
+
 
 
 

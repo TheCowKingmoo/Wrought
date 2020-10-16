@@ -42,16 +42,12 @@ public class Multiblock {
 
 
     public static TileEntity getTileFromPos(World worldIn, BlockPos posIn)  {return worldIn.getTileEntity(posIn);}
-    /*
-West = -x
-East = +X
-North = -Z
-South = +Z
-this function will return the North-Western corner of the multi block to be formed
-*/
-    public static BlockPos findLowsestValueCorner(BlockPos centerPos, int xLength, int yLength, int zLength)  {
-        if(centerPos == null)  return null;
-        return new BlockPos(centerPos.getX() - (xLength / 2), centerPos.getY() - (yLength / 2), centerPos.getZ() - (zLength / 2));
+
+    public static BlockPos getUnderlyingBlock(BlockPos posIn)  {
+        if(posIn.getY() > 255 || posIn.getY() < 1)  {
+            return null;
+        }
+        return new BlockPos(posIn.getX(), posIn.getY()-1, posIn.getZ());
     }
 
 }

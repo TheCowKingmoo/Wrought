@@ -46,20 +46,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.thecowking.wrought.blocks.Multiblock.*;
-import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_CONTROLLER_TILE;
-import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_BLOCK;
+import static com.thecowking.wrought.util.RegistryHandler.*;
 
 
 public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements ITickableTileEntity, INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block controllerBlock = H_C_COKE_FRAME_BLOCK.get();
+    private static Block controllerBlock = H_C_COKE_CONTROLLER_BLOCK.get();
     private static Block hatchBlock = H_C_COKE_FRAME_BLOCK.get();
 
 
-    private static Block frameStairs = H_C_COKE_FRAME_BLOCK.get();
-    private static Block frameSlab = H_C_COKE_FRAME_BLOCK.get();
+    private static Block frameStairs = H_C_COKE_FRAME_STAIR.get();
+    private static Block frameSlab = H_C_COKE_FRAME_SLAB.get();
 
 
     /*
@@ -74,7 +73,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
                     {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
                     {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {null, frameBlock, frameBlock, frameBlock, null, null},
+                    {null, frameBlock, frameBlock, frameBlock, null},
                     {null, null, null, null, null}
             },
             {
@@ -84,7 +83,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, null, frameBlock, frameBlock, frameBlock, null, null}
+                    {null, frameBlock, frameBlock, frameBlock, null}
+            },
+            {
+                    {null, frameBlock, controllerBlock, frameBlock, null},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {null, frameBlock, frameBlock, frameBlock, null}
             },
             {
                     {null, frameBlock, frameBlock, frameBlock, null},
@@ -93,23 +101,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
                     {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, null, frameBlock, controllerBlock, frameBlock, null, null}
-            },
-            {
-                    {null, frameBlock, frameBlock, frameBlock, null},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, null, frameBlock, frameBlock, frameBlock, null, null}
+                    {null, frameBlock, frameBlock, frameBlock, null}
             },
             {
                     {null, frameStairs, frameStairs, frameStairs, null},
                     {frameStairs, frameBlock, frameBlock, frameBlock, frameStairs},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
                     {frameStairs, frameBlock, frameBlock, frameBlock, frameStairs},
                     {null, frameStairs, frameStairs, frameStairs, null}
             },
@@ -142,9 +141,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         super(H_C_COKE_CONTROLLER_TILE.get());
         inputSlot = new WroughtItemHandler(1);
         outputSlot = new ItemStackHandler();
-        this.xLength = 7;
-        this.zLength = xLength;
-        this.yLength = 5;
+        this.height = posArray.length;
+        this.length = posArray[0].length;
+        this.width = posArray[0][0].length;
+
     }
 
     @Override
@@ -224,16 +224,33 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn, Direction direction) {
         BlockPos centerPos = calcCenterBlock(direction);
-        BlockPos correctLowCorner = Multiblock.findLowsestValueCorner(centerPos, this.xLength, this.yLength, this.zLength);
+        BlockPos correctLowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
         BlockPos lowCorner = new BlockPos(correctLowCorner.getX(), correctLowCorner.getY() + 1, correctLowCorner.getZ());
         List<BlockPos> multiblockMembers = new ArrayList();
 
-        // checks the central slice part of the structure to ensure the correct blocks exist
-        for (int y = 0; y < yLength; y++) {
-            for (int x = 0; x < xLength; x++) {
-                for (int z = 0; z < zLength; z++) {
+        LOGGER.info("center is");
+        LOGGER.info(centerPos);
+        LOGGER.info("low is");
+        LOGGER.info(lowCorner);
 
-                    Block correctBlock = posArray[y][x][z];                            // get the block that should be at these coord's
+
+        LOGGER.info("test");
+        LOGGER.info(posArray[1][6][4]);
+
+
+
+        // checks the central slice part of the structure to ensure the correct blocks exist
+        for (int y = 0; y < posArray.length; y++) {
+            for (int z = 0; z < posArray[0].length; z++) {
+                for (int x = 0; x < posArray[0][0].length; x++) {
+
+                    Block correctBlock = posArray[y][z][x];                            // get the block that should be at these coord's
+                    LOGGER.info(correctBlock);
+                    //if(true)  continue;
+
+                    LOGGER.info(y);
+                    LOGGER.info(z);
+                    LOGGER.info(x);
 
                     if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
                         continue;
@@ -241,9 +258,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     // get current block
                     BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
 
+
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual block at pos
                     if (currentBlock != correctBlock) {                             // check vs what should be there
                         // do not form multiblock
+                        LOGGER.info(current);
                         LOGGER.info("wrong block - got ");
                         LOGGER.info(currentBlock);
                         LOGGER.info(" should be ");
@@ -273,6 +292,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 assignJobs();                                                                                           // sets "jobs" on frame members as needed
                 return;
             }
+            return;
         }
     }
 
@@ -335,16 +355,17 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         for (int i = 0; i < memberArray.size(); i++) {
             BlockPos current = memberArray.get(i);
             Block currentBlock = world.getBlockState(current).getBlock();                   //check block
-            if(currentBlock instanceof MultiBlockFrameBlock)  {
-                MultiBlockFrameBlock frameBlock = (MultiBlockFrameBlock) currentBlock;
-                frameBlock.addingToMultblock(world.getBlockState(current), world);          // change blockstate and create TE
+            if(currentBlock instanceof IMultiBlockFrame)  {
+                IMultiBlockFrame frameBlock = (IMultiBlockFrame) currentBlock;
+                frameBlock.addingToMultblock(world.getBlockState(current), current, world);          // change blockstate and create TE
                 TileEntity currentTile = getTileFromPos(world, current);                    // get new TE
+                if(currentTile == null)  {LOGGER.info("TE WAS NOT CREATED");}
                 if (currentTile instanceof HCCokeOvenFrameTile) {
                     HCCokeOvenFrameTile castedCurrent = (HCCokeOvenFrameTile) currentTile;
                     if (destroy) {
                         castedCurrent.destroyMultiBlock();   // remove blockstate
                     } else {
-                        castedCurrent.setupMultiBlock(getControllerPos());  // dp TE things needed for multiblock setup
+                        castedCurrent.setupMultiBlock(this.pos);  // dp TE things needed for multiblock setup
                     }
                 }
             }
@@ -458,5 +479,72 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             });
         }
         return inputs;
+    }
+
+    /*
+  West = -x
+  East = +X
+  North = -Z
+  South = +Z
+  this function will return the center most point based on the lengths of the mutli-block and the
+  direction that is fed in
+ */
+    public BlockPos calcCenterBlock(Direction inputDirection)  {
+        int xCoord = this.pos.getX();
+        int yCoord = this.pos.getY();
+        int zCoord = this.pos.getZ();
+        switch(inputDirection)  {
+            case NORTH:
+                return new BlockPos(xCoord, yCoord, zCoord + (length / 2));
+            case SOUTH:
+                return new BlockPos(xCoord, yCoord, zCoord - (length / 2));
+            case WEST:
+                return new BlockPos(xCoord  + (length / 2), yCoord, zCoord);
+            case EAST:
+                return new BlockPos(xCoord  - (length / 2), yCoord, zCoord);
+        }
+        return null;
+    }
+
+
+    /*
+      Used a simple getter for the center block
+      Instead of read/writing the center block we can just calculate its position when needed as long as we have
+      the correct facingDirection of the multi-block
+     */
+
+    public BlockPos getCenterBlock()  {
+        if(this.centerBlock == null && this.facingDirection != -1)  {
+            this.centerBlock = calcCenterBlock(POSSIBLE_DIRECTIONS[this.facingDirection]);
+        }
+        return this.centerBlock;
+    }
+
+    /*
+West = -x
+East = +X
+North = -Z
+South = +Z
+this function will return the North-Western corner of the multi block to be formed
+*/
+    public BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int height, int shorterSide)  {
+        if(centerPos == null)  return null;
+
+        int xCoord = centerPos.getX();
+        int yCoord = centerPos.getY();
+        int zCoord = centerPos.getZ();
+
+        switch(inputDirection)  {
+            case NORTH:
+                return new BlockPos(xCoord - (shorterSide / 2), yCoord - (height / 2) , zCoord - (longerSide / 2));
+            case SOUTH:
+                return new BlockPos(xCoord  - (shorterSide / 2), yCoord  - (height / 2), zCoord - (longerSide / 2));
+            case WEST:
+                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
+            case EAST:
+                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
+            default:
+                return null;
+        }
     }
 }

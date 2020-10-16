@@ -24,12 +24,14 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
         if(!(player instanceof ServerPlayerEntity))  {
             return;
         }
-        updateMultiBlock(worldIn, posIn);
+        if(state.get(Multiblock.FORMED))  {
+            updateMultiBlock(worldIn, posIn);
+        }
         super.onBlockHarvested(worldIn, posIn, state, player);
     }
 
 
-    private void updateMultiBlock(World worldIn, BlockPos posIn)  {
+    public void updateMultiBlock(World worldIn, BlockPos posIn)  {
         // We need the Tile Entity to grab the controller position
         TileEntity tileEntity = getTileFromPos(worldIn, posIn);
 
@@ -60,7 +62,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock  {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
         // make sure correct side
-        if (player instanceof ServerPlayerEntity) {
+        if (player instanceof ServerPlayerEntity && state.get(Multiblock.FORMED)) {
             // get TE
             TileEntity tileEntity = worldIn.getTileEntity(posIn);
             // make sure TE is correct TE

@@ -11,10 +11,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBlockControllerTile {
+    private static final Logger LOGGER = LogManager.getLogger();
+
 
     protected int facingDirection = -1;
     protected final Direction[] POSSIBLE_DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
@@ -22,9 +26,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     protected BlockPos redstoneOut;
     protected BlockPos centerBlock;
 
-    protected int xLength;
-    protected int yLength;
-    protected int zLength;
+    protected int length;
+    protected int width;
+    protected int height;
 
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -90,43 +94,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
 
 
 
-    /*
-      Used a simple getter for the center block
-      Instead of read/writing the center block we can just calculate its position when needed as long as we have
-      the correct facingDirection of the multi-block
-     */
 
-    public BlockPos getCenterBlock()  {
-        if(this.centerBlock == null && this.facingDirection != -1)  {
-            this.centerBlock = calcCenterBlock(POSSIBLE_DIRECTIONS[this.facingDirection]);
-        }
-        return this.centerBlock;
-    }
 
-    /*
-      West = -x
-      East = +X
-      North = -Z
-      South = +Z
-      this function will return the center most point based on the lengths of the mutli-block and the
-      direction that is fed in
-     */
-    public BlockPos calcCenterBlock(Direction inputDirection)  {
-        int xCoord = this.pos.getX();
-        int yCoord = this.pos.getY();
-        int zCoord = this.pos.getZ();
-        switch(inputDirection)  {
-            case NORTH:
-                return new BlockPos(xCoord, yCoord, zCoord + (zLength / 2));
-            case SOUTH:
-                return new BlockPos(xCoord, yCoord, zCoord - (zLength / 2));
-            case WEST:
-                return new BlockPos(xCoord  + (xLength / 2), yCoord, zCoord);
-            case EAST:
-                return new BlockPos(xCoord  - (xLength / 2), yCoord, zCoord);
-        }
-        return null;
-    }
 
     /*
       Checks a frame blocks blockstate to see if it is powered by redstone
@@ -145,7 +114,11 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     public void sendOutRedstone(int power)  {
         if(this.redstoneOut != null)  {
             MultiBlockFrameTile frameTile = getFrameTile(this.redstoneOut);
-            frameTile.setRedstonePower(power);
+            if(frameTile != null)  {
+                frameTile.setRedstonePower(power);
+            }  else  {
+                LOGGER.info("redstone out block is null");
+            }
         }
     }
 

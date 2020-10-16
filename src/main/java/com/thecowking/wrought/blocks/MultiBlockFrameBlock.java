@@ -19,7 +19,7 @@ import static com.thecowking.wrought.blocks.Multiblock.FORMED;
 import static com.thecowking.wrought.blocks.Multiblock.REDSTONE;
 import static net.minecraft.util.Direction.DOWN;
 
-public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock {
+public class MultiBlockFrameBlock extends Block implements IMultiBlockFrame {
 
     public MultiBlockFrameBlock() {
         super(Properties.create(Material.IRON)
@@ -78,14 +78,9 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrameBlock
     }
 
 
-    public void addingToMultblock(BlockState blockState, World worldIn)  {
-        blockState.with(FORMED, true);
-        createTileEntity(blockState, worldIn);
+    @Override
+    public void addingToMultblock(BlockState blockState, BlockPos posIn, World worldIn) {
+        worldIn.setBlockState(posIn, blockState.with(FORMED, true));
+        this.createTileEntity(blockState, worldIn);
     }
-
-
-
-
-
-
 }

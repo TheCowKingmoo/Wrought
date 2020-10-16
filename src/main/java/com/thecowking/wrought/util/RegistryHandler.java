@@ -1,7 +1,8 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.blocks.honeycomb_coke_oven.*;
+import com.thecowking.wrought.blocks.CokeBlock;
+import com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven.*;
 import com.thecowking.wrought.items.ItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
@@ -59,5 +60,9 @@ public class RegistryHandler {
 
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", ItemBase::new);
+
+    //Coke Block
+    public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
+    public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new BlockItemBase(COKE_BLOCK.get()));
 
 }

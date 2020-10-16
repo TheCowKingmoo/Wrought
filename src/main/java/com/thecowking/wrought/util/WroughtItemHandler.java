@@ -1,10 +1,8 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.blocks.Multiblock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;

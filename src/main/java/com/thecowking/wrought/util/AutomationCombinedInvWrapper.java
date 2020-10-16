@@ -6,8 +6,8 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.blocks.Multiblock.INDEX_ITEM_INPUT;
-import static com.thecowking.wrought.blocks.Multiblock.INDEX_ITEM_OUTPUT;
+import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.INDEX_ITEM_INPUT;
+import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.INDEX_ITEM_OUTPUT;
 
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     public AutomationCombinedInvWrapper(IItemHandlerModifiable... itemHandler)  {

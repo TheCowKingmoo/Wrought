@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -33,9 +34,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
-
-    public boolean isLit()  {return this.world.getBlockState(this.pos).get(Multiblock.LIT);}
-    public void setLit(boolean b)  {this.world.setBlockState(this.pos, getBlockState().with(Multiblock.LIT, b));}
 
     /*
     Does the needed checks and casting to see if current BlockPos holds a correct member of multi-block
@@ -85,10 +83,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     public void  setFacingDirection(int dir)  {this.facingDirection = dir;}
 
     public Direction getDirectionFacing()  {
-        if (this.facingDirection == -1)  {
-            return null;
-        }
-        return POSSIBLE_DIRECTIONS[facingDirection];
+        return this.world.getBlockState(this.pos).get(BlockStateProperties.FACING);
     }
 
 

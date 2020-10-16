@@ -190,7 +190,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }  else  {
             sendOutRedstone(0);
         }
-        setLit(online);
         blockUpdate();
     }
 
@@ -212,6 +211,50 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
     }
 
+
+    public List<BlockPos>  getNorthSouthMultiBlockMembers(BlockPos lowCorner, boolean destroy)  {
+        List<BlockPos> multiblockMembers = new ArrayList();
+        // checks the central slice part of the structure to ensure the correct blocks exist
+        for (int y = 0; y < posArray.length; y++) {
+            for (int z = 0; z < posArray[0].length; z++) {
+                for (int x = 0; x < posArray[0][0].length; x++) {
+
+                    Block correctBlock = posArray[y][z][x];                            // get the block that should be at these coord's
+                    LOGGER.info(correctBlock);
+                    //if(true)  continue;
+
+                    LOGGER.info(y);
+                    LOGGER.info(z);
+                    LOGGER.info(x);
+
+                    if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
+                        continue;
+                    }
+                    // get current block
+                    //BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
+                    BlockPos current = indexShifterBlockPos(getDirectionFacing(), lowCorner, x, y, z, length, width);
+                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual block at pos
+                    if (currentBlock != correctBlock) {                             // check vs what should be there
+                        // do not form multiblock
+                        LOGGER.info(current);
+                        LOGGER.info("wrong block - got ");
+                        LOGGER.info(currentBlock);
+                        LOGGER.info(" should be ");
+                        LOGGER.info(correctBlock);
+                        if (!destroy) {
+                            return null;
+                        }
+                    }
+                    // add this block to correct
+                    multiblockMembers.add(current);
+                }
+            }
+        }  //end loop
+        return multiblockMembers;
+    }
+
+
+
     /*
       This attempts to find all the frame blocks in the multi-block to determine if we should form the multi-block or used to update frame blocks
       that the multi-block is being destoryed.
@@ -222,11 +265,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             - some strange issue such as an explosion wiped away other blocks.
      */
 
-    public List<BlockPos> getMultiBlockMembers(World worldIn, BlockPos posIn, Direction direction) {
+    public List<BlockPos> getMultiBlockMembers(World worldIn, boolean destroy, Direction direction) {
         BlockPos centerPos = calcCenterBlock(direction);
         BlockPos correctLowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
         BlockPos lowCorner = new BlockPos(correctLowCorner.getX(), correctLowCorner.getY() + 1, correctLowCorner.getZ());
         List<BlockPos> multiblockMembers = new ArrayList();
+
 
         LOGGER.info("center is");
         LOGGER.info(centerPos);
@@ -234,9 +278,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         LOGGER.info(lowCorner);
 
 
-        LOGGER.info("test");
-        LOGGER.info(posArray[1][6][4]);
-
+        LOGGER.info("Direction");
+        LOGGER.info(getDirectionFacing());
 
 
         // checks the central slice part of the structure to ensure the correct blocks exist
@@ -256,9 +299,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         continue;
                     }
                     // get current block
-                    BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
-
-
+                    //BlockPos current = new BlockPos(lowCorner.getX() + x, lowCorner.getY() + y, lowCorner.getZ() + z);
+                    BlockPos current = indexShifterBlockPos(getDirectionFacing(), lowCorner, x, y, z, length, width);
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual block at pos
                     if (currentBlock != correctBlock) {                             // check vs what should be there
                         // do not form multiblock
@@ -267,7 +309,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         LOGGER.info(currentBlock);
                         LOGGER.info(" should be ");
                         LOGGER.info(correctBlock);
-                        if (posIn == null) {
+                        if (!destroy) {
                             return null;
                         }
                     }
@@ -279,20 +321,31 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return multiblockMembers;
     }
 
-    public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
 
-        for (int i = 0; i < POSSIBLE_DIRECTIONS.length; i++) {                                                          // iterate over ever direction the multiblock can be in
-            Direction currentDirection = POSSIBLE_DIRECTIONS[i];
-            List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, currentDirection);             // calc if every location has correct block
-            if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
-                setFacingDirection(i);                                                                                  // saves the current direction index
-                LOGGER.info("FORM MULTIBLOCK");                                                                         // get this far and we should form multi block
-                setFormed(true);                                                                                        // change block state of controller
-                updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change block state of frames
-                assignJobs();                                                                                           // sets "jobs" on frame members as needed
-                return;
-            }
-            return;
+    public BlockPos indexShifterBlockPos(Direction inputDirection, BlockPos low, int x, int y, int z, int length, int width)  {
+
+        switch (inputDirection)  {
+            case NORTH:
+                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + z);
+            case SOUTH:
+                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + length - z - 1);
+            case WEST:
+                return new BlockPos(low.getX() + z, low.getY() + y, low.getZ() + x);
+            case EAST:
+                return new BlockPos(low.getX() + length - z - 1, low.getY() + y, low.getZ() + width - x - 1);
+
+        }
+        return null;
+    }
+
+
+    public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, false, getDirectionFacing());             // calc if every location has correct block
+        if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
+            LOGGER.info("FORM MULTIBLOCK");                                                                         // get this far and we should form multi block
+            setFormed(true);                                                                                        // change block state of controller
+            updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change block state of frames
+            assignJobs();                                                                                           // sets "jobs" on frame members as needed
         }
     }
 
@@ -301,16 +354,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
         setFormed(false);
-        setLit(false);
-        Direction d = getDirectionFacing();
-        if(d == null)  {
-            // something went super wrong - the direction was already lost
-            LOGGER.info("attemped to destory multiblock without the direction!");
-        }  else  {
-            List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, posIn, d);
-            if (multiblockMembers != null) {
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, true, getDirectionFacing());
+        if (multiblockMembers != null) {
                 updateMultiBlockMemberTiles(multiblockMembers, true);
-            }
         }
             LOGGER.info("Multiblock Destroyed");
     }

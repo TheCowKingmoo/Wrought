@@ -1,7 +1,52 @@
 {
   "variants": {
-    "": {
+    "facing=down,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": 90
+    },
+    "facing=up,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": -90
+    },
+    "facing=north,formed=false":  {
       "model": "wrought:block/h_c_coke_controller_block"
+    },
+    "facing=south,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 180
+    },
+    "facing=west,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 270
+    },
+    "facing=east,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 90
+    },
+    "facing=down,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": 90
+    },
+    "facing=up,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": -90
+    },
+    "facing=north,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block"
+    },
+    "facing=south,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 180
+    },
+    "facing=west,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 270
+    },
+    "facing=east,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 90
     }
   }
 }
+
+

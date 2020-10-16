@@ -10,10 +10,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -40,6 +42,18 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new HCCokeOvenControllerTile();
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        Direction[] d = context.getNearestLookingDirections();
+        for(int i = 0; i < d.length; i++)  {
+            if(d[i] != Direction.UP && d[i] != Direction.DOWN)  {
+                return getDefaultState().with(BlockStateProperties.FACING, d[i].getOpposite());
+            }
+        }
+        return getDefaultState().with(BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite());
     }
 
 

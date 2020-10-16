@@ -32,13 +32,13 @@ public class MultiBlockControllerBlock extends Block implements IMultiBlockContr
                 .hardnessAndResistance(2.0f)
                 .harvestTool(ToolType.PICKAXE)
         );
-        setDefaultState(this.getDefaultState().with(Multiblock.FORMED, false).with(Multiblock.LIT, false));
+        setDefaultState(this.getDefaultState().with(Multiblock.FORMED, false));
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         super.fillStateContainer(builder);
-        builder.add(Multiblock.FORMED, Multiblock.LIT);
+        builder.add(Multiblock.FORMED, BlockStateProperties.FACING);
     }
 
     @Override

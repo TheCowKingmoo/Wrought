@@ -4,6 +4,7 @@ import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import com.thecowking.wrought.util.AutomationCombinedInvWrapper;
+import com.thecowking.wrought.util.MultiStack;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.util.WroughtItemHandler;
 import net.minecraft.block.*;
@@ -12,6 +13,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -32,6 +34,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -128,8 +135,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private boolean isSmelting = false;
     private int smeltTime = 0;
 
+    protected FluidHandlerItemStack fluidOutput;
     protected ItemStackHandler inputSlot;
     protected ItemStackHandler outputSlot;
+    private final LazyOptional<IFluidHandler> fluid = LazyOptional.of(() -> fluidOutput);
     private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(inputSlot, outputSlot));
     private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(inputSlot, outputSlot));
 
@@ -172,6 +181,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             machineChangeOperation(false);
             return;
         }
+        if(fluidOutput.getFluidInTank(0).getAmount() >= fluidOutput.getTankCapacity(0))  {
+            LOGGER.info("fluid output turned off");
+            machineChangeOperation(false);
+            return;
+        }
         ovenOperation();
     }
 
@@ -194,14 +208,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     private void ovenOperation() {
         ItemStack stack = inputSlot.getStackInSlot(0);
-        ItemStack outputStack = getRecipe(stack);
+        MultiStack outputs = getRecipe(stack);
+        ItemStack outputItemStack = outputs.getItemStack();
+        FluidStack outputFluidStack = outputs.getFluidStack();
 
-        if (outputStack != null) {
+        if (outputItemStack != null && outputFluidStack == null) {
             if(!this.isSmelting)  {
                 machineChangeOperation(true);
             }
             inputSlot.extractItem(0, 1, false);
-            outputSlot.insertItem(0, outputStack, false);
+            outputSlot.insertItem(0, outputItemStack, false);
             markDirty();
         }
     }
@@ -263,6 +279,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 return automation.cast();
             }
         }
+        if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)  {
+            fluid.cast();
+        }
         return super.getCapability(cap, side);
     }
 
@@ -278,9 +297,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     @Nullable
-    private ItemStack getRecipe(ItemStack stack) {
+    private MultiStack getRecipe(ItemStack stack) {
         if (stack.getItem() == Items.COAL) {
-            return new ItemStack(RegistryHandler.COKE.get(), 1);
+            return new MultiStack(new ItemStack(RegistryHandler.COKE.get(), 1), null);
         }
         return null;
     }

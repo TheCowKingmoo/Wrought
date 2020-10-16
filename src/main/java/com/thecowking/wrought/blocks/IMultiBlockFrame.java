@@ -13,4 +13,5 @@ import static com.thecowking.wrought.blocks.Multiblock.FORMED;
 
 public interface IMultiBlockFrame {
     public void addingToMultblock(BlockState blockState, BlockPos posIn, World worldIn);
+    public void removeFromMultiBlock(BlockState blockState,BlockPos posIn, World worldIn);
 }

@@ -83,4 +83,9 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrame {
         worldIn.setBlockState(posIn, blockState.with(FORMED, true));
         this.createTileEntity(blockState, worldIn);
     }
+
+    @Override
+    public void removeFromMultiBlock(BlockState blockState, BlockPos posIn, World worldIn) {
+        worldIn.setBlockState(posIn, blockState.with(FORMED, false));
+    }
 }

@@ -403,7 +403,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             Block currentBlock = world.getBlockState(current).getBlock();                   //check block
             if(currentBlock instanceof IMultiBlockFrame)  {
                 IMultiBlockFrame frameBlock = (IMultiBlockFrame) currentBlock;
-                frameBlock.addingToMultblock(world.getBlockState(current), current, world);          // change blockstate and create TE
+                if(destroy)  {
+                    frameBlock.removeFromMultiBlock(world.getBlockState(current),current, world);
+                }  else  {
+                    frameBlock.addingToMultblock(world.getBlockState(current), current, world);          // change blockstate and create TE
+                }
                 TileEntity currentTile = getTileFromPos(world, current);                    // get new TE
                 if(currentTile == null)  {LOGGER.info("TE WAS NOT CREATED");}
                 if (currentTile instanceof HCCokeOvenFrameTile) {
@@ -414,6 +418,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                         castedCurrent.setupMultiBlock(this.pos);  // dp TE things needed for multiblock setup
                     }
                 }
+
+
             }
         }
     }

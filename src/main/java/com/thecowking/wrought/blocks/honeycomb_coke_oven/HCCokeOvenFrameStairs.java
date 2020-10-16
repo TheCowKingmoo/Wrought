@@ -1,6 +1,7 @@
 package com.thecowking.wrought.blocks.honeycomb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
+import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
 import com.thecowking.wrought.blocks.MultiBlockFrameTile;
 import com.thecowking.wrought.blocks.Multiblock;
 import com.thecowking.wrought.util.RegistryHandler;
@@ -67,54 +68,25 @@ public class HCCokeOvenFrameStairs extends StairsBlock implements IMultiBlockFra
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
-        // make sure correct side
-        if (player instanceof ServerPlayerEntity) {
-            // get TE
-            TileEntity tileEntity = worldIn.getTileEntity(posIn);
-            // make sure TE is correct TE
-            if (tileEntity instanceof MultiBlockFrameTile) {
-                // cast
-                MultiBlockFrameTile frameTile = (MultiBlockFrameTile) tileEntity;
-                // check if the multi-structure is even formed
-                if(frameTile.isFormed(frameTile.getPos()))  {
-                    // contorller pos
-                    BlockPos controllerPos = frameTile.getControllerPos();
-                    if(controllerPos != null)  {
-                        // get the TE at controller pos
-                        tileEntity = worldIn.getTileEntity(controllerPos);
-                        // make sure correct tile
-                        if(tileEntity instanceof HCCokeOvenControllerTile)  {
-                            HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
-                            if(controllerTile.isFormed(controllerPos))  {
-                                // OPEN GUI
-                                controllerTile.openGUI(worldIn, posIn, player, controllerTile);
-                                return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
-                            }
-
-                        }  else  {
-                            LOGGER.info("block at contr pos is not correct TE");
-                        }
-                    }  else  {
-                        LOGGER.info("no controller pos");
-                    }
-                    // need to deconstruct frame block
-                    frameTile.destroyMultiBlock();
-
-                }  else  {
-                    LOGGER.info("frame is not formed");
-                }
-            } else {
-                LOGGER.info(posIn);
-                LOGGER.info(tileEntity);
-                throw new IllegalStateException("Our named container provider is missing!");
+        if (player instanceof ServerPlayerEntity && worldIn.getBlockState(posIn).get(Multiblock.FORMED)) {
+            BlockPos frameBlockPos = getUnderlyingBlock(posIn);
+            Block frameBlock = worldIn.getBlockState(frameBlockPos).getBlock();
+            if (frameBlock instanceof MultiBlockFrameBlock) {
+                ((MultiBlockFrameBlock) frameBlock).onBlockActivated(worldIn.getBlockState(frameBlockPos), worldIn, frameBlockPos, player, hand, trace);
             }
         }
         return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
     }
 
     public void addingToMultblock(BlockState blockState, BlockPos posIn, World worldIn) {
-        blockState.with(FORMED, true);
+        worldIn.setBlockState(posIn, blockState.with(FORMED, true));
     }
+
+    @Override
+    public void removeFromMultiBlock(BlockState blockState, BlockPos posIn, World worldIn) {
+        worldIn.setBlockState(posIn, blockState.with(FORMED, false));
+    }
+
 }
 
 

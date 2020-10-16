@@ -3,17 +3,14 @@ package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
-import com.thecowking.wrought.util.AutomationCombinedInvWrapper;
-import com.thecowking.wrought.util.MultiStack;
-import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.util.WroughtItemHandler;
+import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
+import com.thecowking.wrought.util.*;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -34,16 +31,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -181,9 +177,13 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             machineChangeOperation(false);
             return;
         }
-        if(fluidOutput.getFluidInTank(0).getAmount() >= fluidOutput.getTankCapacity(0))  {
-            LOGGER.info("fluid output turned off");
-            machineChangeOperation(false);
+//        if(fluidOutput.getFluidInTank(0).getAmount() >= fluidOutput.getTankCapacity(0))  {
+//            LOGGER.info("fluid output turned off");
+//            machineChangeOperation(false);
+//            return;
+ //       }
+
+        if(this.getRecipe(inputSlot.getStackInSlot(0)) == null)  {
             return;
         }
         ovenOperation();
@@ -207,17 +207,24 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     private void ovenOperation() {
-        ItemStack stack = inputSlot.getStackInSlot(0);
-        MultiStack outputs = getRecipe(stack);
-        ItemStack outputItemStack = outputs.getItemStack();
-        FluidStack outputFluidStack = outputs.getFluidStack();
+        LOGGER.info(this.getRecipe(this.inputSlot.getStackInSlot(0)).getInput());
+        LOGGER.info(this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeOutput());
 
-        if (outputItemStack != null && outputFluidStack == null) {
+        //ItemStack stack = inputSlot.getStackInSlot(0);
+        ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeOutput();
+        //ItemStack outputItemStack = outputs.getItemStack();
+        //FluidStack outputFluidStack = outputs.getFluidStack();
+
+        //if (outputItemStack != null && outputFluidStack == null) {
+        if (outputs != null && outputs.getItem() != Items.AIR) {
             if(!this.isSmelting)  {
                 machineChangeOperation(true);
             }
+            LOGGER.info(outputs);
             inputSlot.extractItem(0, 1, false);
-            outputSlot.insertItem(0, outputItemStack, false);
+
+            inputSlot.getStackInSlot(0).shrink(1);
+            outputSlot.insertItem(0, outputs.copy(), false);
             markDirty();
         }
     }
@@ -295,12 +302,31 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public ITextComponent getDisplayName() {
         return null;
     }
-
+/*
     @Nullable
     private MultiStack getRecipe(ItemStack stack) {
         if (stack.getItem() == Items.COAL) {
             return new MultiStack(new ItemStack(RegistryHandler.COKE.get(), 1), null);
         }
+        return null;
+    }
+
+ */
+
+    @Nullable
+    private HoneyCombCokeOvenRecipe getRecipe(ItemStack stack) {
+        if (stack == null) {
+            return null;
+        }
+
+        Set<IRecipe<?>> recipes = findRecipesByType(RecipeSerializerInit.EXAMPLE_TYPE, this.world);
+        for (IRecipe<?> iRecipe : recipes) {
+            HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
+            if (recipe.matches(new RecipeWrapper(this.inputSlot), this.world)) {
+                return recipe;
+            }
+        }
+
         return null;
     }
 

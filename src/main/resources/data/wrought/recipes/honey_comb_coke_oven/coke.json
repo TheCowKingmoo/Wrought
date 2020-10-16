@@ -1,0 +1,10 @@
+{
+  "type": "wrought:honey_comb_coke_oven",
+  "output": {
+    "item": "wrought:coke"
+  },
+  "input": {
+    "item": "minecraft:coal"
+  },
+  "burntime": 100
+}

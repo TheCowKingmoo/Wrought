@@ -3,12 +3,14 @@ package com.thecowking.wrought.util;
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.CokeBlock;
 import com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven.*;
+import com.thecowking.wrought.init.FluidInit;
 import com.thecowking.wrought.items.BlockItemBase;
 import com.thecowking.wrought.items.CokeBlockItem;
 import com.thecowking.wrought.items.CokeItem;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,11 +28,14 @@ public class RegistryHandler {
 
 
 
+
     public static void init()  {
+        FluidInit.FLUIDS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RecipeSerializerInit.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     //Honey Comb Coke Controller

@@ -32,7 +32,7 @@ public class FluidInit {
 
     public static final ForgeFlowingFluid.Properties CREOSOTE_PROPERTIES = new ForgeFlowingFluid.Properties(() -> CREOSOTE_FLUID.get(),
             () -> CREOSOTE_FLOWING.get(),
-            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL).density(5).luminosity(10).overlay(CREOSOTE_OVERLAY_RL)).block(() -> FluidInit.CREOSOTE_BLOCK.get());
+            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL).density(5).luminosity(10).overlay(CREOSOTE_OVERLAY_RL)).block(() -> FluidInit.CREOSOTE_BLOCK.get()).bucket(() -> RegistryHandler.CREOSOTE_BUCKET.get());
 
 
     public static final RegistryObject<FlowingFluidBlock> CREOSOTE_BLOCK = RegistryHandler.BLOCKS.register("creosote",

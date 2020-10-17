@@ -3,7 +3,9 @@
   "block.wrought.h_c_coke_frame_block": "Coke Oven Frame Block",
   "block.wrought.h_c_coke_frame_stair": "Coke Oven Frame Stair",
   "block.wrought.h_c_coke_frame_slab": "Coke Oven Frame Slab",
+
   "block.wrought.coke_block": "Block of Coke",
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
+  "item.wrought.creosote_bucket": "Creosote Bucket",
   "item.wrought.coke": "Coke"
 }

@@ -9,6 +9,7 @@ import com.thecowking.wrought.items.CokeBlockItem;
 import com.thecowking.wrought.items.CokeItem;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -70,5 +71,10 @@ public class RegistryHandler {
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
     public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
+
+
+
+    //Creosote Bucket
+    public static final RegistryObject<BucketItem> CREOSOTE_BUCKET = ITEMS.register("creosote_bucket", () -> new BucketItem(() -> FluidInit.CREOSOTE_FLUID.get(), new Item.Properties().maxStackSize(1)) );
 
 }

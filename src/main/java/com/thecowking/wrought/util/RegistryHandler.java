@@ -2,7 +2,7 @@ package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.CokeBlock;
-import com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven.*;
+import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
 import com.thecowking.wrought.items.BlockItemBase;
 import com.thecowking.wrought.items.CokeBlockItem;
@@ -10,7 +10,6 @@ import com.thecowking.wrought.items.CokeItem;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

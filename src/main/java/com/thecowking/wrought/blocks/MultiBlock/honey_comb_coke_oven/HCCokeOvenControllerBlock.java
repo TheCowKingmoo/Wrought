@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
+package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerBlock;
 import net.minecraft.block.BlockState;
@@ -61,7 +61,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
                     controllerTile.openGUI(worldIn, posIn, player, controllerTile);
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");
-                    // attempts to form the multi-block
+                    // attempts to form the multi-blocks
                     controllerTile.tryToFormMultiBlock(worldIn, posIn);
                 }
             } else {

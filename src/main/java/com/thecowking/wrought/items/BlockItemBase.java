@@ -6,7 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 
 
-// Default block item
+// Default blocks item
 public class BlockItemBase extends BlockItem {
     public BlockItemBase(Block blockIn) {
         super(blockIn, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS));

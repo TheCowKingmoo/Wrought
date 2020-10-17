@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
+package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameBlock;
@@ -31,7 +31,7 @@ public class HCCokeOvenFrameSlab extends SlabBlock implements IMultiBlockFrame {
     }
 
     /*
-  Looks below it to grab a Tile Entity that can find the controller and start deconstructing the multi-block
+  Looks below it to grab a Tile Entity that can find the controller and start deconstructing the multi-blocks
  */
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {

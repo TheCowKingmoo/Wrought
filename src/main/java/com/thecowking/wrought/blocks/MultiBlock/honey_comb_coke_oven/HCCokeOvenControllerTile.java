@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
+package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
@@ -64,7 +64,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     /*
-    array holding the block location of all members in the multi-block
+    array holding the blocks location of all members in the multi-blocks
     split up by the y level where posArray[0][x][z] = the bottom most layer
      */
 
@@ -134,15 +134,21 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     protected FluidHandlerItemStack fluidOutput;
     protected ItemStackHandler inputSlot;
     protected ItemStackHandler outputSlot;
+    protected ItemStackHandler itemFluidInputSlot;
+    protected ItemStackHandler itemFluidOutputSlot;
+
     private final LazyOptional<IFluidHandler> fluid = LazyOptional.of(() -> fluidOutput);
-    private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(inputSlot, outputSlot));
-    private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(inputSlot, outputSlot));
+    private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(inputSlot, outputSlot, itemFluidInputSlot, itemFluidOutputSlot));
+    private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(inputSlot, outputSlot, itemFluidInputSlot, itemFluidOutputSlot));
 
 
     public HCCokeOvenControllerTile() {
         super(H_C_COKE_CONTROLLER_TILE.get());
         inputSlot = new WroughtItemHandler(1);
-        outputSlot = new ItemStackHandler();
+        outputSlot = new WroughtItemHandler(1);
+        itemFluidInputSlot = new WroughtItemHandler(1);
+        itemFluidOutputSlot = new WroughtItemHandler(1);
+
         this.height = posArray.length;
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
@@ -277,7 +283,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (world != null && world.getBlockState(pos).getBlock() != this.getBlockState().getBlock()) {//if the block at myself isn't myself, allow full access (Block Broken)
+            if (world != null && world.getBlockState(pos).getBlock() != this.getBlockState().getBlock()) {//if the blocks at myself isn't myself, allow full access (Block Broken)
                 return everything.cast();
             }
             if (side == null) {
@@ -367,7 +373,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private void updateMultiBlockMemberTiles(List<BlockPos> memberArray, boolean destroy) {
         for (int i = 0; i < memberArray.size(); i++) {
             BlockPos current = memberArray.get(i);
-            Block currentBlock = world.getBlockState(current).getBlock();                   //check block
+            Block currentBlock = world.getBlockState(current).getBlock();                   //check blocks
             if(currentBlock instanceof IMultiBlockFrame)  {
                 IMultiBlockFrame frameBlock = (IMultiBlockFrame) currentBlock;
                 if(destroy)  {
@@ -389,8 +395,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
         /*
-      This attempts to find all the frame blocks in the multi-block to determine if we should form the multi-block or used to update frame blocks
-      that the multi-block is being formed or destroyed.
+      This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
+      that the multi-blocks is being formed or destroyed.
      */
 
     public List<BlockPos> getMultiBlockMembers(World worldIn, boolean destroy, Direction direction) {
@@ -403,19 +409,19 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         for (int y = 0; y < posArray.length; y++) {
             for (int z = 0; z < posArray[0].length; z++) {
                 for (int x = 0; x < posArray[0][0].length; x++) {
-                    Block correctBlock = posArray[y][z][x];                            // get the block that should be at these coord's
+                    Block correctBlock = posArray[y][z][x];                            // get the blocks that should be at these coord's
                     if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
                         continue;
                     }
-                    // get current block - adjusted for Direction
+                    // get current blocks - adjusted for Direction
                     BlockPos current = indexShifterBlockPos(getDirectionFacing(), correctLowCorner, x, y, z, length, width);
-                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual block at pos
+                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
                     if (currentBlock != correctBlock && !destroy) {
                         if (!destroy) {
                             return null;
                         }
                     }  else  {
-                        // add block of things to be formed/deleted
+                        // add blocks of things to be formed/deleted
                         multiblockMembers.add(current);
                     }
                 }
@@ -425,7 +431,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     /*
-      Moves what block we are looking at with respect to the posArray
+      Moves what blocks we are looking at with respect to the posArray
      */
     public BlockPos indexShifterBlockPos(Direction inputDirection, BlockPos low, int x, int y, int z, int length, int width)  {
 
@@ -449,16 +455,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
       Driver for forming the multiblock
      */
     public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, false, getDirectionFacing());             // calc if every location has correct block
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, false, getDirectionFacing());             // calc if every location has correct blocks
         if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
-            setFormed(true);                                                                                        // change block state of controller
-            updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change block state of frames
+            setFormed(true);                                                                                        // change blocks state of controller
+            updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change blocks state of frames
             assignJobs();                                                                                           // sets "jobs" on frame members as needed
         }
     }
 
     /*
-      Driver for destroying multi-block
+      Driver for destroying multi-blocks
      */
     public void destroyMultiBlock(World worldIn, BlockPos posIn) {
         if (!isFormed(getControllerPos())) {

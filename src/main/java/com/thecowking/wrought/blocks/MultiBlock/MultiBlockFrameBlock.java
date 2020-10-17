@@ -1,6 +1,6 @@
 package com.thecowking.wrought.blocks.MultiBlock;
 
-import com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;

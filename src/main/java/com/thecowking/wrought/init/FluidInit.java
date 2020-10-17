@@ -19,9 +19,9 @@ import java.lang.ref.WeakReference;
 import java.rmi.registry.Registry;
 
 public class FluidInit {
-    public static final ResourceLocation CREOSOTE_STILL_RL = new ResourceLocation(Wrought.MODID, "block/creosote_still");
-    public static final ResourceLocation CREOSOTE_FLOWING_RL = new ResourceLocation(Wrought.MODID, "block/creosote_flowing");
-    public static final ResourceLocation CREOSOTE_OVERLAY_RL = new ResourceLocation(Wrought.MODID, "block/creosote_overlay");
+    public static final ResourceLocation CREOSOTE_STILL_RL = new ResourceLocation(Wrought.MODID, "blocks/creosote_still");
+    public static final ResourceLocation CREOSOTE_FLOWING_RL = new ResourceLocation(Wrought.MODID, "blocks/creosote_flowing");
+    public static final ResourceLocation CREOSOTE_OVERLAY_RL = new ResourceLocation(Wrought.MODID, "blocks/creosote_overlay");
 
 
 

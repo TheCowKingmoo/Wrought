@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/stairs",
   "textures": {
-    "bottom": "wrought:block/h_c_coke_frame_block",
-    "top": "wrought:block/h_c_coke_frame_block",
-    "side": "wrought:block/h_c_coke_frame_block"
+    "bottom": "wrought:blocks/h_c_coke_frame_block",
+    "top": "wrought:blocks/h_c_coke_frame_block",
+    "side": "wrought:blocks/h_c_coke_frame_block"
   }
 }

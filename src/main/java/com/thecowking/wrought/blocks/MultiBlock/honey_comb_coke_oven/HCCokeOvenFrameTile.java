@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
+package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameTile;
 import net.minecraft.block.BlockState;

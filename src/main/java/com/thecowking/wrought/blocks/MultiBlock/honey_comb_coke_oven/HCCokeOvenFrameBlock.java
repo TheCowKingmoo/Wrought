@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honeycomb_coke_oven;
+package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameBlock;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameTile;
@@ -17,7 +17,7 @@ import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
 
 public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
     /*
-    If part of a multi-block it finds the controller to start the process of taking the multi-block
+    If part of a multi-blocks it finds the controller to start the process of taking the multi-blocks
     apart.
      */
     @Override
@@ -88,12 +88,12 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                             }
 
                         }  else  {
-                            LOGGER.info("block at contr pos is not correct TE");
+                            LOGGER.info("blocks at contr pos is not correct TE");
                         }
                     }  else  {
                         LOGGER.info("no controller pos");
                     }
-                    // need to deconstruct frame block
+                    // need to deconstruct frame blocks
                     frameTile.destroyMultiBlock();
 
                 }  else  {

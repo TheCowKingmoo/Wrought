@@ -31,7 +31,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     }
 
     /*
-    Does the needed checks and casting to see if current BlockPos holds a correct member of multi-block
+    Does the needed checks and casting to see if current BlockPos holds a correct member of multi-blocks
  */
     private boolean checkIfCorrectFrame(BlockPos currentPos)  {
         Block currentBlock = world.getBlockState(currentPos).getBlock();
@@ -54,8 +54,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     }
 
     /*
-      This is called when a controller is right clicked by a player when the multi-block is not formed
-      Checks to make sure that the player is holding the correct item in hand to form the multi-block.
+      This is called when a controller is right clicked by a player when the multi-blocks is not formed
+      Checks to make sure that the player is holding the correct item in hand to form the multi-blocks.
      */
     public boolean isValidMultiBlockFormer(Item item)  {
         return item == Items.STICK;
@@ -88,7 +88,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
             if(frameTile != null)  {
                 frameTile.setRedstonePower(power);
             }  else  {
-                LOGGER.info("redstone out block is null");
+                LOGGER.info("redstone out blocks is null");
             }
         }
     }
@@ -108,7 +108,7 @@ West = -x
 East = +X
 North = -Z
 South = +Z
-this function will return the North-Western corner of the multi block to be formed
+this function will return the North-Western corner of the multi blocks to be formed
 */
     public BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int height, int shorterSide)  {
         if(centerPos == null)  return null;
@@ -136,7 +136,7 @@ West = -x
 East = +X
 North = -Z
 South = +Z
-this function will return the center most point based on the lengths of the mutli-block and the
+this function will return the center most point based on the lengths of the mutli-blocks and the
 direction that is fed in
 */
     public BlockPos calcCenterBlock(Direction inputDirection)  {

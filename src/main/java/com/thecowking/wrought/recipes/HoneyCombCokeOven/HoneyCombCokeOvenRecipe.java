@@ -1,12 +1,15 @@
 package com.thecowking.wrought.recipes.HoneyCombCokeOven;
 
+import com.thecowking.wrought.util.MultiStack;
 import com.thecowking.wrought.util.RecipeSerializerInit;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,24 +20,15 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
 
     private final ResourceLocation id;
     private Ingredient input;
+    private FluidStack fluidStack;
     private final ItemStack output;
     private int burnTime = 0;
 
-    public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient input, ItemStack output) {
-        LOGGER.info(input);
-        LOGGER.info(output);
-
+    public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient input, ItemStack output, FluidStack fluidStack, int burnTime) {
         this.id = id;
         this.output = output;
         this.input = input;
-    }
-    public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient input, ItemStack output, int burnTime) {
-        LOGGER.info(input);
-        LOGGER.info(output);
-
-        this.id = id;
-        this.output = output;
-        this.input = input;
+        this.fluidStack = fluidStack;
         this.burnTime = burnTime;
     }
 
@@ -51,10 +45,14 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
         return this.output;
     }
 
-    @Override
-    public ItemStack getRecipeOutput() {
+   @Override
+   public ItemStack getRecipeOutput() {
         return this.output;
     }
+
+    public ItemStack getRecipeItemStackOutput()  {return this.output;}
+    public FluidStack getRecipeFluidStackOutput()  {return this.fluidStack;}
+
 
     @Override
     public ResourceLocation getId() {

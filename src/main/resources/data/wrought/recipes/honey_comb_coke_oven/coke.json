@@ -6,5 +6,7 @@
   "input": {
     "item": "minecraft:coal"
   },
+  "fluid": "wrought:creosote_fluid",
+  "fluidamount": 1000,
   "burntime": 100
 }

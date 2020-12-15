@@ -15,13 +15,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class RecipeSerializerInit {
 
-    public static final IRecipeSerializer<HoneyCombCokeOvenRecipe> EXAMPLE_RECIPE_SERIALIZER = new HoneyCombCokeOvenRecipeSerializer();
-    public static final IRecipeType<IHoneyCombCokeOvenRecipe> EXAMPLE_TYPE = registerType(IHoneyCombCokeOvenRecipe.RECIPE_TYPE_ID);
+    public static final IRecipeSerializer<HoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new HoneyCombCokeOvenRecipeSerializer();
+    public static final IRecipeType<IHoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_TYPE = registerType(IHoneyCombCokeOvenRecipe.RECIPE_TYPE_ID);
 
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Wrought.MODID);
 
     public static final RegistryObject<IRecipeSerializer<?>> EXAMPLE_SERIALIZER = RECIPE_SERIALIZERS.register("honey_comb_coke_oven",
-            () -> EXAMPLE_RECIPE_SERIALIZER);
+            () -> HONEY_COMB_OVEN_RECIPE_SERIALIZER);
 
     private static class RecipeType<T extends IRecipe<?>> implements IRecipeType<T> {
         @Override

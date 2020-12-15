@@ -1,6 +1,7 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.util.RegistryHandler;
+import com.thecowking.wrought.util.SlotInput;
 import com.thecowking.wrought.util.SlotInputFluidContainer;
 import com.thecowking.wrought.util.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,18 +31,20 @@ public class HCCokeOvenContainer extends Container {
     private TileEntity tileEntity;
     private IItemHandler playerInventory;
     private static final Logger LOGGER = LogManager.getLogger();
+    private HCCokeOvenControllerTile controller;
 
     public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
         super(H_C_CONTAINER.get(), windowId);
         tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
+        this.controller = (HCCokeOvenControllerTile) tileEntity;
 
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 addSlot(new SlotItemHandler(h, 0, 64, 24));     // oven item input
                 addSlot(new SlotOutput(h, 1, 64, 48));          // oven item ouput
-                addSlot(new SlotInputFluidContainer(h, 2, 128, 24));  // fluid item input
+                addSlot(new SlotItemHandler(h, 2, 128, 24));  // fluid item input
                 addSlot(new SlotOutput(h, 3, 128, 48));         // fluid item output
             });
         }

@@ -38,7 +38,8 @@ public class Multiblock {
 
     public static final int INDEX_ITEM_INPUT = 0;
     public static final int INDEX_ITEM_OUTPUT = 1;
-    public static final int INDEX_ITEM_EXTRA_OUTPUT = 2;
+    public static final int INDEX_FLUID_ITEM_INPUT = 2;
+    public static final int INDEX_FLUID_ITEM_OUTPUT = 3;
 
 
     public static TileEntity getTileFromPos(World worldIn, BlockPos posIn)  {return worldIn.getTileEntity(posIn);}

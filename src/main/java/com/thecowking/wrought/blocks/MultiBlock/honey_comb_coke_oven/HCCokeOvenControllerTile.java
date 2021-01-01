@@ -139,9 +139,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     private OutputFluidTank fluidTank;
 
+    // used when player is directly accessing multi-block
     private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(inputSlot, outputSlot, itemFluidInputSlot, itemFluidOutputSlot));
+    // used when in world things interact with multi-block
     private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(inputSlot, outputSlot, itemFluidInputSlot, itemFluidOutputSlot));
+
+    // used to stop operation for when an item cannot be inserted into output slot
     private ItemStack itemBacklog;  //TODO - read/write
+    // used to stop operation for when a fluid cannot be inserted into output slot
     private FluidStack fluidBacklog;
 
     public HCCokeOvenControllerTile() {
@@ -155,7 +160,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         itemBacklog = ItemStack.EMPTY;
         fluidBacklog = FluidStack.EMPTY;
 
-
         this.height = posArray.length;
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
@@ -166,31 +170,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public void tick() {
-        // check if we have a multiblock - TODO - not tickable until multiblock?
+        // check if we have a multi-block
         if (!isFormed(getControllerPos())) {return; }
+
         // check if we are in correct instance
         if (this.world == null || this.world.isRemote) { return; }
+
         // Check if enough time passed for an operation
         this.markDirty();
         if (tickCounter++ < TICKSPEROPERATION) { return; }
         tickCounter = 0;
-
-        if(itemBacklog != ItemStack.EMPTY)  {
-            itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
-            if(itemBacklog != ItemStack.EMPTY)  {
-                return;
-            }
-        }
-
-        //processFluidContainerItem();
-
-        if(fluidBacklog != FluidStack.EMPTY)  {
-            fluidBacklog = fluidTank.internalFill(fluidBacklog.copy(), IFluidHandler.FluidAction.EXECUTE);
-            if(fluidBacklog != FluidStack.EMPTY)  {
-                return;
-            }
-        }
-
 
         // check if redstone is turning machine off
         if (isRedstonePowered(this.redstoneIn)) {
@@ -198,14 +187,40 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
 
-        // get input item -> if no recipe exists then jump out
-        if (this.getRecipe(inputSlot.getStackInSlot(0)) == null) {
+        // backlog checks - note that another operation will not happen until tickCount has passed if these fail
+        // items
+        if(itemBacklog != ItemStack.EMPTY)  {
+            itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
+            if(itemBacklog != ItemStack.EMPTY)  {
+                return;
+            }
+        }
+        // fluids
+        if(fluidBacklog != FluidStack.EMPTY)  {
+            fluidBacklog = fluidTank.internalFill(fluidBacklog.copy(), IFluidHandler.FluidAction.EXECUTE);
+            if(fluidBacklog != FluidStack.EMPTY)  {
+                return;
+            }
+        }
+
+        // yank the current recipe for an item in
+        HoneyCombCokeOvenRecipe currentRecipe = this.getRecipe(inputSlot.getStackInSlot(0));
+
+        // check if we have a recipe for item
+        if (currentRecipe == null) {
             machineChangeOperation(false);
             return;
         }
-        // TODO - move so that recipes without fluids can still run
-        if(fluidTank.getFluidAmount() >= fluidTank.getCapacity())  {
-            return;
+
+        // get the fluid output from recipe
+        FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
+
+        // check if recipe has a fluid output
+        if(recipeFluidOutput != null)  {
+            // check if fluid matches tank and if tank has space for fluid
+            if (recipeFluidOutput != fluidTank.getFluid()  || fluidTank.getFluidAmount() >= fluidTank.getCapacity())  {
+                return;
+            }
         }
 
         // check to make sure output is not full before starting another operation
@@ -213,15 +228,30 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             machineChangeOperation(false);
             return;
         }
-//        if(fluidOutput.getFluidInTank(0).getAmount() >= fluidOutput.getTankCapacity(0))  {
-//            machineChangeOperation(false);
-//            return;
- //       }
 
-        if(this.getRecipe(inputSlot.getStackInSlot(0)) == null)  {
-            return;
-        }
+        // if we get here then we can run an operation!
         ovenOperation();
+    }
+
+    /*
+     Method to run a single oven operation
+     */
+    private void ovenOperation() {
+
+        ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeItemStackOutput();
+        FluidStack fluidOutput = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeFluidStackOutput();
+
+        //if (outputItemStack != null && outputFluidStack == null) {
+        if (outputs != null && outputs.getItem() != Items.AIR) {
+            if(!this.isSmelting)  {
+                machineChangeOperation(true);
+            }
+            inputSlot.getStackInSlot(0).shrink(1);
+            // TODO - stopped here last - want to uncomment line below and start testing fluid
+            //fluidBacklog = fluidTank.internalFill(fluidOutput.copy(), IFluidHandler.FluidAction.EXECUTE);
+            itemBacklog = outputSlot.internalInsertItem(0, outputs.copy(), false);
+            markDirty();
+        }
     }
 
     /*
@@ -238,23 +268,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             sendOutRedstone(0);
         }
         blockUpdate();
-    }
-
-    private void ovenOperation() {
-
-        ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeItemStackOutput();
-        FluidStack fluidOutput = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeFluidStackOutput();
-
-        //if (outputItemStack != null && outputFluidStack == null) {
-        if (outputs != null && outputs.getItem() != Items.AIR) {
-            if(!this.isSmelting)  {
-                machineChangeOperation(true);
-            }
-            inputSlot.getStackInSlot(0).shrink(1);
-            //fluidBacklog = fluidTank.internalFill(fluidOutput.copy(), IFluidHandler.FluidAction.EXECUTE);
-            itemBacklog = outputSlot.internalInsertItem(0, outputs.copy(), false);
-            markDirty();
-        }
     }
 
 

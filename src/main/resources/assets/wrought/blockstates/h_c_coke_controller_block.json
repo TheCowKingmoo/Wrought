@@ -1,35 +1,52 @@
 {
   "variants": {
-    "facing=north,formed=true": {
+    "facing=down,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": 90
+    },
+    "facing=up,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": -90
+    },
+    "facing=north,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block"
+    },
+    "facing=south,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 180
+    },
+    "facing=west,formed=false":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "y": 270
+    },
+    "facing=east,formed=false":  {
       "model": "wrought:block/h_c_coke_controller_block",
       "y": 90
     },
-    "facing=south,formed=true": {
+    "facing=down,formed=true":  {
       "model": "wrought:block/h_c_coke_controller_block",
-      "y": 270
+      "x": 90
     },
-    "facing=west,formed=true": {
+    "facing=up,formed=true":  {
+      "model": "wrought:block/h_c_coke_controller_block",
+      "x": -90
+    },
+    "facing=north,formed=true":  {
       "model": "wrought:block/h_c_coke_controller_block"
     },
-    "facing=east,formed=true": {
+    "facing=south,formed=true":  {
       "model": "wrought:block/h_c_coke_controller_block",
       "y": 180
     },
-
-    "facing=north,formed=false": {
-      "model": "wrought:block/h_c_coke_controller_block"
-    },
-    "facing=south,formed=false": {
-      "model": "wrought:block/h_c_coke_controller_block",
-      "y": 180
-    },
-    "facing=west,formed=false": {
+    "facing=west,formed=true":  {
       "model": "wrought:block/h_c_coke_controller_block",
       "y": 270
     },
-    "facing=east,formed=false": {
+    "facing=east,formed=true":  {
       "model": "wrought:block/h_c_coke_controller_block",
       "y": 90
     }
   }
 }
+
+

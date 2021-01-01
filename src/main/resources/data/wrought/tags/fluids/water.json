@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "wrought:creosote",
+    "wrought:creosote_flowing",
+    "wrought:creosote_still"
+  ]
+}

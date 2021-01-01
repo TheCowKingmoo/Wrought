@@ -1,9 +1,15 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.blocks.honeycomb_coke_oven.*;
+import com.thecowking.wrought.blocks.CokeBlock;
+import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.*;
+import com.thecowking.wrought.init.FluidInit;
+import com.thecowking.wrought.items.BlockItemBase;
+import com.thecowking.wrought.items.CokeBlockItem;
+import com.thecowking.wrought.items.CokeItem;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -22,12 +28,14 @@ public class RegistryHandler {
 
 
 
+
     public static void init()  {
+        FluidInit.FLUIDS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-
+        RecipeSerializerInit.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     //Honey Comb Coke Controller
@@ -40,11 +48,33 @@ public class RegistryHandler {
     public static final RegistryObject<Item> H_C_COKE_FRAME_BLOCK_ITEM = ITEMS.register("h_c_coke_frame_block", () -> new BlockItemBase(H_C_COKE_FRAME_BLOCK.get()));
     public static final RegistryObject<TileEntityType<HCCokeOvenFrameTile>> H_C_COKE_FRAME_TILE = TILES.register("h_c_coke_frame_block", () -> TileEntityType.Builder.create(HCCokeOvenFrameTile::new, H_C_COKE_FRAME_BLOCK.get()).build(null));
 
+
+    //Honey Comb Coke Frame Slab
+    public static final RegistryObject<Block> H_C_COKE_FRAME_SLAB = BLOCKS.register("h_c_coke_frame_slab", HCCokeOvenFrameSlab::new);
+    public static final RegistryObject<Item> H_C_COKE_FRAME_SLAB_ITEM = ITEMS.register("h_c_coke_frame_slab", () -> new BlockItemBase(H_C_COKE_FRAME_SLAB.get()));
+
+    //Honey Comb Coke Frame Stairs
+    public static final RegistryObject<Block> H_C_COKE_FRAME_STAIR = BLOCKS.register("h_c_coke_frame_stair", HCCokeOvenFrameStairs::new);
+    public static final RegistryObject<Item> H_C_COKE_FRAME_STAIR_ITEM = ITEMS.register("h_c_coke_frame_stair", () -> new BlockItemBase(H_C_COKE_FRAME_STAIR.get()));
+
+
     //Honey Comb Coke Multi-Block
     public static final RegistryObject<ContainerType<HCCokeOvenContainer>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
         return new HCCokeOvenContainer(windowId, world, pos, inv, inv.player);
     }));
+
+    //Coke Item
+    public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
+
+    //Coke Block
+    public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
+    public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
+
+
+
+    //Creosote Bucket
+    public static final RegistryObject<BucketItem> CREOSOTE_BUCKET = ITEMS.register("creosote_bucket", () -> new BucketItem(() -> FluidInit.CREOSOTE_FLUID.get(), new Item.Properties().maxStackSize(1)) );
 
 }

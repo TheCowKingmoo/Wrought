@@ -1,0 +1,12 @@
+{
+  "type": "wrought:honey_comb_coke_oven",
+  "output": {
+    "item": "wrought:coke"
+  },
+  "input": {
+    "item": "minecraft:coal"
+  },
+  "fluid": "wrought:creosote_fluid",
+  "fluidamount": 1000,
+  "burntime": 100
+}

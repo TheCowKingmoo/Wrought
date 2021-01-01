@@ -13,10 +13,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import org.jetbrains.annotations.Nullable;
-
 import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.FORMED;
 import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.REDSTONE;
+import javax.annotation.Nullable;
+
 
 public class MultiBlockFrameBlock extends Block implements IMultiBlockFrame {
 

@@ -15,6 +15,10 @@ public class FluidItemOutputHandler extends ItemStackHandler {
         return stack;
     }
 
+    public ItemStack internalInsertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
+        return super.insertItem(slot, stack, simulate);
+    }
+
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate)  {
         return super.extractItem(slot, amount, simulate);

@@ -11,6 +11,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BucketItem;
@@ -149,6 +151,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // used to stop operation for when a fluid cannot be inserted into output slot
     private FluidStack fluidBacklog;
 
+    // used to stop operations if the bucket slot cannot be used
+    private ItemStack fluidItemBacklog;
+
     public HCCokeOvenControllerTile() {
         super(H_C_COKE_CONTROLLER_TILE.get());
         inputSlot = new InputItemHandler(1, this);
@@ -159,6 +164,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         fluidTank = new OutputFluidTank(16000);
         itemBacklog = ItemStack.EMPTY;
         fluidBacklog = FluidStack.EMPTY;
+        fluidItemBacklog = ItemStack.EMPTY;
 
         this.height = posArray.length;
         this.length = posArray[0].length;
@@ -181,6 +187,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if (tickCounter++ < TICKSPEROPERATION) { return; }
         tickCounter = 0;
 
+        // want this to be able to process even if the oven is turned off due to overflow of items/fluids
+        processFluidContainerItem();
+
         // check if redstone is turning machine off
         if (isRedstonePowered(this.redstoneIn)) {
             machineChangeOperation(false);
@@ -197,14 +206,18 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 return;
             }
         }
+        /*
         // fluids
         if(fluidBacklog != FluidStack.EMPTY)  {
             fluidBacklog = fluidTank.internalFill(fluidBacklog.copy(), IFluidHandler.FluidAction.EXECUTE);
             if(fluidBacklog != FluidStack.EMPTY)  {
                 LOGGER.info("fluid backlog off");
+                LOGGER.info(fluidBacklog.getDisplayName());
                 return;
             }
         }
+
+         */
 
         // yank the current recipe for an item in
         HoneyCombCokeOvenRecipe currentRecipe = this.getRecipe(inputSlot.getStackInSlot(0));
@@ -218,16 +231,29 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         // get the fluid output from recipe
         FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
-/*
+
+        //LOGGER.info(fluidTank.getFluidAmount());
+
         // check if recipe has a fluid output
-        if(recipeFluidOutput != null)  {
+        if(recipeFluidOutput != null && !fluidTank.isEmpty())  {
+
             // check if fluid matches tank and if tank has space for fluid
-            if (recipeFluidOutput != fluidTank.getFluid()  || fluidTank.getFluidAmount() >= fluidTank.getCapacity())  {
-                LOGGER.info("fluid cannot insert off");
+            if(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() > fluidTank.getCapacity())  {
+                LOGGER.info(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() + " is not smaller than " + fluidTank.getCapacity());
+                LOGGER.info("fluid cannot insert as there is not enough tank space");
                 return;
             }
+
+            // check to see if that fluids match
+            if (recipeFluidOutput.getFluid() != fluidTank.getFluid().getFluid()  )  {
+                LOGGER.info("fluid cannot insert fluid is not equal");
+                LOGGER.info(recipeFluidOutput.getDisplayName());
+                LOGGER.info(fluidTank.getFluid().getDisplayName());
+                return;
+            }
+
         }
-*/
+
         // check to make sure output is not full before starting another operation
         if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
             machineChangeOperation(false);
@@ -255,8 +281,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             }
             inputSlot.getStackInSlot(0).shrink(1);
             // TODO - stopped here last - want to uncomment line below and start testing fluid
-            //fluidBacklog = fluidTank.internalFill(fluidOutput.copy(), IFluidHandler.FluidAction.EXECUTE);
+            fluidBacklog = fluidTank.internalFill(fluidOutput, IFluidHandler.FluidAction.EXECUTE);
             itemBacklog = outputSlot.internalInsertItem(0, outputs.copy(), false);
+
             markDirty();
         }
     }
@@ -282,6 +309,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     /*
     TODO - add support for tanks
+    Processes items in the "bucket" slot
      */
     protected void processFluidContainerItem()  {
         if(fluidTank.getFluidAmount() < 1000)  return;
@@ -297,9 +325,18 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(fluidBucket.isEmpty())  return;
 
         itemFluidInputSlot.getStackInSlot(0).shrink(1);
+
         ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(emptyContainer, fluidTank.getFluid());
+        if (filledContainer.isEmpty())  {
+            LOGGER.info("could not get filledcontainer");
+            return;
+        }
+        LOGGER.info("container is ");
+        LOGGER.info(filledContainer);
+
+        LOGGER.info("inserting into itemfluid ouptut");
         fluidTank.drain(1000, IFluidHandler.FluidAction.EXECUTE);
-        itemFluidOutputSlot.insertItem(0, filledContainer, false);
+        fluidItemBacklog = itemFluidOutputSlot.internalInsertItem(0, filledContainer.copy(), false);
     }
 
 

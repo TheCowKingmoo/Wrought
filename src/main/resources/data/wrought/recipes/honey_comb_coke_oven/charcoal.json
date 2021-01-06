@@ -1,0 +1,12 @@
+{
+  "type": "wrought:honey_comb_coke_oven",
+  "output": {
+    "item": "minecraft:charcoal"
+  },
+  "input": {
+    "tag": "minecraft:logs"
+  },
+  "fluid": "wrought:creosote_fluid",
+  "fluidamount": 1000,
+  "burntime": 100
+}

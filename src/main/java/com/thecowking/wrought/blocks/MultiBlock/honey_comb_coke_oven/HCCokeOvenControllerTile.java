@@ -184,6 +184,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // check if redstone is turning machine off
         if (isRedstonePowered(this.redstoneIn)) {
             machineChangeOperation(false);
+            LOGGER.info("redstone turn off");
             return;
         }
 
@@ -192,6 +193,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(itemBacklog != ItemStack.EMPTY)  {
             itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
             if(itemBacklog != ItemStack.EMPTY)  {
+                LOGGER.info("item full off");
                 return;
             }
         }
@@ -199,6 +201,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(fluidBacklog != FluidStack.EMPTY)  {
             fluidBacklog = fluidTank.internalFill(fluidBacklog.copy(), IFluidHandler.FluidAction.EXECUTE);
             if(fluidBacklog != FluidStack.EMPTY)  {
+                LOGGER.info("fluid backlog off");
                 return;
             }
         }
@@ -209,23 +212,27 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // check if we have a recipe for item
         if (currentRecipe == null) {
             machineChangeOperation(false);
+            LOGGER.info("no recipe");
             return;
         }
 
         // get the fluid output from recipe
         FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
-
+/*
         // check if recipe has a fluid output
         if(recipeFluidOutput != null)  {
             // check if fluid matches tank and if tank has space for fluid
             if (recipeFluidOutput != fluidTank.getFluid()  || fluidTank.getFluidAmount() >= fluidTank.getCapacity())  {
+                LOGGER.info("fluid cannot insert off");
                 return;
             }
         }
-
+*/
         // check to make sure output is not full before starting another operation
         if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
             machineChangeOperation(false);
+            LOGGER.info("cannot insert item off");
+
             return;
         }
 

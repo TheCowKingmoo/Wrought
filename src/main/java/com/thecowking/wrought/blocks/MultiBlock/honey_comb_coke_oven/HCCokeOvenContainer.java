@@ -83,12 +83,13 @@ public class HCCokeOvenContainer extends Container {
     @Nonnull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {
+        LOGGER.info("here");
+
         ItemStack returnStack = ItemStack.EMPTY;
         final Slot slot = this.inventorySlots.get(index);
         if (slot != null && slot.getHasStack()) {
             final ItemStack slotStack = slot.getStack();
             returnStack = slotStack.copy();
-
             final int containerSlots = this.inventorySlots.size() - player.inventory.mainInventory.size();
             if (index < containerSlots) {
                 if (!mergeItemStack(slotStack, containerSlots, this.inventorySlots.size(), true)) {

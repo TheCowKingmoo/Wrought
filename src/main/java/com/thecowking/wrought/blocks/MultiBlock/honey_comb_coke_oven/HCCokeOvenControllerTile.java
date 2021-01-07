@@ -34,9 +34,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -315,27 +318,58 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(itemFluidInputSlot.getStackInSlot(0).isEmpty())  return;
         if(!(itemFluidOutputSlot.getStackInSlot(0).isEmpty()))  return;
 
-        ItemStack emptyContainer = itemFluidInputSlot.getStackInSlot(0);
-        if(!(emptyContainer.getItem() instanceof BucketItem))  {
+        ItemStack fluidContainer = itemFluidInputSlot.getStackInSlot(0);
+
+        //LazyOptional <net.minecraftforge.fluids.capability.IFluidHandler> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        LazyOptional <net.minecraftforge.fluids.capability.IFluidHandlerItem> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+
+        // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
+        if(!itemFluidCapability.isPresent())  {
+            LOGGER.info("not a container!");
             return;
         }
 
-        ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(emptyContainer, fluidTank.getFluid());
-        if(fluidBucket.isEmpty())  return;
+        // if we have a bucket
+        if(fluidContainer.getItem() instanceof BucketItem)  {
+            ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, fluidTank.getFluid());
+            if(fluidBucket.isEmpty())  return;
 
-        itemFluidInputSlot.getStackInSlot(0).shrink(1);
+            itemFluidInputSlot.getStackInSlot(0).shrink(1);
 
-        ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(emptyContainer, fluidTank.getFluid());
-        if (filledContainer.isEmpty())  {
-            LOGGER.info("could not get filledcontainer");
-            return;
+            ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, fluidTank.getFluid());
+            if (filledContainer.isEmpty())  {
+                LOGGER.info("could not get filledcontainer");
+                return;
+            }
+            LOGGER.info("container is ");
+            LOGGER.info(filledContainer);
+
+            LOGGER.info("inserting into itemfluid ouptut");
+            fluidTank.drain(1000, IFluidHandler.FluidAction.EXECUTE);
+            fluidItemBacklog = itemFluidOutputSlot.internalInsertItem(0, filledContainer.copy(), false);
+
+            // we have some sort of container
+        }  else  {
+            LOGGER.info("processing!");
+            IFluidHandlerItem fluidItemHandler = itemFluidCapability.resolve().get();
+            FluidStack back = FluidUtil.tryFluidTransfer(fluidItemHandler, fluidTank, fluidTank.getFluid(), true);
+            LOGGER.info(back.getDisplayName());
+            if (back.isEmpty())  {
+                ItemStack f = itemFluidInputSlot.getStackInSlot(0).copy();
+                itemFluidInputSlot.getStackInSlot(0).shrink(1);
+                itemFluidOutputSlot.internalInsertItem(0, f, false);
+            }
+
+            if (back != null)  {
+
+                LOGGER.info("did something!!");
+            }  else  {
+                LOGGER.info("failed to process!");
+            }
+
         }
-        LOGGER.info("container is ");
-        LOGGER.info(filledContainer);
 
-        LOGGER.info("inserting into itemfluid ouptut");
-        fluidTank.drain(1000, IFluidHandler.FluidAction.EXECUTE);
-        fluidItemBacklog = itemFluidOutputSlot.internalInsertItem(0, filledContainer.copy(), false);
     }
 
 

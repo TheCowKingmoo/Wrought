@@ -47,7 +47,6 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -372,6 +371,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         super.read(state, nbt);
         inputSlot.deserializeNBT(nbt.getCompound(INVENTORY_IN));
         outputSlot.deserializeNBT(nbt.getCompound(INVENTORY_OUT));
+        itemFluidInputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_IN));
+        itemFluidOutputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_OUT));
+        fluidTank.readFromNBT(nbt.getCompound(FLUID_TANK));
         this.tickCounter = nbt.getInt(NUM_TICKS);
     }
 
@@ -380,9 +382,22 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         tag = super.write(tag);
         tag.put(INVENTORY_IN, inputSlot.serializeNBT());
         tag.put(INVENTORY_OUT, outputSlot.serializeNBT());
+        tag.put(FLUID_INVENTORY_IN, inputSlot.serializeNBT());
+        tag.put(FLUID_INVENTORY_OUT, outputSlot.serializeNBT());
         tag.putInt(NUM_TICKS, tickCounter);
+        tag.put(FLUID_TANK, fluidTank.writeToNBT(new CompoundNBT()));
         return tag;
     }
+
+
+
+    /*
+    	nbt.setTag("tank", tank.writeNBT(new NBTTagCompound()));
+		nbt.setBoolean("fill", tank.output);
+		nbt.setBoolean("auto", auto);
+		nbt.setByte("type", type);
+		return super.writeToNBT(nbt);
+     */
 
     @Nonnull
     @Override

@@ -22,8 +22,15 @@ public class Multiblock {
     public static final String JOB_FLUID_OUT = "F_OUT";
     public static final String DIRECTION_FACING = "D_F";
     public static final String NUM_TICKS = "N_TICKS";
+
     public static final String INVENTORY_IN = "inv_in";
     public static final String INVENTORY_OUT = "inv_out";
+    public static final String FLUID_INVENTORY_IN = "fluid_inv_in";
+    public static final String FLUID_INVENTORY_OUT = "fluid_inv_out";
+    public static final String FLUID_TANK = "fluid_tank";
+
+
+
 
 
 

@@ -44,7 +44,7 @@ public class HCCokeOvenContainer extends Container {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 addSlot(new SlotItemHandler(h, 0, 64, 24));     // oven item input
                 addSlot(new SlotOutput(h, 1, 64, 48));          // oven item ouput
-                addSlot(new SlotItemHandler(h, 2, 128, 24));  // fluid item input
+                addSlot(new SlotInputFluidContainer(h, 2, 128, 24));  // fluid item input
                 addSlot(new SlotOutput(h, 3, 128, 48));         // fluid item output
             });
         }

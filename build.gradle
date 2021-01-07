@@ -100,6 +100,10 @@ repositories {
     maven { // Hwyla
         url = "https://maven.tehnut.info"
     }
+    maven {
+        url 'https://modmaven.dev/'
+    }
+
 }
 
 
@@ -120,6 +124,15 @@ dependencies {
 
     compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
     runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
+
+
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+
+    // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
 
 
     // Real examples

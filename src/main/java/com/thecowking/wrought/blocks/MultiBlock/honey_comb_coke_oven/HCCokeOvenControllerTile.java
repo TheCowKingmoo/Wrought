@@ -390,15 +390,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
-
-    /*
-    	nbt.setTag("tank", tank.writeNBT(new NBTTagCompound()));
-		nbt.setBoolean("fill", tank.output);
-		nbt.setBoolean("auto", auto);
-		nbt.setByte("type", type);
-		return super.writeToNBT(nbt);
-     */
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {

@@ -28,6 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -535,7 +536,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
       that the multi-blocks is being formed or destroyed.
      */
 
-    public List<BlockPos> getMultiBlockMembers(World worldIn, boolean destroy, Direction direction) {
+    public List<BlockPos> getMultiBlockMembers(World worldIn, PlayerEntity player, boolean destroy, Direction direction) {
         BlockPos centerPos = calcCenterBlock(direction);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
@@ -554,6 +555,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
                     if (currentBlock != correctBlock && !destroy) {
                         if (!destroy) {
+                            if (player != null)  {
+                                String msg = "Could not form because of block at Coord at X:" + current.getX() + " Y:" + current.getY() + " Z:" + current.getZ();
+                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
+                                msg = "Should be " + correctBlock.getBlock() + " not " + currentBlock.getBlock();
+                                player.sendStatusMessage(new TranslationTextComponent(msg), true);
+                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
+
+                            }
                             LOGGER.info("Could not form because of " + current);
                             LOGGER.info("should be " + correctBlock + " not " + currentBlock);
                             return null;
@@ -589,11 +598,13 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
 
+
+
     /*
       Driver for forming the multiblock
      */
-    public void tryToFormMultiBlock(World worldIn, BlockPos posIn) {
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, false, getDirectionFacing());             // calc if every location has correct blocks
+    public void tryToFormMultiBlock(World worldIn, PlayerEntity player, BlockPos posIn) {
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, player,false, getDirectionFacing());             // calc if every location has correct blocks
         if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
             setFormed(true);                                                                                        // change blocks state of controller
             updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change blocks state of frames
@@ -609,7 +620,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
         setFormed(false);
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, true, getDirectionFacing());
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, true, getDirectionFacing());
         if (multiblockMembers != null) {
             updateMultiBlockMemberTiles(multiblockMembers, true);
         }

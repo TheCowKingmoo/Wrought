@@ -63,7 +63,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");
                     // attempts to form the multi-blocks
-                    controllerTile.tryToFormMultiBlock(worldIn, posIn);
+                    controllerTile.tryToFormMultiBlock(worldIn, player, posIn);
                 }
             } else {
                 LOGGER.info(posIn);

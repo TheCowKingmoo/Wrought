@@ -1,5 +1,7 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
+import com.thecowking.wrought.blocks.MultiBlock.MultiBlockTile;
+import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.util.SlotInput;
 import com.thecowking.wrought.util.SlotInputFluidContainer;
@@ -37,15 +39,18 @@ public class HCCokeOvenContainer extends Container {
         super(H_C_CONTAINER.get(), windowId);
         tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
-        this.controller = (HCCokeOvenControllerTile) tileEntity;
+
+        //BlockPos controlPos = ((MultiBlockTile) tileEntity).yankControllerPos();
+
+        tileEntity = world.getTileEntity(pos);
 
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                addSlot(new SlotItemHandler(h, 0, 64, 24));     // oven item input
-                addSlot(new SlotOutput(h, 1, 64, 48));          // oven item ouput
-                addSlot(new SlotInputFluidContainer(h, 2, 128, 24));  // fluid item input
-                addSlot(new SlotOutput(h, 3, 128, 48));         // fluid item output
+                addSlot(new SlotItemHandler(h, 0, 64, 24));             // oven item input
+                addSlot(new SlotOutput(h, 1, 64, 48));                  // oven item ouput
+                addSlot(new SlotInputFluidContainer(h, 2, 128, 24));    // fluid item input
+                addSlot(new SlotOutput(h, 3, 128, 48));                 // fluid item output
             });
         }
         layoutPlayerInventorySlots(10, 70);

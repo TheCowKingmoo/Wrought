@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "wrought:blocks/h_c_coke_controller_block",
+    "up": "wrought:blocks/h_c_coke_controller_block",
+    "north": "wrought:blocks/h_c_coke_controller_block_front_on",
+    "south": "wrought:blocks/h_c_coke_controller_block",
+    "east": "wrought:blocks/h_c_coke_controller_block",
+    "west": "wrought:blocks/h_c_coke_controller_block"
+  }
+}

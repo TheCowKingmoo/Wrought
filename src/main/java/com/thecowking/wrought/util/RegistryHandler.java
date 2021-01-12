@@ -65,6 +65,7 @@ public class RegistryHandler {
         return new HCCokeOvenContainer(windowId, world, pos, inv, inv.player);
     }));
 
+
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
 

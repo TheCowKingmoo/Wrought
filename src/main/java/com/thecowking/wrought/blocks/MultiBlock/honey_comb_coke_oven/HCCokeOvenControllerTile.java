@@ -1,5 +1,6 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
+import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
@@ -73,59 +74,60 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
 
     private final Block[][][] posArray = {
+            // bottom level
             {
-                    {null, null, null, null, null},
-                    {null, frameBlock, frameBlock, frameBlock, null},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {frameBlock, frameBlock, frameBlock, frameBlock, frameBlock},
-                    {null, frameBlock, frameBlock, frameBlock, null},
-                    {null, null, null, null, null}
+                    {null, null,       null,       null,       null,       null,       null},
+                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
+                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
+                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
+                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
+                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
+                    {null, null,       null,       null,       null,       null,       null}
             },
             {
-                    {null, frameBlock, frameBlock, frameBlock, null},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, frameBlock, frameBlock, frameBlock, null}
+                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
             },
             {
-                    {null, frameBlock, controllerBlock, frameBlock, null},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, frameBlock, frameBlock, frameBlock, null}
+                    {null,  null, frameBlock, controllerBlock, frameBlock, null, null},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
             },
             {
-                    {null, frameBlock, frameBlock, frameBlock, null},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null, frameBlock, frameBlock, frameBlock, null}
+                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
+                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
+                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
             },
             {
-                    {null, frameStairs, frameStairs, frameStairs, null},
-                    {frameStairs, frameBlock, frameBlock, frameBlock, frameStairs},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameStairs, frameBlock, frameBlock, frameBlock, frameStairs},
-                    {null, frameStairs, frameStairs, frameStairs, null}
+                    {null, null, frameStairs, frameStairs, frameStairs, null, null},
+                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
+                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
+                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
+                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
+                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
+                    {null, null, frameStairs, frameStairs, frameStairs, null, null}
             },
             {
-                    {null, null, null, null, null},
-                    {null, frameSlab, frameSlab, frameSlab, null},
-                    {frameSlab, frameBlock, frameBlock, frameBlock, frameSlab},
-                    {frameSlab, frameBlock, hatchBlock, frameBlock, frameSlab},
-                    {frameSlab, frameBlock, frameBlock, frameBlock, frameSlab},
-                    {null, frameSlab, frameSlab, frameSlab, null},
-                    {null, null, null, null, null}
+                    {null, null, null, null, null, null, null},
+                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
+                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
+                    {null, frameStairs, frameBlock, hatchBlock, frameBlock, frameStairs, null},
+                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
+                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
+                    {null, null, null, null, null, null, null}
             }
     };
 
@@ -276,6 +278,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeItemStackOutput();
         FluidStack fluidOutput = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeFluidStackOutput();
 
+        machineChangeOperation(true);
         //if (outputItemStack != null && outputFluidStack == null) {
         if (outputs != null && outputs.getItem() != Items.AIR) {
             if(!this.isSmelting)  {
@@ -298,6 +301,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
         this.isSmelting = online;
+        setOn(online);
         if(online)  {
             sendOutRedstone(15);
         }  else  {
@@ -372,18 +376,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     }
 
-
-    protected BlockPos getControllerPos() {
-        return this.pos;
-    }
-
     // override the always return true method
     // TODO - learn a better way to throw this info upward
     @Override
     public boolean checkIfCorrectFrame(Block block) {
         return (block instanceof HCCokeOvenFrameBlock);
     }
-
 
     public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
@@ -446,6 +444,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
+
         return new HCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, playerIn);
     }
 
@@ -499,22 +498,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return world != null ? world.getRecipeManager().getRecipes().stream()
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
-/*
-    public static Set<ItemStack> getAllRecipeInputs(IRecipeType<?> typeIn, World worldIn) {
-        Set<ItemStack> inputs = new HashSet<ItemStack>();
-        Set<IRecipe<?>> recipes = findRecipesByType(typeIn, worldIn);
-        for (IRecipe<?> recipe : recipes) {
-            NonNullList<Ingredient> ingredients = recipe.getIngredients();
-            ingredients.forEach(ingredient -> {
-                for (ItemStack stack : ingredient.getMatchingStacks()) {
-                    inputs.add(stack);
-                }
-            });
-        }
-        return inputs;
-    }
-
- */
 
 
     // ------------------------MULTI-BLOCK STUFFS ------------------------------------------------
@@ -571,6 +554,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
                     if (currentBlock != correctBlock && !destroy) {
                         if (!destroy) {
+                            LOGGER.info("Could not form because of " + current);
+                            LOGGER.info("should be " + correctBlock + " not " + currentBlock);
                             return null;
                         }
                     }  else  {

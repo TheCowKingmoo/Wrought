@@ -181,4 +181,9 @@ direction that is fed in
     public boolean checkIfCorrectFrame(Block block)  {
         return true;
     }
+
+    public BlockPos getControllerPos() {
+        return this.pos;
+    }
+
 }

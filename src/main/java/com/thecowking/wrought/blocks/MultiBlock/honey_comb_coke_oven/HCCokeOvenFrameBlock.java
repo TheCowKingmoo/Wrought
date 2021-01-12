@@ -43,7 +43,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 LOGGER.info("multiblock is not formed");
                 return;
             }
-            BlockPos controllerPos = castedTile.getControllerPos();
+            BlockPos controllerPos = castedTile.frameGetControllerPos();
             // if this is null then we have some serious problems
             if(controllerPos == null)  {
                 LOGGER.info("err - does not have controller pos");
@@ -63,6 +63,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
     @SuppressWarnings("deprecation")
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
+
         // make sure correct side
         if (player instanceof ServerPlayerEntity && state.get(Multiblock.FORMED)) {
             // get TE
@@ -74,13 +75,13 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 // check if the multi-structure is even formed
                 if(frameTile.isFormed(frameTile.getPos()))  {
                     // contorller pos
-                    BlockPos controllerPos = frameTile.getControllerPos();
+                    BlockPos controllerPos = frameTile.frameGetControllerPos();
                     if(controllerPos != null)  {
                         // get the TE at controller pos
-                        tileEntity = worldIn.getTileEntity(controllerPos);
+                        TileEntity ctileEntity = worldIn.getTileEntity(controllerPos);
                         // make sure correct tile
-                        if(tileEntity instanceof HCCokeOvenControllerTile)  {
-                            HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
+                        if(ctileEntity instanceof HCCokeOvenControllerTile)  {
+                            HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) ctileEntity;
                             if(controllerTile.isFormed(controllerPos))  {
                                 // OPEN GUI
                                 controllerTile.openGUI(worldIn, posIn, player, controllerTile);

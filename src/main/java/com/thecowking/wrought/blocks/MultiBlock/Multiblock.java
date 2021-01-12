@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class Multiblock {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
-    public static final BooleanProperty LIT = BooleanProperty.create("lit");
+    public static final BooleanProperty RUNNING = BooleanProperty.create("running");
     public static final IntegerProperty REDSTONE = BlockStateProperties.POWER_0_15;
 
 

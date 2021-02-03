@@ -1,5 +1,7 @@
 package com.thecowking.wrought.blocks.MultiBlock;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +14,12 @@ import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
 public class MultiBlockFrameTile extends MultiBlockTile {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private BlockPos controllerPos;
+    private static String NBT_CX = "CX";
+    private static String NBT_CY = "CY";
+    private static String NBT_CZ = "CZ";
+    private static String NBT_JOB = "JOB";
+
+    public BlockPos controllerPos;
     private String job;
 
     public MultiBlockFrameTile(TileEntityType<?> tileEntityTypeIn) {
@@ -21,7 +28,7 @@ public class MultiBlockFrameTile extends MultiBlockTile {
 
     public void setupMultiBlock(BlockPos posIn)  {
         world.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, true));
-        setControllerPos(posIn);
+        frameSetControllerPos(posIn);
     }
     public void destroyMultiBlock()  {
         if(world.isRemote)  {
@@ -33,7 +40,7 @@ public class MultiBlockFrameTile extends MultiBlockTile {
     }
 
     public void clearNBT()  {
-        setControllerPos(null);
+        frameSetControllerPos(null);
         setJob(null);
     }
 
@@ -44,8 +51,14 @@ public class MultiBlockFrameTile extends MultiBlockTile {
         return (MultiBlockControllerTile) te;
     }
 
-    public BlockPos getControllerPos()  {return this.controllerPos;}
-    public void setControllerPos(BlockPos posIn) {this.controllerPos = posIn;}
+    public BlockPos frameGetControllerPos()  {
+        return this.controllerPos;
+    }
+
+    public void frameSetControllerPos(BlockPos posIn) {
+        LOGGER.info("control pos has been set for frame");
+        this.controllerPos = posIn;
+    }
     public String getJob()  {return this.job;}
 
     /*
@@ -62,6 +75,26 @@ public class MultiBlockFrameTile extends MultiBlockTile {
             if(redstoneNum > 0)  {return true;  }
         }
         return false;
+    }
+
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+        if(nbt.contains(NBT_CX))  {
+            frameSetControllerPos(new BlockPos(nbt.getInt(NBT_CX), nbt.getInt(NBT_CY), nbt.getInt(NBT_CZ)));
+        }
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        tag = super.write(tag);
+        if(frameGetControllerPos() != null)  {
+            tag.putInt(NBT_CX, frameGetControllerPos().getX());
+            tag.putInt(NBT_CY, frameGetControllerPos().getY());
+            tag.putInt(NBT_CZ, frameGetControllerPos().getZ());
+        }
+        return tag;
     }
 }
 

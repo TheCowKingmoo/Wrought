@@ -69,6 +69,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private static Block frameStairs = H_C_COKE_FRAME_STAIR.get();
     private static Block frameSlab = H_C_COKE_FRAME_SLAB.get();
 
+
+    public final HCStateData stateData = new HCStateData();
+
     /*
     array holding the blocks location of all members in the multi-blocks
     split up by the y level where posArray[0][x][z] = the bottom most layer
@@ -133,10 +136,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     };
 
     private final int TICKSPEROPERATION = 20;
-    private int tickCounter = 0;
+    //private int tickCounter = 0;
 
     private boolean isSmelting = false;
-    private int smeltTime = 0;
+    //private int smeltTimeInSeconds = 4;
 
     protected FluidHandlerItemStack fluidOutput;
     protected InputItemHandler inputSlot;
@@ -171,12 +174,20 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         fluidBacklog = FluidStack.EMPTY;
         fluidItemBacklog = ItemStack.EMPTY;
 
+        stateData.timeElapsed = 0;
+        stateData.timeComplete = 10;
+
         this.height = posArray.length;
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
     }
 
     public World getWorld()  {return this.world;}
+
+
+    public HCStateData getStateData()  {
+        return this.stateData;
+    }
 
 
     @Override
@@ -189,8 +200,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         // Check if enough time passed for an operation
         this.markDirty();
-        if (tickCounter++ < TICKSPEROPERATION) { return; }
-        tickCounter = 0;
+        if (this.stateData.timeElapsed++ < TICKSPEROPERATION * this.stateData.timeComplete) { return; }
+        this.stateData.timeElapsed = 0;
 
         // want this to be able to process even if the oven is turned off due to overflow of items/fluids
         processFluidContainerItem();
@@ -393,7 +404,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, playerEntity);
+                return  HCCokeOvenContainer.ServerHCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
             }
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
@@ -407,7 +418,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         itemFluidInputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_IN));
         itemFluidOutputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_OUT));
         fluidTank.readFromNBT(nbt.getCompound(FLUID_TANK));
-        this.tickCounter = nbt.getInt(NUM_TICKS);
+        stateData.readFromNBT(nbt);
     }
 
     @Override
@@ -417,8 +428,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         tag.put(INVENTORY_OUT, outputSlot.serializeNBT());
         tag.put(FLUID_INVENTORY_IN, inputSlot.serializeNBT());
         tag.put(FLUID_INVENTORY_OUT, outputSlot.serializeNBT());
-        tag.putInt(NUM_TICKS, tickCounter);
         tag.put(FLUID_TANK, fluidTank.writeToNBT(new CompoundNBT()));
+        stateData.putIntoNBT(tag);
         return tag;
     }
 
@@ -445,8 +456,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
-
-        return new HCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, playerIn);
+        return HCCokeOvenContainer.ServerHCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, stateData);
     }
 
     @Override

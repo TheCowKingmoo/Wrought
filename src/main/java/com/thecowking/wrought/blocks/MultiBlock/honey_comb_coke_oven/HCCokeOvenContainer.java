@@ -34,15 +34,28 @@ public class HCCokeOvenContainer extends Container {
     private IItemHandler playerInventory;
     private static final Logger LOGGER = LogManager.getLogger();
     private HCCokeOvenControllerTile controller;
+    private World world;
+    private BlockPos controllerPos;
+    private HCStateData stateData;
 
-    public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    public static HCCokeOvenContainer ClientHCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory)  {
+        HCStateData stateData = new HCStateData();
+        return new HCCokeOvenContainer(windowId, world, pos, playerInventory, stateData);
+    }
+
+    public static HCCokeOvenContainer ServerHCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData)  {
+        return new HCCokeOvenContainer(windowId, world, pos, playerInventory, stateData);
+    }
+
+    public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData) {
         super(H_C_CONTAINER.get(), windowId);
         tileEntity = world.getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInventory);
-
-        //BlockPos controlPos = ((MultiBlockTile) tileEntity).yankControllerPos();
-
+        this.world = world;
+        this.controllerPos = pos;
+        this.controller = (HCCokeOvenControllerTile)tileEntity  ;
         tileEntity = world.getTileEntity(pos);
+        this.stateData = stateData;
 
 
         if (tileEntity != null) {
@@ -54,7 +67,12 @@ public class HCCokeOvenContainer extends Container {
             });
         }
         layoutPlayerInventorySlots(10, 70);
+        trackIntArray(stateData);
     }
+
+
+
+
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {
             addSlot(new SlotItemHandler(handler, index, x, y));
@@ -80,6 +98,12 @@ public class HCCokeOvenContainer extends Container {
         topRow += 58;
         addSlotRange(playerInventory, 0, leftCol, topRow, 9, 18);
     }
+
+    public double getProgress()  {
+        if (stateData.timeComplete == 0)  {return 0;}
+        return (double)stateData.timeElapsed / (20 * stateData.timeComplete);
+    }
+
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
@@ -115,12 +139,5 @@ public class HCCokeOvenContainer extends Container {
         }
         return returnStack;
     }
-
-
-
-
-
-
-
 
 }

@@ -62,7 +62,7 @@ public class RegistryHandler {
     public static final RegistryObject<ContainerType<HCCokeOvenContainer>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
-        return new HCCokeOvenContainer(windowId, world, pos, inv, inv.player);
+        return new HCCokeOvenContainer(windowId, world, pos, inv, new HCStateData());
     }));
 
 

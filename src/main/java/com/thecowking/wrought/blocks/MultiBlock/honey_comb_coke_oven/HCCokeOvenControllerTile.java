@@ -23,6 +23,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -682,6 +684,27 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             this.redstoneOut = new BlockPos(getControllerPos().getX(), getControllerPos().getY() - 1, getControllerPos().getZ());
         }
         return this.redstoneOut;
+    }
+
+
+    @Override
+    public CompoundNBT getUpdateTag()  {
+        return this.write(new CompoundNBT());
+    }
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket()
+    {
+        CompoundNBT nbt = new CompoundNBT();
+        this.write(nbt);
+
+        // the number here is generally ignored for non-vanilla TileEntities, 0 is safest
+        return new SUpdateTileEntityPacket(this.getPos(), 0, nbt);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
+    {
+        this.read(world.getBlockState(packet.getPos()), packet.getNbtCompound());
     }
 
 

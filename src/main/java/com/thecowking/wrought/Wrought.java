@@ -1,6 +1,5 @@
 package com.thecowking.wrought;
 
-import com.thecowking.wrought.network.WroughtNetworkHandler;
 import com.thecowking.wrought.util.ClientSetup;
 import com.thecowking.wrought.util.RegistryHandler;
 import net.minecraft.block.Block;
@@ -49,7 +48,6 @@ public class Wrought
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        WroughtNetworkHandler.registerChannels();
     }
 
     private void setup(final FMLCommonSetupEvent event)

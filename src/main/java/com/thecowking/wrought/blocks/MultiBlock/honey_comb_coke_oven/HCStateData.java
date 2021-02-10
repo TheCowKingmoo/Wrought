@@ -2,6 +2,7 @@ package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IIntArray;
+import net.minecraftforge.fluids.FluidStack;
 
 /*
   Source - https://github.com/TheGreyGhost/MinecraftByExample/blob/master/src/main/java/minecraftbyexample/mbe31_inventory_furnace/FurnaceStateData.java
@@ -12,10 +13,16 @@ public class HCStateData implements IIntArray {
 
     public int timeElapsed = 0;
     public int timeComplete = 1;
+    public FluidStack fluidStack;
 
 
     private final int ELAPSED_INDEX = 0;
     private final int COMPLETE_INDEX = 1;
+    private final int FLUID_STACK_INDEX = 2;
+
+    public HCStateData()  {
+    }
+
 
     public void putIntoNBT(CompoundNBT nbtTagCompound) {
         nbtTagCompound.putInt("timeElapsed", timeElapsed);

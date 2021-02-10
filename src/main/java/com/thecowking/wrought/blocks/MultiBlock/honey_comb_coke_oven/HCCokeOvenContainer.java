@@ -1,7 +1,5 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
-import com.thecowking.wrought.network.WroughtPacket;
-import com.thecowking.wrought.network.WroughtNetworkHandler;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.util.SlotInputFluidContainer;
 import com.thecowking.wrought.util.SlotOutput;
@@ -66,21 +64,6 @@ public class HCCokeOvenContainer extends Container {
         layoutPlayerInventorySlots(10, 70);
         trackIntArray(stateData);
     }
-
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        ServerPlayerEntity sPlayer = (ServerPlayerEntity)player;
-        if (sPlayer == null)  {
-            LOGGER.info("player is null");
-        }
-        if(WroughtNetworkHandler.INSTANCE == null)  {
-            LOGGER.info("didnt register something correctly");
-        }
-        WroughtNetworkHandler.INSTANCE.sendTo(new WroughtPacket.Server.UpdateTile(controller, "c"), sPlayer.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-    }
-
 
 
 

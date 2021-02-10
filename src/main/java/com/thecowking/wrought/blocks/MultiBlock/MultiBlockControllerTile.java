@@ -198,84 +198,11 @@ direction that is fed in
         return this.getBlockState().get(Multiblock.FORMED);
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-
-        setNeedsUpdate();
-    }
-
-    public void setNeedsUpdate() {
-        if ( this.needsUpdate == 0 ) {
-            this.needsUpdate = 20;
-        }
-    }
-
-
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        super.onDataPacket(net, pkt);
-
-        boolean oldIsValid = isFormed();
-
-        read(getBlockState(), pkt.getNbtCompound());
-
-        if ( getWorld() != null && getWorld().isRemote && oldIsValid != isFormed() ) {
-            markForUpdateNow();
-        }
-    }
-
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT tag = new CompoundNBT();
-        write(tag);
-        return new SUpdateTileEntityPacket(getPos(), 42, tag);
-    }
-
-    @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = new CompoundNBT();
-        write(tag);
-        return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        read(state, tag);
-    }
-
-    public void doUpdate() {}
-
-    public void markForUpdate() {
-        if ( getWorld() == null ) {
-            setNeedsUpdate();
-            return;
-        }
-
-        if ( --this.needsUpdate == 0 ) {
-            BlockState state = getWorld().getBlockState(getPos());
-            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
-            doUpdate();
-            markDirty();
-        }
-    }
-
-    public void markForUpdateNow() {
-        this.needsUpdate = 1;
-        markForUpdate();
-    }
-
-    public void markForUpdateNow(int when) {
-        this.needsUpdate = Math.min(when, 20);
-        markForUpdate();
-    }
 
     @Override
     public void tick() {
-        if ( this.needsUpdate > 0 ) {
-            markForUpdate();
-        }
     }
+
 
 
 }

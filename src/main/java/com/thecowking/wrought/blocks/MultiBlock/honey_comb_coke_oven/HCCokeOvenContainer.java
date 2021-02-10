@@ -1,13 +1,13 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockTile;
-import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
+import com.thecowking.wrought.network.WroughtPacket;
+import com.thecowking.wrought.network.WroughtNetworkHandler;
 import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.util.SlotInput;
 import com.thecowking.wrought.util.SlotInputFluidContainer;
 import com.thecowking.wrought.util.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -15,6 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -24,8 +26,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.INDEX_ITEM_INPUT;
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.INDEX_ITEM_OUTPUT;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
@@ -37,11 +37,8 @@ public class HCCokeOvenContainer extends Container {
     private World world;
     private BlockPos controllerPos;
     private HCStateData stateData;
+    private PlayerEntity player;
 
-    public static HCCokeOvenContainer ClientHCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory)  {
-        HCStateData stateData = new HCStateData();
-        return new HCCokeOvenContainer(windowId, world, pos, playerInventory, stateData);
-    }
 
     public static HCCokeOvenContainer ServerHCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData)  {
         return new HCCokeOvenContainer(windowId, world, pos, playerInventory, stateData);
@@ -56,7 +53,7 @@ public class HCCokeOvenContainer extends Container {
         this.controller = (HCCokeOvenControllerTile)tileEntity  ;
         tileEntity = world.getTileEntity(pos);
         this.stateData = stateData;
-
+        this.player = playerInventory.player;
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
@@ -68,6 +65,20 @@ public class HCCokeOvenContainer extends Container {
         }
         layoutPlayerInventorySlots(10, 70);
         trackIntArray(stateData);
+    }
+
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        ServerPlayerEntity sPlayer = (ServerPlayerEntity)player;
+        if (sPlayer == null)  {
+            LOGGER.info("player is null");
+        }
+        if(WroughtNetworkHandler.INSTANCE == null)  {
+            LOGGER.info("didnt register something correctly");
+        }
+        WroughtNetworkHandler.INSTANCE.sendTo(new WroughtPacket.Server.UpdateTile(controller, "c"), sPlayer.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
 
@@ -103,6 +114,12 @@ public class HCCokeOvenContainer extends Container {
         if (stateData.timeComplete == 0)  {return 0;}
         return (double)stateData.timeElapsed / (20 * stateData.timeComplete);
     }
+
+    public FluidStack getFluid()  {
+        //LOGGER.info("container - fluid is " + controller.getFluidInTank().getDisplayName());
+        return controller.getFluidInTank();
+    }
+
 
 
     @Override

@@ -2,6 +2,7 @@ package com.thecowking.wrought.blocks.MultiBlock;
 
 
 
+import com.thecowking.wrought.blocks.INameableTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -15,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 public class MultiBlockControllerBlock extends Block implements IMultiBlockControllerBlock {
+
 
     public MultiBlockControllerBlock() {
         super(Properties.create(Material.IRON)
@@ -54,5 +56,6 @@ public class MultiBlockControllerBlock extends Block implements IMultiBlockContr
     public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos)  {
         return Container.calcRedstone(Multiblock.getTileFromPos(worldIn, pos));
     }
+
 }
 

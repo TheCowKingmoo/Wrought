@@ -10,7 +10,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -22,10 +26,13 @@ import org.apache.logging.log4j.Logger;
 
 import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
 
-public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBlockControllerTile {
+public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBlockControllerTile, ITickableTileEntity {
     private static final Logger LOGGER = LogManager.getLogger();
     protected BlockPos redstoneIn;
     protected BlockPos redstoneOut;
+
+    private int needsUpdate = 0;
+
 
     protected int length;
     protected int width;
@@ -185,5 +192,90 @@ direction that is fed in
     public BlockPos getControllerPos() {
         return this.pos;
     }
+
+
+    public boolean isFormed()  {
+        return this.getBlockState().get(Multiblock.FORMED);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+
+        setNeedsUpdate();
+    }
+
+    public void setNeedsUpdate() {
+        if ( this.needsUpdate == 0 ) {
+            this.needsUpdate = 20;
+        }
+    }
+
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        super.onDataPacket(net, pkt);
+
+        boolean oldIsValid = isFormed();
+
+        read(getBlockState(), pkt.getNbtCompound());
+
+        if ( getWorld() != null && getWorld().isRemote && oldIsValid != isFormed() ) {
+            markForUpdateNow();
+        }
+    }
+
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT tag = new CompoundNBT();
+        write(tag);
+        return new SUpdateTileEntityPacket(getPos(), 42, tag);
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = new CompoundNBT();
+        write(tag);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        read(state, tag);
+    }
+
+    public void doUpdate() {}
+
+    public void markForUpdate() {
+        if ( getWorld() == null ) {
+            setNeedsUpdate();
+            return;
+        }
+
+        if ( --this.needsUpdate == 0 ) {
+            BlockState state = getWorld().getBlockState(getPos());
+            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+            doUpdate();
+            markDirty();
+        }
+    }
+
+    public void markForUpdateNow() {
+        this.needsUpdate = 1;
+        markForUpdate();
+    }
+
+    public void markForUpdateNow(int when) {
+        this.needsUpdate = Math.min(when, 20);
+        markForUpdate();
+    }
+
+    @Override
+    public void tick() {
+        if ( this.needsUpdate > 0 ) {
+            markForUpdate();
+        }
+    }
+
 
 }

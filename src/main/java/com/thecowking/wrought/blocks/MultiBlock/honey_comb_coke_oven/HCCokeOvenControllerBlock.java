@@ -1,5 +1,6 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
+import com.thecowking.wrought.blocks.INameableTile;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,8 +23,10 @@ import javax.annotation.Nullable;
 import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.getTileFromPos;
 
 
-public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
+public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock implements INameableTile {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    String tile;
 
 
 
@@ -85,4 +88,9 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock {
     }
 
 
+    @Override
+    public void setTileName(String name) {
+        this.tile = name;
+
+    }
 }

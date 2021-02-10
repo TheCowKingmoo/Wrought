@@ -3,7 +3,9 @@ package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -54,9 +56,15 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
         double processTime = container.getProgress();
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
-        LOGGER.info("progress = " + processTime);
+        //LOGGER.info("progress = " + processTime);
         this.blit(stack, xStart + COOK_BAR_XPOS, yStart + COOK_BAR_YPOS, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
                 (int) (processTime * COOK_BAR_WIDTH), COOK_BAR_HEIGHT);
+
+        TextureAtlasSprite fluidTexture = RenderHelper.getFluidTexture(container.getFluid());
+        //LOGGER.info(container.getFluid().getDisplayName());
+        this.blit(stack, xStart, yStart, COOK_BAR_ICON_U, COOK_BAR_ICON_V, COOK_BAR_HEIGHT, fluidTexture);
+
+
         //blit(stack, xStart, yStart, 0, 0, 64, 64);
         //blit(stack, 10, 10, 10, 0F, 0F, 64, 64, 32, 32);
 

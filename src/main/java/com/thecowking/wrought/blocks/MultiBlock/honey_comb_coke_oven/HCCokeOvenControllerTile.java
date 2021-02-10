@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
 import static com.thecowking.wrought.util.RegistryHandler.*;
 
-public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements ITickableTileEntity, INamedContainerProvider {
+public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
@@ -162,6 +162,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // used to stop operations if the bucket slot cannot be used
     private ItemStack fluidItemBacklog;
 
+    public int operationProgression;
+    public int operationComplete;
+
     public HCCokeOvenControllerTile() {
         super(H_C_COKE_CONTROLLER_TILE.get());
         inputSlot = new InputItemHandler(1, this);
@@ -177,6 +180,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         stateData.timeElapsed = 0;
         stateData.timeComplete = 10;
 
+        operationProgression = 0;
+        operationComplete = 10;
+
         this.height = posArray.length;
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
@@ -189,9 +195,13 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return this.stateData;
     }
 
+    public FluidStack getFluidInTank()  {return fluidTank.getFluid();}
+
+
 
     @Override
     public void tick() {
+        super.tick();
         // check if we have a multi-block
         if (!isFormed(getControllerPos())) {return; }
 
@@ -222,6 +232,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 return;
             }
         }
+        LOGGER.info(getFluidInTank().getDisplayName());
         /*
         // fluids
         if(fluidBacklog != FluidStack.EMPTY)  {
@@ -672,4 +683,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
         return this.redstoneOut;
     }
+
+
 }

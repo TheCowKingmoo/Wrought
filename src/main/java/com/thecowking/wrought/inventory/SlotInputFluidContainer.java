@@ -1,4 +1,4 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.inventory;
 
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;

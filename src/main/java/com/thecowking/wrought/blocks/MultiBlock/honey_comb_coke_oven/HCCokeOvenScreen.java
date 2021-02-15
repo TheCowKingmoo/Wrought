@@ -4,9 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -31,6 +31,11 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     final static  int COOK_BAR_HEIGHT = 17;
     private static final Logger LOGGER = LogManager.getLogger();
 
+    final static int TANK_X_OFFSET = 0;
+    final static int TANK_Y_OFFSET = 0;
+    final static int TANK_WIDTH = 20;
+    final static int TANK_HEIGHT = 80;
+
 
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
@@ -54,34 +59,58 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.renderHoveredTooltip(stack, x, y);
     }
 
+    /*
+        Is called as the mouse moves around
+     */
+
+    @Override
+    protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
+
+        // highlights the item the player is hovering over
+        if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
+            this.renderTooltip(matrixStack, this.hoveredSlot.getStack(), x, y);
+
+        // detects when the player is hovering over the tank
+        }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
+            FluidStack fluidStack = getFluidStackInTank();
+            TranslationTextComponent text = new TranslationTextComponent(fluidStack.getDisplayName().getString());
+            text.appendString(fluidStack.getAmount() + " / " + container.getTankMaxSize());
+            renderTooltip(matrixStack, text, x, y+10);
+
+        // debug
+        }  else  {
+            renderTooltip(matrixStack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
+        }
+    }
+
+
+    public int xStart() {
+        return (this.width - this.xSize) / 2;
+    }
+
+    public int yStart() {
+        return (this.height - this.ySize) / 2;
+    }
+
+
+
+
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
         int xStart = (this.width - this.xSize) / 2;
         int yStart = (this.height - this.ySize) / 2;
-
 
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(stack, xStart, yStart, 0,0, this.xSize, this.ySize);
 
         double processTime = container.getProgress();
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
-        //LOGGER.info("progress = " + processTime);
         this.blit(stack, xStart + COOK_BAR_XPOS, yStart + COOK_BAR_YPOS, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
                 (int) (processTime * COOK_BAR_WIDTH), COOK_BAR_HEIGHT);
 
-        //TextureAtlasSprite fluidTexture = RenderHelper.getFluidTexture(container.getFluid());
-        //this.minecraft.getTextureManager().bindTexture(GUI);
-
-        LOGGER.info(container.getFluid().getDisplayName());
-        //this.blit(stack, xStart, yStart, COOK_BAR_ICON_U, COOK_BAR_ICON_V, COOK_BAR_HEIGHT, fluidTexture);
-        drawFluid(stack, container.getFluid(), xStart, yStart);
-
-
-
-        //blit(stack, xStart, yStart, 0, 0, 64, 64);
-        //blit(stack, 10, 10, 10, 0F, 0F, 64, 64, 32, 32);
-
+        drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
     }
+
 
     protected ITextComponent getName() {
         return new TranslationTextComponent("multi_block.wrought.coke_oven");
@@ -104,10 +133,14 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
         int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
         setGLColorFromInt(color);
-        drawTiledTexture(x, y, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), width, height);
+        drawTiledTexture(x, y, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, TANK_HEIGHT);
 
         matrixStack.pop();
+    }
 
+
+    public FluidStack getFluidStackInTank()  {
+        return container.getFluid();
     }
 
     public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height) {
@@ -158,5 +191,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         float blue = (float) (color & 255) / 255.0F;
         GlStateManager.color4f(red, green, blue, 1.0F);
     }
+
 
 }

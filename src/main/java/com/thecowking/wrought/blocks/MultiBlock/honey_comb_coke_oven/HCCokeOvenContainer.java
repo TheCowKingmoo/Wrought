@@ -1,11 +1,10 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.util.SlotInputFluidContainer;
-import com.thecowking.wrought.util.SlotOutput;
+import com.thecowking.wrought.inventory.SlotInputFluidContainer;
+import com.thecowking.wrought.inventory.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -99,8 +97,11 @@ public class HCCokeOvenContainer extends Container {
     }
 
     public FluidStack getFluid()  {
-        //LOGGER.info("container - fluid is " + controller.getFluidInTank().getDisplayName());
         return controller.getFluidInTank();
+    }
+
+    public int getTankMaxSize()  {
+        return controller.getTankMaxSize();
     }
 
 
@@ -112,8 +113,6 @@ public class HCCokeOvenContainer extends Container {
     @Nonnull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {
-        LOGGER.info("here");
-
         ItemStack returnStack = ItemStack.EMPTY;
         final Slot slot = this.inventorySlots.get(index);
         if (slot != null && slot.getHasStack()) {
@@ -139,5 +138,6 @@ public class HCCokeOvenContainer extends Container {
         }
         return returnStack;
     }
+
 
 }

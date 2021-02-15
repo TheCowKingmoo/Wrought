@@ -1,4 +1,4 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.inventory;
 
 import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;

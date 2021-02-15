@@ -1,13 +1,12 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.inventory;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class OutputItemHandler extends ItemStackHandler {
-    public OutputItemHandler(int size, ItemStack... stacks) {
+public class FluidItemOutputHandler extends ItemStackHandler {
+    public FluidItemOutputHandler(int size, ItemStack... stacks) {
         super(size);
     }
     @Nonnull

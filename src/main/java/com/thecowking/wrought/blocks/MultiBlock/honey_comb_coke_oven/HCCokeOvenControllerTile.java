@@ -1,9 +1,9 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
+import com.thecowking.wrought.inventory.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.util.*;
 import net.minecraft.block.*;
@@ -12,8 +12,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BucketItem;
@@ -21,16 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,7 +38,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -73,6 +67,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     public final HCStateData stateData = new HCStateData();
+
+
+    private boolean needUpdate = false;
 
     /*
     array holding the blocks location of all members in the multi-blocks
@@ -138,7 +135,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     };
 
     private final int TICKSPEROPERATION = 20;
-    //private int tickCounter = 0;
+    private int tickCounter = 0;
 
     private boolean isSmelting = false;
     //private int smeltTimeInSeconds = 4;
@@ -192,28 +189,33 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     public World getWorld()  {return this.world;}
 
-
-    public HCStateData getStateData()  {
-        return this.stateData;
-    }
-
     public FluidStack getFluidInTank()  {return fluidTank.getFluid();}
-
 
 
     @Override
     public void tick() {
         super.tick();
-        // check if we have a multi-block
-        if (!isFormed(getControllerPos())) {return; }
+
 
         // check if we are in correct instance
-        if (this.world == null || this.world.isRemote) { return; }
+        if (this.world == null || this.world.isRemote) {
+            finishOperation();
+            return;
+        }
+
+        // check if we have a multi-block
+        if (!isFormed(getControllerPos())) {
+            finishOperation();
+            return;
+        }
 
         // Check if enough time passed for an operation
-        this.markDirty();
-        if (this.stateData.timeElapsed++ < TICKSPEROPERATION * this.stateData.timeComplete) { return; }
-        this.stateData.timeElapsed = 0;
+        if(tickCounter < TICKSPEROPERATION)  {
+            tickCounter++;
+            finishOperation();
+            return;
+        }
+        tickCounter = 0;
 
         // want this to be able to process even if the oven is turned off due to overflow of items/fluids
         processFluidContainerItem();
@@ -222,6 +224,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if (isRedstonePowered(this.redstoneIn)) {
             machineChangeOperation(false);
             LOGGER.info("redstone turn off");
+            finishOperation();
             return;
         }
 
@@ -231,6 +234,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
             if(itemBacklog != ItemStack.EMPTY)  {
                 LOGGER.info("item full off");
+                finishOperation();
                 return;
             }
         }
@@ -255,6 +259,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if (currentRecipe == null) {
             machineChangeOperation(false);
             LOGGER.info("no recipe");
+            finishOperation();
             return;
         }
 
@@ -270,6 +275,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             if(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() > fluidTank.getCapacity())  {
                 LOGGER.info(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() + " is not smaller than " + fluidTank.getCapacity());
                 LOGGER.info("fluid cannot insert as there is not enough tank space");
+                finishOperation();
                 return;
             }
 
@@ -278,6 +284,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 LOGGER.info("fluid cannot insert fluid is not equal");
                 LOGGER.info(recipeFluidOutput.getDisplayName());
                 LOGGER.info(fluidTank.getFluid().getDisplayName());
+                finishOperation();
                 return;
             }
 
@@ -287,12 +294,21 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
             machineChangeOperation(false);
             LOGGER.info("cannot insert item off");
-
+            finishOperation();
             return;
         }
 
+        this.needUpdate = true;
+
         // if we get here then we can run an operation!
+        if (this.stateData.timeElapsed++ < this.stateData.timeComplete) {
+            this.stateData.timeElapsed++;
+            finishOperation();
+            return;
+        }
+        this.stateData.timeElapsed = 0;
         ovenOperation();
+        finishOperation();
     }
 
     /*
@@ -313,8 +329,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             // TODO - stopped here last - want to uncomment line below and start testing fluid
             fluidBacklog = fluidTank.internalFill(fluidOutput, IFluidHandler.FluidAction.EXECUTE);
             itemBacklog = outputSlot.internalInsertItem(0, outputs.copy(), false);
-
-            markDirty();
         }
     }
 
@@ -335,14 +349,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         blockUpdate();
     }
 
-
-
-
     /*
     TODO - add support for tanks
     Processes items in the "bucket" slot
      */
     protected void processFluidContainerItem()  {
+        LOGGER.info(fluidTank.getFluidAmount());
         if(fluidTank.getFluidAmount() < 1000)  return;
         if(itemFluidInputSlot.getStackInSlot(0).isEmpty())  return;
         if(!(itemFluidOutputSlot.getStackInSlot(0).isEmpty()))  return;
@@ -377,6 +389,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             LOGGER.info("inserting into itemfluid ouptut");
             fluidTank.drain(1000, IFluidHandler.FluidAction.EXECUTE);
             fluidItemBacklog = itemFluidOutputSlot.internalInsertItem(0, filledContainer.copy(), false);
+            this.needUpdate = true;
 
             // we have some sort of container
         }  else  {
@@ -388,17 +401,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 ItemStack f = itemFluidInputSlot.getStackInSlot(0).copy();
                 itemFluidInputSlot.getStackInSlot(0).shrink(1);
                 itemFluidOutputSlot.internalInsertItem(0, f, false);
+                this.needUpdate = true;
             }
-
-            if (back != null)  {
-
-                LOGGER.info("did something!!");
-            }  else  {
-                LOGGER.info("failed to process!");
-            }
-
         }
-
     }
 
     // override the always return true method
@@ -422,6 +427,19 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
     }
+
+    /*
+        Method to set off updates
+        This way markDirty is not called multiple times in one operation
+     */
+    public void finishOperation()  {
+        if (this.needUpdate)  {
+            this.needUpdate = false;
+            blockUpdate();
+            markDirty();
+        }
+    }
+
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
@@ -684,6 +702,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             this.redstoneOut = new BlockPos(getControllerPos().getX(), getControllerPos().getY() - 1, getControllerPos().getZ());
         }
         return this.redstoneOut;
+    }
+
+
+    public int getTankMaxSize()  {
+        return fluidTank.getCapacity();
     }
 
 

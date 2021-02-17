@@ -36,10 +36,19 @@ public class HCCokeOvenContainer extends Container {
     private HCStateData stateData;
     private PlayerEntity player;
 
+    final static int ITEM_X = 14;
+    final static int FLUID_ITEM_X = 149;
+    final static int INPUTS_Y = 22;
+    final static int OUTPUTS_Y = 72;
 
-    public static HCCokeOvenContainer ServerHCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData)  {
-        return new HCCokeOvenContainer(windowId, world, pos, playerInventory, stateData);
-    }
+
+    final static int INPUT_ITEM_SLOT_IDX = 0;
+    final static int OUTPUT_ITEM_SLOT_IDX = 1;
+    final static int FLUID_INPUT_ITEM_SLOT_IDX = 2;
+    final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 3;
+
+
+
 
     public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData) {
         super(H_C_CONTAINER.get(), windowId);
@@ -47,20 +56,20 @@ public class HCCokeOvenContainer extends Container {
         this.playerInventory = new InvWrapper(playerInventory);
         this.world = world;
         this.controllerPos = pos;
-        this.controller = (HCCokeOvenControllerTile)tileEntity  ;
+        this.controller = (HCCokeOvenControllerTile)tileEntity;
         tileEntity = world.getTileEntity(pos);
         this.stateData = stateData;
         this.player = playerInventory.player;
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                addSlot(new SlotItemHandler(h, 0, 64, 24));             // oven item input
-                addSlot(new SlotOutput(h, 1, 64, 48));                  // oven item ouput
-                addSlot(new SlotInputFluidContainer(h, 2, 128, 24));    // fluid item input
-                addSlot(new SlotOutput(h, 3, 128, 48));                 // fluid item output
+                addSlot(new SlotItemHandler(h, INPUT_ITEM_SLOT_IDX, ITEM_X, INPUTS_Y));             // oven item input
+                addSlot(new SlotOutput(h, OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));                  // oven item ouput
+                addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));    // fluid item input
+                addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));                 // fluid item output
             });
         }
-        layoutPlayerInventorySlots(10, 70);
+        layoutPlayerInventorySlots(10, 115);
         trackIntArray(stateData);
     }
 

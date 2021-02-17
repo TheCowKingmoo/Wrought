@@ -442,12 +442,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("screen.wrought.h_c");
+                return new TranslationTextComponent("Honey Comb Coke Oven");
             }
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return  HCCokeOvenContainer.ServerHCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
+                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
             }
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
@@ -512,7 +512,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
-        return HCCokeOvenContainer.ServerHCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, stateData);
+        return new HCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, stateData);
     }
 
     @Override

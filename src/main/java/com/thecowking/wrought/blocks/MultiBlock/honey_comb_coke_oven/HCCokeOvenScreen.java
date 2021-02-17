@@ -11,7 +11,10 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -31,10 +34,10 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     final static  int COOK_BAR_HEIGHT = 17;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    final static int TANK_X_OFFSET = 0;
-    final static int TANK_Y_OFFSET = 0;
-    final static int TANK_WIDTH = 20;
-    final static int TANK_HEIGHT = 80;
+    final static int TANK_X_OFFSET = 83;
+    final static int TANK_Y_OFFSET = 21;
+    final static int TANK_WIDTH = 17;
+    final static int TANK_HEIGHT = 69;
 
 
 
@@ -49,6 +52,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.xSize = 176;
         this.ySize = 240;
     }
+
 
 
     @Override
@@ -97,27 +101,35 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
-        int xStart = (this.width - this.xSize) / 2;
-        int yStart = (this.height - this.ySize) / 2;
-
+        // Draws the main background
         this.minecraft.getTextureManager().bindTexture(GUI);
-        this.blit(stack, xStart, yStart, 0,0, this.xSize, this.ySize);
+        this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
+        // Draws the Cooking time
         double processTime = container.getProgress();
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
-        this.blit(stack, xStart + COOK_BAR_XPOS, yStart + COOK_BAR_YPOS, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
+        this.blit(stack, xStart() + COOK_BAR_XPOS, yStart() + COOK_BAR_YPOS, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
                 (int) (processTime * COOK_BAR_WIDTH), COOK_BAR_HEIGHT);
 
+        // Draws the fluid tank
         drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
     }
 
 
     protected ITextComponent getName() {
-        return new TranslationTextComponent("multi_block.wrought.coke_oven");
+        return new TranslationTextComponent("Honey Comb Coke Oven");
     }
 
-    protected void drawForgegroundString(MatrixStack matrixStack) {
-        font.func_243248_b(matrixStack, getName(), 28 + 0, 4 + 0, 4210752);
+
+    /*
+        This draws both title for the screen and the player inventory
+        this had to be overridden as I cannot change the location of the titles otherwise
+     */
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
+
     }
 
 

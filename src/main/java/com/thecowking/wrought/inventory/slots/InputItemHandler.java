@@ -1,4 +1,4 @@
-package com.thecowking.wrought.inventory;
+package com.thecowking.wrought.inventory.slots;
 
 import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
@@ -32,7 +32,6 @@ public class InputItemHandler extends ItemStackHandler {
         }
         return super.insertItem(slot, stack, simulate);
     }
-
 
 
     }

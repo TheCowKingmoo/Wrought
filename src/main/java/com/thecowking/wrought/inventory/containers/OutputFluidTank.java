@@ -1,4 +1,4 @@
-package com.thecowking.wrought.inventory;
+package com.thecowking.wrought.inventory.containers;
 
 import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -20,6 +20,7 @@ public class OutputFluidTank extends FluidTank {
     {return 0;}
 
     public FluidStack internalFill(FluidStack resource, FluidAction action)  {
+        if(resource == FluidStack.EMPTY)  {return FluidStack.EMPTY;}
         Fluid f = resource.getFluid();
         LOGGER.info("fluid = " + f);
         LOGGER.info("fluid amount to fill" + resource.getAmount());

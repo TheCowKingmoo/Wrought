@@ -34,10 +34,7 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
 
     @Override
     public boolean matches(RecipeWrapper inv, World worldIn) {
-        if (this.input.test(inv.getStackInSlot(0))) {
-            return true;
-        }
-        return false;
+        return this.input.test(inv.getStackInSlot(0));
     }
 
     @Override
@@ -52,7 +49,6 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
 
     public ItemStack getRecipeItemStackOutput()  {return this.output;}
     public FluidStack getRecipeFluidStackOutput()  {return this.fluidStack;}
-
 
     @Override
     public ResourceLocation getId() {

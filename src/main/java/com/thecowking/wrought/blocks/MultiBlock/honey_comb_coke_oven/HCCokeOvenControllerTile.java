@@ -3,7 +3,8 @@ package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
-import com.thecowking.wrought.inventory.*;
+import com.thecowking.wrought.inventory.containers.OutputFluidTank;
+import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.util.*;
 import net.minecraft.block.*;
@@ -12,6 +13,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BucketItem;
@@ -158,6 +160,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // used to stop operation for when a fluid cannot be inserted into output slot
     private FluidStack fluidBacklog;
 
+
+    // holds information about the current oven operation
+    private ItemStack processingItemStack;
+    private FluidStack processingFluidStack;
+    private boolean isProcessing = false;
+
     // used to stop operations if the bucket slot cannot be used
     private ItemStack fluidItemBacklog;
 
@@ -175,6 +183,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         itemBacklog = ItemStack.EMPTY;
         fluidBacklog = FluidStack.EMPTY;
         fluidItemBacklog = ItemStack.EMPTY;
+        processingItemStack = ItemStack.EMPTY;
+        processingFluidStack = FluidStack.EMPTY;
 
         stateData.timeElapsed = 0;
         stateData.timeComplete = 10;
@@ -230,30 +240,43 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         // backlog checks - note that another operation will not happen until tickCount has passed if these fail
         // items
-        if(itemBacklog != ItemStack.EMPTY)  {
+        if(itemBacklog != ItemStack.EMPTY) {
             itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
-            if(itemBacklog != ItemStack.EMPTY)  {
+            if (itemBacklog != ItemStack.EMPTY) {
                 LOGGER.info("item full off");
                 finishOperation();
                 return;
             }
         }
-        LOGGER.info(getFluidInTank().getDisplayName());
-        /*
-        // fluids
-        if(fluidBacklog != FluidStack.EMPTY)  {
-            fluidBacklog = fluidTank.internalFill(fluidBacklog.copy(), IFluidHandler.FluidAction.EXECUTE);
-            if(fluidBacklog != FluidStack.EMPTY)  {
-                LOGGER.info("fluid backlog off");
-                LOGGER.info(fluidBacklog.getDisplayName());
-                return;
-            }
+
+
+        // Check if there is a previous item and the item has "cooked" long enough
+        if (processingItemStack != ItemStack.EMPTY && this.stateData.timeElapsed++ < this.stateData.timeComplete) {
+            this.needUpdate = true;
+            this.stateData.timeElapsed++;
+            finishOperation();
+            return;
+
+        // item has cooked long enough -> insert outputs and move onto next operation
+        }  else if(processingItemStack != ItemStack.EMPTY) {
+            this.needUpdate = true;
+            this.stateData.timeElapsed = 0;
+            // attempt to insert fluid from craft and fill leftovers into backlog tank
+            fluidBacklog = fluidTank.internalFill(processingFluidStack, IFluidHandler.FluidAction.EXECUTE);
+            // attempt to insert item from craft and fill leftovers into backlog container
+            LOGGER.info("inserting -> " + processingItemStack);
+
+            // unsure why but if i do not .copy() the outputs randomly multiplies by two on each successful operation
+            itemBacklog = outputSlot.internalInsertItem(0, processingItemStack.copy(), false);
+            processingFluidStack = FluidStack.EMPTY;
+            processingItemStack = ItemStack.EMPTY;
+            isProcessing = false;
         }
 
-         */
 
         // yank the current recipe for an item in
         HoneyCombCokeOvenRecipe currentRecipe = this.getRecipe(inputSlot.getStackInSlot(0));
+        LOGGER.info("currentRecipe = " + currentRecipe);
 
         // check if we have a recipe for item
         if (currentRecipe == null) {
@@ -263,10 +286,17 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
 
+        // check to make sure output is not full before starting another operation
+        if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
+            machineChangeOperation(false);
+            LOGGER.info("cannot insert item off");
+            finishOperation();
+            return;
+        }
+
+
         // get the fluid output from recipe
         FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
-
-        //LOGGER.info(fluidTank.getFluidAmount());
 
         // check if recipe has a fluid output
         if(recipeFluidOutput != null && !fluidTank.isEmpty())  {
@@ -290,45 +320,41 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         }
 
-        // check to make sure output is not full before starting another operation
-        if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
-            machineChangeOperation(false);
-            LOGGER.info("cannot insert item off");
-            finishOperation();
-            return;
-        }
-
-        this.needUpdate = true;
-
-        // if we get here then we can run an operation!
-        if (this.stateData.timeElapsed++ < this.stateData.timeComplete) {
-            this.stateData.timeElapsed++;
-            finishOperation();
-            return;
-        }
-        this.stateData.timeElapsed = 0;
         ovenOperation();
         finishOperation();
+    }
+
+
+
+    private void insertIntoOutputSlot()  {
+
     }
 
     /*
      Method to run a single oven operation
      */
     private void ovenOperation() {
+        LOGGER.info("start oven operation");
 
+        LOGGER.info(this.inputSlot.getStackInSlot(0));
         ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeItemStackOutput();
         FluidStack fluidOutput = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeFluidStackOutput();
 
-        machineChangeOperation(true);
-        //if (outputItemStack != null && outputFluidStack == null) {
+        LOGGER.info("outputs = " + outputs);
+
         if (outputs != null && outputs.getItem() != Items.AIR) {
             if(!this.isSmelting)  {
                 machineChangeOperation(true);
             }
+            isProcessing = true;
+            LOGGER.info("shrink input");
+
             inputSlot.getStackInSlot(0).shrink(1);
-            // TODO - stopped here last - want to uncomment line below and start testing fluid
-            fluidBacklog = fluidTank.internalFill(fluidOutput, IFluidHandler.FluidAction.EXECUTE);
-            itemBacklog = outputSlot.internalInsertItem(0, outputs.copy(), false);
+            //inputSlot.extractItem(0, 1, false);
+
+            processingItemStack = outputs;
+            processingFluidStack = fluidOutput;
+            needUpdate = true;
         }
     }
 
@@ -346,7 +372,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }  else  {
             sendOutRedstone(0);
         }
-        blockUpdate();
     }
 
     /*
@@ -457,8 +482,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         tag = super.write(tag);
         tag.put(INVENTORY_IN, inputSlot.serializeNBT());
         tag.put(INVENTORY_OUT, outputSlot.serializeNBT());
-        tag.put(FLUID_INVENTORY_IN, inputSlot.serializeNBT());
-        tag.put(FLUID_INVENTORY_OUT, outputSlot.serializeNBT());
+        tag.put(FLUID_INVENTORY_IN, itemFluidInputSlot.serializeNBT());
+        tag.put(FLUID_INVENTORY_OUT, itemFluidOutputSlot.serializeNBT());
         tag.put(FLUID_TANK, fluidTank.writeToNBT(new CompoundNBT()));
         stateData.putIntoNBT(tag);
         return tag;
@@ -501,15 +526,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if (stack == null) {
             return null;
         }
-
         Set<IRecipe<?>> recipes = findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, this.world);
+
         for (IRecipe<?> iRecipe : recipes) {
             HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
             if (recipe.matches(new RecipeWrapper(this.inputSlot), this.world)) {
                 return recipe;
             }
         }
-
         return null;
     }
 

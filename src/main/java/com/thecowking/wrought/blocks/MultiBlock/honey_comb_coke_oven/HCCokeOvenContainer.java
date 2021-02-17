@@ -1,8 +1,9 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
+import com.thecowking.wrought.inventory.slots.SlotInputHandler;
 import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.inventory.SlotInputFluidContainer;
-import com.thecowking.wrought.inventory.SlotOutput;
+import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
+import com.thecowking.wrought.inventory.slots.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -93,7 +94,7 @@ public class HCCokeOvenContainer extends Container {
 
     public double getProgress()  {
         if (stateData.timeComplete == 0)  {return 0;}
-        return (double)stateData.timeElapsed / (20 * stateData.timeComplete);
+        return (double)stateData.timeElapsed / (stateData.timeComplete);
     }
 
     public FluidStack getFluid()  {

@@ -156,9 +156,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height, int numBuckets) {
         int i;
         int j;
-        LOGGER.info("numBuckets is " + numBuckets);
-        LOGGER.info("x = " + x + " y = " + y);
-
 
         int drawHeight;
         int drawWidth;

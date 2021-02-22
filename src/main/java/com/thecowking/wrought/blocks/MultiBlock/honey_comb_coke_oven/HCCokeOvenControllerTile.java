@@ -230,6 +230,18 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // want this to be able to process even if the oven is turned off due to overflow of items/fluids
         processFluidContainerItem();
 
+        // backlog checks - note that another operation will not happen until tickCount has passed if these fail
+        // items
+        if(itemBacklog != ItemStack.EMPTY) {
+            itemBacklog = outputSlot.internalInsertItem(0, itemBacklog.copy(), false);
+            if (itemBacklog != ItemStack.EMPTY) {
+                LOGGER.info(itemBacklog);
+                LOGGER.info("item full off");
+                finishOperation();
+                return;
+            }
+        }
+
         // check if redstone is turning machine off
         if (isRedstonePowered(this.redstoneIn)) {
             machineChangeOperation(false);
@@ -238,16 +250,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
 
-        // backlog checks - note that another operation will not happen until tickCount has passed if these fail
-        // items
-        if(itemBacklog != ItemStack.EMPTY) {
-            itemBacklog = outputSlot.insertItem(0, itemBacklog.copy(), false);
-            if (itemBacklog != ItemStack.EMPTY) {
-                LOGGER.info("item full off");
-                finishOperation();
-                return;
-            }
-        }
+
 
 
         // Check if there is a previous item and the item has "cooked" long enough

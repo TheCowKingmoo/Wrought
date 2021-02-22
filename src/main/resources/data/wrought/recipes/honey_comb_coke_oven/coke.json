@@ -7,6 +7,6 @@
     "item": "minecraft:coal"
   },
   "fluid": "wrought:creosote_fluid",
-  "fluidamount": 1000,
+  "fluidamount": 250,
   "burntime": 100
 }

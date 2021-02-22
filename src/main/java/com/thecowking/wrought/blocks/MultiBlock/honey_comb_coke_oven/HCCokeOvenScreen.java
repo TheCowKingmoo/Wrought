@@ -40,11 +40,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     final static int TANK_HEIGHT = 69;
 
 
-    final static int TANK_BOTTOM_X = 232;
-    final static int TANK_BOTTOM_Y = 95;
-
-
-
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 

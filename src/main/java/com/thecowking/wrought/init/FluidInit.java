@@ -2,6 +2,7 @@ package com.thecowking.wrought.init;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.util.RegistryHandler;
+import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
@@ -32,7 +33,7 @@ public class FluidInit {
 
     public static final ForgeFlowingFluid.Properties CREOSOTE_PROPERTIES = new ForgeFlowingFluid.Properties(() -> CREOSOTE_FLUID.get(),
             () -> CREOSOTE_FLOWING.get(),
-            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL).density(5).luminosity(10).overlay(CREOSOTE_OVERLAY_RL)).block(() -> FluidInit.CREOSOTE_BLOCK.get()).bucket(() -> RegistryHandler.CREOSOTE_BUCKET.get());
+            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL).density(5).color(RenderHelper.convertARGBToInt(255,255,61, 0.5)).luminosity(10).overlay(CREOSOTE_OVERLAY_RL)).block(() -> FluidInit.CREOSOTE_BLOCK.get()).bucket(() -> RegistryHandler.CREOSOTE_BUCKET.get());
 
 
     public static final RegistryObject<FlowingFluidBlock> CREOSOTE_BLOCK = RegistryHandler.BLOCKS.register("creosote",

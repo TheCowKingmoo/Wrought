@@ -110,6 +110,10 @@ public class HCCokeOvenContainer extends Container {
         return controller.getFluidInTank();
     }
 
+    public double getPercentageInTank()  {
+       return ((double)getFluid().getAmount() / (double)getTankMaxSize());
+    }
+
     public int getTankMaxSize()  {
         return controller.getTankMaxSize();
     }

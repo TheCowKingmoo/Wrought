@@ -40,6 +40,10 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     final static int TANK_HEIGHT = 69;
 
 
+    final static int TANK_BOTTOM_X = 232;
+    final static int TANK_BOTTOM_Y = 95;
+
+
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
@@ -132,7 +136,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
     }
 
-
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
         if(fluidStack == null || fluidStack.isEmpty())  {
             return;
@@ -145,7 +148,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
         int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
         setGLColorFromInt(color);
-        drawTiledTexture(x, y, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, TANK_HEIGHT);
+        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * container.getPercentageInTank()), fluidStack.getAmount() / 1000);
 
         matrixStack.pop();
     }
@@ -155,9 +158,12 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         return container.getFluid();
     }
 
-    public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height) {
+    public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height, int numBuckets) {
         int i;
         int j;
+        LOGGER.info("numBuckets is " + numBuckets);
+        LOGGER.info("x = " + x + " y = " + y);
+
 
         int drawHeight;
         int drawWidth;
@@ -166,7 +172,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
             for (j = 0; j < height; j += 16) {
                 drawWidth = Math.min(width - i, 16);
                 drawHeight = Math.min(height - j, 16);
-                drawScaledTexturedModelRectFromIcon(x + i, y + j, icon, drawWidth, drawHeight);
+                drawScaledTexturedModelRectFromIcon(x + i, y - j, icon, drawWidth, drawHeight);
             }
         }
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -189,10 +195,16 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(x, y + height, zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
-        buffer.pos(x + width, y + height, zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
-        buffer.pos(x + width, y, zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
-        buffer.pos(x, y, zLevel).tex(minU, minV).endVertex();
+
+        // Bottom Left
+        buffer.pos(x, y, zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
+        // Bottom Right
+        buffer.pos(x + width, y, zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
+        // Top Right
+        buffer.pos(x + width, y - height, zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
+        // Top Left
+        buffer.pos(x, y - height, zLevel).tex(minU, minV).endVertex();
+        // Draw
         Tessellator.getInstance().draw();
     }
 

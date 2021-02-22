@@ -97,15 +97,11 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven { // Hwyla
-        url = "https://maven.tehnut.info"
-    }
+   // maven { // Hwyla
+   //     url = "https://maven.tehnut.info"
+   // }
     maven {
         url 'https://modmaven.dev/'
-    }
-    maven { // Cyclops Core
-        name "Cyclops Repo"
-        url "https://oss.jfrog.org/artifactory/simple/libs-release/"
     }
 
 }
@@ -126,14 +122,12 @@ dependencies {
     // compile "some.group:artifact:version"
     compile 'com.intellij:annotations:+@jar'
 
-    // Cyclops Core
-    compile "org.cyclops.cyclopscore:CyclopsCore:${minecraft_version}-${cyclopscore_version}:deobf"
 
     compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
 
-    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
-    runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
+    //compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
+    //runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
 
     //Mekanism - testing cross mod interactions
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"

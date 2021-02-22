@@ -26,12 +26,12 @@ import org.lwjgl.opengl.GL11;
 
 
 public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
-    final static int COOK_BAR_XPOS = 49;
-    final static  int COOK_BAR_YPOS = 60;
+    final static int COOK_BAR_X_OFFSET = 14;
+    final static  int COOK_BAR_Y_OFFSET = 40;
     final static  int COOK_BAR_ICON_U = 0;   // texture position of white arrow icon [u,v]
     final static  int COOK_BAR_ICON_V = 207;
-    final static  int COOK_BAR_WIDTH = 80;
-    final static  int COOK_BAR_HEIGHT = 17;
+    final static  int COOK_BAR_WIDTH = 17;
+    final static  int COOK_BAR_HEIGHT = 30;
     private static final Logger LOGGER = LogManager.getLogger();
 
     final static int TANK_X_OFFSET = 83;
@@ -112,8 +112,8 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         // Draws the Cooking time
         double processTime = container.getProgress();
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
-        this.blit(stack, xStart() + COOK_BAR_XPOS, yStart() + COOK_BAR_YPOS, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
-                (int) (processTime * COOK_BAR_WIDTH), COOK_BAR_HEIGHT);
+        this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
+                COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
 
         // Draws the fluid tank
         drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);

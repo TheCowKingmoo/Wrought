@@ -1,9 +1,6 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.inventory.slots;
 
-import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;

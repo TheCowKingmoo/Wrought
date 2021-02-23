@@ -97,9 +97,9 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven { // Hwyla
-        url = "https://maven.tehnut.info"
-    }
+   // maven { // Hwyla
+   //     url = "https://maven.tehnut.info"
+   // }
     maven {
         url 'https://modmaven.dev/'
     }
@@ -108,6 +108,9 @@ repositories {
 
 
 dependencies {
+    implementation 'org.projectlombok:lombok:1.18.16'
+    implementation 'org.projectlombok:lombok:1.18.16'
+
 
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -119,13 +122,14 @@ dependencies {
     // compile "some.group:artifact:version"
     compile 'com.intellij:annotations:+@jar'
 
+
     compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
 
-    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
-    runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
+    //compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
+    //runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
 
-
+    //Mekanism - testing cross mod interactions
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
 
     // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following

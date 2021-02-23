@@ -7,6 +7,6 @@
     "tag": "minecraft:logs"
   },
   "fluid": "wrought:creosote_fluid",
-  "fluidamount": 1000,
+  "fluidamount": 100,
   "burntime": 100
 }

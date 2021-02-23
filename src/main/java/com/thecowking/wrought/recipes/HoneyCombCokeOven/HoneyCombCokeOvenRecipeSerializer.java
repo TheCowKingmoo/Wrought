@@ -32,7 +32,8 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
 
     @Override
     public HoneyCombCokeOvenRecipe read(ResourceLocation recipeId, JsonObject json) {
-        ItemStack output = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "output"), true);
+        ItemStack primaryOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "primary_output"), true);
+        ItemStack secondaryOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "secondary_output"), true);
         Ingredient input = Ingredient.deserialize(JSONUtils.getJsonObject(json, "input"));
         ResourceLocation fluidId = new ResourceLocation(JSONUtils.getString(json, "fluid"));
         int fluidAmount = JSONUtils.getInt(json, "fluidamount");
@@ -42,7 +43,7 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
         }
         FluidStack fluidStackOutput = new FluidStack(fluid, fluidAmount);
         int burnTime = JSONUtils.getInt(json, "burntime");
-        return new HoneyCombCokeOvenRecipe(recipeId, input, output, fluidStackOutput, burnTime);
+        return new HoneyCombCokeOvenRecipe(recipeId, input, primaryOutput, secondaryOutput, fluidStackOutput, burnTime);
     }
 
     /*
@@ -50,20 +51,23 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
      */
     public HoneyCombCokeOvenRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
 
-        ItemStack output = buffer.readItemStack();
-        LOGGER.info("read with output of  -> " + output );
+        ItemStack primaryOutput = buffer.readItemStack();
+        ItemStack secondaryOutput = buffer.readItemStack();
+
+        LOGGER.info("read with output of  -> " + primaryOutput );
 
         FluidStack fluidStack = buffer.readFluidStack();
         int burntime = buffer.readInt();
         Ingredient input = Ingredient.read(buffer);
-        return new HoneyCombCokeOvenRecipe(recipeId, input, output, fluidStack, burntime);
+        return new HoneyCombCokeOvenRecipe(recipeId, input, primaryOutput, secondaryOutput, fluidStack, burntime);
     }
 
     @Override
     public void write(PacketBuffer buffer, HoneyCombCokeOvenRecipe recipe) {
         Ingredient input = recipe.getIngredients().get(0);
         input.write(buffer);
-        buffer.writeItemStack(recipe.getRecipeItemStackOutput());
+        buffer.writeItemStack(recipe.getPrimaryOutput());
+        buffer.writeItemStack(recipe.getSecondaryOutput());
         buffer.writeFluidStack(recipe.getRecipeFluidStackOutput());
         buffer.writeInt(recipe.getBurnTime());
     }

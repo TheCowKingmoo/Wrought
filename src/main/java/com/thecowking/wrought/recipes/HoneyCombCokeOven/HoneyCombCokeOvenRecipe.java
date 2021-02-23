@@ -14,6 +14,8 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -21,15 +23,27 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
     private final ResourceLocation id;
     private Ingredient input;
     private FluidStack fluidStack;
-    private final ItemStack output;
+    private final ItemStack primaryOutput;
+    private ItemStack secondaryOutput;
+
+
     private int burnTime = 0;
 
-    public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient input, ItemStack output, FluidStack fluidStack, int burnTime) {
+    public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient input, ItemStack primaryOutput, ItemStack secondaryOutput, FluidStack fluidStack, int burnTime) {
         this.id = id;
-        this.output = output;
+        this.primaryOutput = primaryOutput;
+        this.secondaryOutput = secondaryOutput;
         this.input = input;
         this.fluidStack = fluidStack;
         this.burnTime = burnTime;
+    }
+
+    public ItemStack getPrimaryOutput()  {
+        return this.primaryOutput;
+    }
+
+    public ItemStack getSecondaryOutput()  {
+        return this.secondaryOutput;
     }
 
     @Override
@@ -39,15 +53,15 @@ public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
 
     @Override
     public ItemStack getCraftingResult(RecipeWrapper inv) {
-        return this.output;
+        return this.primaryOutput;
     }
 
-   @Override
-   public ItemStack getRecipeOutput() {
-        return this.output;
+    @Override
+    public ItemStack getRecipeOutput() {
+        return null;
     }
 
-    public ItemStack getRecipeItemStackOutput()  {return this.output;}
+    public ItemStack getRecipeItemStackOutput()  {return this.primaryOutput;}
     public FluidStack getRecipeFluidStackOutput()  {return this.fluidStack;}
 
     @Override

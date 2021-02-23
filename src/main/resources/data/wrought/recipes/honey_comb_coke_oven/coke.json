@@ -1,7 +1,10 @@
 {
   "type": "wrought:honey_comb_coke_oven",
-  "output": {
+  "primary_output": {
     "item": "wrought:coke"
+  },
+  "secondary_output": {
+    "item": "wrought:soot"
   },
   "input": {
     "item": "minecraft:coal"

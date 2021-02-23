@@ -5,6 +5,7 @@ import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControll
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -44,9 +46,10 @@ public class HCCokeOvenContainer extends Container {
 
 
     final static int INPUT_ITEM_SLOT_IDX = 0;
-    final static int OUTPUT_ITEM_SLOT_IDX = 1;
-    final static int FLUID_INPUT_ITEM_SLOT_IDX = 2;
-    final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 3;
+    final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 1;
+    final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 2;
+    final static int FLUID_INPUT_ITEM_SLOT_IDX = 3;
+    final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 4;
 
 
 
@@ -65,7 +68,8 @@ public class HCCokeOvenContainer extends Container {
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 addSlot(new SlotItemHandler(h, INPUT_ITEM_SLOT_IDX, ITEM_X, INPUTS_Y));             // oven item input
-                addSlot(new SlotOutput(h, OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));                  // oven item ouput
+                addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));                  // oven item ouput
+                addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+10, OUTPUTS_Y));                  // oven item ouput
                 addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));    // fluid item input
                 addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));                 // fluid item output
             });
@@ -119,12 +123,14 @@ public class HCCokeOvenContainer extends Container {
         return controller.getTankMaxSize();
     }
 
-
-
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
+       //BlockPos targetBlock = new BlockPos(playerIn.getLookVec());
+        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), controllerPos), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
+
+        //return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), targetBlock), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
     }
+
     @Nonnull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {

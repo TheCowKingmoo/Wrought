@@ -5,9 +5,11 @@ import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
-import com.thecowking.wrought.items.BlockItemBase;
-import com.thecowking.wrought.items.CokeBlockItem;
-import com.thecowking.wrought.items.CokeItem;
+import com.thecowking.wrought.items.blocks.BlockItemBase;
+import com.thecowking.wrought.items.blocks.CokeBlockItem;
+import com.thecowking.wrought.items.items.AshItem;
+import com.thecowking.wrought.items.items.CokeItem;
+import com.thecowking.wrought.items.items.SootItem;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
@@ -72,6 +74,12 @@ public class RegistryHandler {
 
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
+
+    //Soot Item
+    public static final RegistryObject<Item> SOOT = ITEMS.register("soot", SootItem::new);
+
+    //Ash Item
+    public static final RegistryObject<Item> ASH = ITEMS.register("ash", AshItem::new);
 
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);

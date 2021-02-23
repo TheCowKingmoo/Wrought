@@ -1,4 +1,4 @@
-package com.thecowking.wrought.items;
+package com.thecowking.wrought.items.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;

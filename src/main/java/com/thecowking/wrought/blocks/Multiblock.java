@@ -24,7 +24,9 @@ public class Multiblock {
     public static final String NUM_TICKS = "N_TICKS";
 
     public static final String INVENTORY_IN = "inv_in";
-    public static final String INVENTORY_OUT = "inv_out";
+    public static final String PRIMARY_INVENTORY_OUT = "p_inv_out";
+    public static final String SECONDARY_INVENTORY_OUT = "s_inv_out";
+
     public static final String FLUID_INVENTORY_IN = "fluid_inv_in";
     public static final String FLUID_INVENTORY_OUT = "fluid_inv_out";
     public static final String FLUID_TANK = "fluid_tank";

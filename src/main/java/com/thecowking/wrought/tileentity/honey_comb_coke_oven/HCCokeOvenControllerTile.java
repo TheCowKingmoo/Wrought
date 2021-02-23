@@ -138,7 +138,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     // used to track when we can start an operations
     // -> didnt want something that processes too fast
-    private int tickCounter = 0;
+    private int tickCounter;
 
     // tracks for the light level and blockstate
     private boolean isSmelting = false;
@@ -203,6 +203,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         this.height = posArray.length;
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
+        this.tickCounter = 0;
     }
 
     /*
@@ -232,7 +233,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         // Check if enough time passed for an operation
         // note - don't really care about writing this to mem
-        if(tickCounter < TICKSPEROPERATION)  {
+        if(tickCounter < this.TICKSPEROPERATION)  {
             tickCounter++;
             finishOperation();
             return;
@@ -248,6 +249,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Main operation driver - checks all instances to make sure that we can actually run an operation
      */
     public void attemptRunOperation() {
+        LOGGER.info("Attempt Oven Operation");
+
 
         // Checks if we can fill the item in the fluid input with the tanks fluid
         processFluidContainerItem();
@@ -256,16 +259,15 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(!processItemBackLog())  { return; }
 
         // check if redstone is turning machine off
-        if (redstonePowered())  { return; }
+        if(redstonePowered())  { return; }
 
         // either increment how long current item has cooked or get ready to move onto next item
-        if(processItem())  { return; }
+        if(!processItem())  { return; }
 
         // check to make sure output is not full before starting another operation
         if (outputSlot.getStackInSlot(0).getCount() >= outputSlot.getStackInSlot(0).getMaxStackSize()) {
             machineChangeOperation(false);
             LOGGER.info("cannot insert item off");
-            finishOperation();
             return;
         }
 
@@ -286,6 +288,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         true if we should continue on
      */
     private boolean processItemBackLog()  {
+        LOGGER.info("Process Item Backlog");
+
 
         if(this.itemBacklog == ItemStack.EMPTY)  {return true;}
 
@@ -309,6 +313,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Checks if redstone signal is on / off and turns off machine if on
      */
     private boolean redstonePowered()  {
+        LOGGER.info("Check Redstone Power");
+
         if(isRedstonePowered(this.redstoneIn)) {
             LOGGER.info("redstone turn off");
             machineChangeOperation(false);
@@ -323,11 +329,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
 
     private boolean processItem()  {
+        LOGGER.info("Process Item");
+
         // Check if there is a previous item and the item has "cooked" long enough
         if (processingItemStack != ItemStack.EMPTY && this.stateData.timeElapsed++ < this.stateData.timeComplete) {
+            LOGGER.info("Burn Time = " + this.stateData.timeElapsed + " finishtime = " + this.stateData.timeComplete);
+
             this.needUpdate = true;
             this.stateData.timeElapsed++;
-            finishOperation();
             return false;
 
             // item has cooked long enough -> insert outputs and move onto next operation
@@ -352,6 +361,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Check if a new item has a recipe that the oven can use
      */
     private boolean recipeChecker(HoneyCombCokeOvenRecipe currentRecipe)  {
+        LOGGER.info("Recipe Check");
+
 
         // check if we have a recipe for item
         if (currentRecipe == null) {
@@ -366,6 +377,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Check if we can store a fluid for a new operation
      */
     private boolean fluidRecipeChecker(HoneyCombCokeOvenRecipe currentRecipe)  {
+        LOGGER.info("Fluid Reciepe Check");
+
         // get the fluid output from recipe
         FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
 
@@ -398,8 +411,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      Method to run a single oven operation
      */
     private void ovenOperation() {
+        LOGGER.info("Oven Operation");
         ItemStack outputs = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeItemStackOutput();
         FluidStack fluidOutput = this.getRecipe(this.inputSlot.getStackInSlot(0)).getRecipeFluidStackOutput();
+        this.stateData.timeComplete = outputs.getBurnTime();
+        this.operationComplete = outputs.getBurnTime();
+
 
         if (outputs != null && outputs.getItem() != Items.AIR) {
             if(!this.isSmelting)  {
@@ -491,7 +508,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
-    
+
 
     // override the always return true method
     // TODO - learn a better way to throw this info upward

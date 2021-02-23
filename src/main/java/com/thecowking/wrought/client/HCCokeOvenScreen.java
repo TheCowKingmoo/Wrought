@@ -74,11 +74,11 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         // detects when the player is hovering over the tank
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
             FluidStack fluidStack = getFluidStackInTank();
-            TranslationTextComponent text = new TranslationTextComponent(fluidStack.getDisplayName().getString());
-            text.appendString(fluidStack.getAmount() + " / " + container.getTankMaxSize());
-            renderTooltip(matrixStack, text, x, y+10);
-
-        // debug
+            TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + container.getTankMaxSize());
+            renderTooltip(matrixStack, displayName, x, y+10);
+            renderTooltip(matrixStack, fluidAmount, x, y+27);
+            // debug
         }  else  {
             renderTooltip(matrixStack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
         }

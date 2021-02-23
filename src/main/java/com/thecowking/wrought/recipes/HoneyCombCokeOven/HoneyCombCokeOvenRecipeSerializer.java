@@ -46,7 +46,7 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
     }
 
     /*
-        Read information from the server - TODO -> fluids
+        Read information from the server
      */
     public HoneyCombCokeOvenRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
 
@@ -66,6 +66,5 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
         buffer.writeItemStack(recipe.getRecipeItemStackOutput());
         buffer.writeFluidStack(recipe.getRecipeFluidStackOutput());
         buffer.writeInt(recipe.getBurnTime());
-
     }
 }

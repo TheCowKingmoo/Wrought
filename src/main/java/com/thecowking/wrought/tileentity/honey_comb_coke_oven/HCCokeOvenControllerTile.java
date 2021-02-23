@@ -9,6 +9,7 @@ import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.util.*;
+import javafx.util.Pair;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -178,6 +179,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     // lets us know when the current item is done cooking
     public int operationComplete;
+
+    // used to let autobuilding know what blocks are still needed
+    HashMap<Block, Integer> failures;
 
     public HCCokeOvenControllerTile() {
 
@@ -509,29 +513,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
 
-
-    // override the always return true method
-    // TODO - learn a better way to throw this info upward
-    @Override
-    public boolean checkIfCorrectFrame(Block block) {
-        return (block instanceof HCCokeOvenFrameBlock);
-    }
-
-    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
-        INamedContainerProvider containerProvider = new INamedContainerProvider() {
-            @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("Honey Comb Coke Oven");
-            }
-
-            @Override
-            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
-            }
-        };
-        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
-    }
-
     /*
         Method to set off updates
         This way markDirty is not called multiple times in one operation
@@ -545,6 +526,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
+    /*
+        Tells the server what to save to disk
+     */
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
@@ -556,6 +540,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         stateData.readFromNBT(nbt);
     }
 
+
+    /*
+        Tells the server what to read from disk on  chunk load
+     */
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
@@ -568,7 +556,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return tag;
     }
 
-
+    /*
+        lets the world around it know what can be automated
+     */
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
@@ -596,10 +586,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     @Override
     public ITextComponent getDisplayName() {
-        return null;
+        return new TranslationTextComponent("Coke Oven Controller");
     }
 
-
+    /*
+        Finds a recipe for a given input
+     */
     @Nullable
     public HoneyCombCokeOvenRecipe getRecipe(ItemStack stack) {
         if (stack == null) {
@@ -615,19 +607,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
         return null;
     }
-
-    public boolean isValidInputItem(InputItemHandler handler)  {
-        Set<IRecipe<?>> recipes = findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, this.world);
-        LOGGER.info("valid check");
-        for (IRecipe<?> iRecipe : recipes) {
-            HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
-            if (recipe.matches(new RecipeWrapper(handler), this.world)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn, World world) {
         LOGGER.info("findRecipesByType - server");
@@ -645,8 +624,48 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
+    /*
+        Launches the GUI
+     */
+    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+        INamedContainerProvider containerProvider = new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent("Honey Comb Coke Oven");
+            }
+
+            @Override
+            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
+            }
+        };
+        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
+    }
+
     // ------------------------MULTI-BLOCK STUFFS ------------------------------------------------
 
+
+    public void checkIfPlayerHasBlocksNeeded()  {
+
+    }
+
+    public HashMap<Block, Integer> getBlocksNeeded()  {
+        this.failures = new HashMap<>();
+        getMultiBlockMembers(getWorld(), null, false, this.getDirectionFacing());
+        return this.failures;
+    }
+
+    public void autoBuildMultiBlock()  {
+
+    }
+
+
+
+    // override the always return true method
+    @Override
+    public boolean checkIfCorrectFrame(Block block) {
+        return (block instanceof HCCokeOvenFrameBlock);
+    }
 
     /*
   Updates all information in all multiblock members
@@ -679,7 +698,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
       This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
       that the multi-blocks is being formed or destroyed.
      */
-
     public List<BlockPos> getMultiBlockMembers(World worldIn, PlayerEntity player, boolean destroy, Direction direction) {
         BlockPos centerPos = calcCenterBlock(direction);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
@@ -699,13 +717,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
                     if (currentBlock != correctBlock && !destroy) {
                         if (!destroy) {
-                            if (player != null)  {
+                            if (player != null) {
                                 String msg = "Could not form because of block at Coord at X:" + current.getX() + " Y:" + current.getY() + " Z:" + current.getZ();
                                 player.sendStatusMessage(new TranslationTextComponent(msg), false);
                                 msg = "Should be " + correctBlock.getBlock() + " not " + currentBlock.getBlock();
                                 player.sendStatusMessage(new TranslationTextComponent(msg), true);
                                 player.sendStatusMessage(new TranslationTextComponent(msg), false);
-
+                            }
+                            // increment block
+                            if(this.failures != null)  {
+                                failures.put(correctBlock, failures.get(correctBlock)+1);
                             }
                             LOGGER.info("Could not form because of " + current);
                             LOGGER.info("should be " + correctBlock + " not " + currentBlock);
@@ -738,11 +759,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
         return null;
     }
-
-
-
-
-
 
     /*
       Driver for forming the multiblock

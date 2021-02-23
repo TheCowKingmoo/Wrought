@@ -1,8 +1,8 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameBlock;
-import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
+import com.thecowking.wrought.blocks.IMultiBlockFrame;
+import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
+import com.thecowking.wrought.blocks.Multiblock;
 import com.thecowking.wrought.util.RegistryHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -19,7 +19,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class HCCokeOvenFrameStairs extends StairsBlock implements IMultiBlockFrame {
 

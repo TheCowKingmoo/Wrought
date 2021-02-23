@@ -1,10 +1,10 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameBlock;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenFrameTile;
-import com.thecowking.wrought.tileentity.Multiblock.MultiBlockFrameTile;
-import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
+import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
+import com.thecowking.wrought.blocks.Multiblock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
     /*

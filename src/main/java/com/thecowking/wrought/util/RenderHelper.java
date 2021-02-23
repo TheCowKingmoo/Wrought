@@ -21,12 +21,16 @@ public class RenderHelper {
         return TEXTURE_GETTER.apply(fluid.getFluid().getAttributes().getStillTexture(fluid));
     }
 
+    /*
+        Converts rgb + opacity to argb which minecraft uses a lot of
 
-    //https://stackoverflow.com/questions/7358533/how-to-pack-argb-to-one-integer-uniquely
-
-
-    // ints are 32 bits
-    // AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
+        Ints are 32 bits so the bit layout is ->
+        AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
+          a = alpha
+          r = red
+          g = green
+          b = blue
+     */
     public static int convertARGBToInt(int r, int g, int b, double a)  {
         int intA = (int)(a * 256);
         int red = r & 0xFF;

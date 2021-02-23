@@ -1,8 +1,7 @@
-package com.thecowking.wrought.blocks.MultiBlock;
+package com.thecowking.wrought.blocks;
 
 
 
-import com.thecowking.wrought.blocks.INameableTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;

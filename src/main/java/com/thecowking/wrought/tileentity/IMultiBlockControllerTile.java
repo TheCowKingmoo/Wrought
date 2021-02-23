@@ -1,4 +1,4 @@
-package com.thecowking.wrought.tileentity.Multiblock;
+package com.thecowking.wrought.tileentity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock;
+package com.thecowking.wrought.blocks;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

@@ -1,6 +1,6 @@
-package com.thecowking.wrought.blocks.MultiBlock;
+package com.thecowking.wrought.blocks;
 
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -13,8 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.FORMED;
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.REDSTONE;
+import static com.thecowking.wrought.blocks.Multiblock.FORMED;
+import static com.thecowking.wrought.blocks.Multiblock.REDSTONE;
 import javax.annotation.Nullable;
 
 

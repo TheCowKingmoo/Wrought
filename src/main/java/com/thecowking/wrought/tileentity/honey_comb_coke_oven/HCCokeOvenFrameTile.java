@@ -1,7 +1,6 @@
-package com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven;
+package com.thecowking.wrought.tileentity.honey_comb_coke_oven;
 
-import com.thecowking.wrought.tileentity.Multiblock.MultiBlockFrameTile;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;

@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks;
+package com.thecowking.wrought.blocks.coke_block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

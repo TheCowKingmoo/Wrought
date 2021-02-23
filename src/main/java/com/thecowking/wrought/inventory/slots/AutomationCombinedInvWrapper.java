@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     private static final Logger LOGGER = LogManager.getLogger();

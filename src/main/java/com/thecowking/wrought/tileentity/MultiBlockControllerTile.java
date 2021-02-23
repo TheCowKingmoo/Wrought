@@ -1,6 +1,6 @@
-package com.thecowking.wrought.tileentity.Multiblock;
+package com.thecowking.wrought.tileentity;
 
-import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
+import com.thecowking.wrought.blocks.Multiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBlockControllerTile, ITickableTileEntity {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -30,6 +30,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     protected int length;
     protected int width;
     protected int height;
+
+    protected final int TICKSPEROPERATION = 20;
+
 
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);

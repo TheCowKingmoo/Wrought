@@ -1,8 +1,8 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.INameableTile;
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerBlock;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.getTileFromPos;
+import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
 
 
 public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock implements INameableTile {

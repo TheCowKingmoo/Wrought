@@ -1,16 +1,16 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.blocks.CokeBlock;
-import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.*;
+import com.thecowking.wrought.blocks.coke_block.CokeBlock;
+import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
 import com.thecowking.wrought.items.BlockItemBase;
 import com.thecowking.wrought.items.CokeBlockItem;
 import com.thecowking.wrought.items.CokeItem;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenFrameTile;
-import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCStateData;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BucketItem;

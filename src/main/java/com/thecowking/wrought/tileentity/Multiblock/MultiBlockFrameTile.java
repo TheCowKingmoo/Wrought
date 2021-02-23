@@ -1,5 +1,6 @@
-package com.thecowking.wrought.blocks.MultiBlock;
+package com.thecowking.wrought.tileentity.Multiblock;
 
+import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;

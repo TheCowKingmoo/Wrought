@@ -1,5 +1,6 @@
-package com.thecowking.wrought.blocks.MultiBlock;
+package com.thecowking.wrought.tileentity.Multiblock;
 
+import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;

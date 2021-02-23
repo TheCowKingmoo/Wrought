@@ -1,6 +1,6 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenScreen;
+import com.thecowking.wrought.client.HCCokeOvenScreen;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;

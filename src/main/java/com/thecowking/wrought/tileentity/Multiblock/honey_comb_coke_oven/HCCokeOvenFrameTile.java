@@ -1,22 +1,11 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameTile;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
+import com.thecowking.wrought.tileentity.Multiblock.MultiBlockFrameTile;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;

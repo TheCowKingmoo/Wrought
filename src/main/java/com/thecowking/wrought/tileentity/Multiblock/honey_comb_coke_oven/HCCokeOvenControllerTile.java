@@ -1,11 +1,13 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.IMultiBlockFrame;
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerTile;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenFrameBlock;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
+import com.thecowking.wrought.tileentity.Multiblock.MultiBlockControllerTile;
 import com.thecowking.wrought.util.*;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
@@ -13,7 +15,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BucketItem;
@@ -249,9 +250,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             finishOperation();
             return;
         }
-
-
-
 
         // Check if there is a previous item and the item has "cooked" long enough
         if (processingItemStack != ItemStack.EMPTY && this.stateData.timeElapsed++ < this.stateData.timeComplete) {

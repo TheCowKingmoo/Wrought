@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IIntArray;

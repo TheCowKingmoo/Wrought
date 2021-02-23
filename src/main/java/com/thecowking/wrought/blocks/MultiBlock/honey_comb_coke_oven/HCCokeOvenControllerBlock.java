@@ -2,6 +2,7 @@ package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.INameableTile;
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockControllerBlock;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

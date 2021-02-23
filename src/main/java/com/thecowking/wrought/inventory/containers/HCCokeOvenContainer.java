@@ -1,6 +1,7 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.inventory.containers;
 
-import com.thecowking.wrought.inventory.slots.SlotInputHandler;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCStateData;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;

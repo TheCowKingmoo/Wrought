@@ -1,7 +1,9 @@
 package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameBlock;
-import com.thecowking.wrought.blocks.MultiBlock.MultiBlockFrameTile;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.tileentity.Multiblock.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.Multiblock.MultiBlockFrameTile;
 import com.thecowking.wrought.blocks.MultiBlock.Multiblock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

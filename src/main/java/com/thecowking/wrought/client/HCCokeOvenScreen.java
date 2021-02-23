@@ -1,20 +1,18 @@
-package com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven;
+package com.thecowking.wrought.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -98,20 +96,41 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
 
 
+    /*
+        Does as the name suggests -> draws the main background to the gui
+     */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
+
+        // progress bar exists behind the main background
+        drawProgressBar(stack);
+
         // Draws the main background
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
-        // Draws the Cooking time
-        double processTime = container.getProgress();
-        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
-        this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
-                COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
-
         // Draws the fluid tank
         drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
+    }
+
+    /*
+        1. Draws a black background
+        2. Draws a box that expands downwards the larger the processTime is.
+            The main gui has an arrow cutout that will go over thi process box and give the appearnce of an arrow.
+     */
+    protected void drawProgressBar(MatrixStack stack)  {
+        // draw a background for where the progress bar will not be
+        this.fill(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V, RenderHelper.convertARGBToInt(255,255,255,1));
+
+        // get texture for the progress bar
+        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
+
+        // gets the value from 0 to 1 of how much progress the cooking item has
+        double processTime = container.getProgress();
+
+        // draw on screen
+        this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
+                COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
     }
 
 

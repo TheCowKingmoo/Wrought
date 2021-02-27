@@ -131,6 +131,11 @@ public class HCCokeOvenContainer extends Container {
         //return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), targetBlock), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
     }
 
+    public String getStatus()  {
+        return controller.getStatus();
+
+    }
+
     @Nonnull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {

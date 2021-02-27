@@ -31,6 +31,8 @@ public class Multiblock {
     public static final String FLUID_INVENTORY_OUT = "fluid_inv_out";
     public static final String FLUID_TANK = "fluid_tank";
 
+    public static final String STATUS = "status";
+
 
 
 

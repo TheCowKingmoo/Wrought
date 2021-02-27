@@ -32,6 +32,12 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     final static  int COOK_BAR_HEIGHT = 30;
     private static final Logger LOGGER = LogManager.getLogger();
 
+
+    final static int INDICATOR_X_OFFSET = 60;
+    final static int INDICATOR_Y_OFFSET = 20;
+    final static int INDICATOR_HEIGHT = 20;
+    final static int INDICATOR_WIDTH = 20;
+
     final static int TANK_X_OFFSET = 83;
     final static int TANK_Y_OFFSET = 21;
     final static int TANK_WIDTH = 17;
@@ -79,6 +85,9 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
             renderTooltip(matrixStack, displayName, x, y+10);
             renderTooltip(matrixStack, fluidAmount, x, y+27);
             // debug
+        }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
+            TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
+            renderTooltip(matrixStack, displayName, x, y);
         }  else  {
             renderTooltip(matrixStack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
         }
@@ -108,9 +117,9 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         // Draws the main background
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
-
         // Draws the fluid tank
         drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
+        drawStatusIndicator(stack);
     }
 
     /*
@@ -120,7 +129,6 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
      */
     protected void drawProgressBar(MatrixStack stack)  {
         // draw a background for where the progress bar will not be
-        this.fill(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V, RenderHelper.convertARGBToInt(255,255,255,1));
 
         // get texture for the progress bar
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
@@ -131,6 +139,14 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         // draw on screen
         this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
                 COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
+    }
+
+
+
+
+    protected void drawStatusIndicator(MatrixStack stack)  {
+        int color = getStatusColor();
+        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 300.0F);
     }
 
 
@@ -217,6 +233,23 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         buffer.pos(x, y - height, zLevel).tex(minU, minV).endVertex();
         // Draw
         Tessellator.getInstance().draw();
+    }
+
+    public String getStatus() {
+        return container.getStatus();
+    }
+
+    public int getStatusColor()  {
+        String status = getStatus();
+        if(status == "Processing")  {
+            //yellow
+            return RenderHelper.convertARGBToInt(255,255,0,1);
+        } else if( status == "Standing By")  {
+            //green
+            return  RenderHelper.convertARGBToInt(0,255,0,1);
+        }
+        // red
+        return RenderHelper.convertARGBToInt(255,0,0,1);
     }
 
 

@@ -173,6 +173,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private FluidStack processingFluidStack;
     private boolean isProcessing = false;
 
+    private String status;
+
     // used to stop operations if the bucket slot cannot be used
     private ItemStack fluidItemBacklog;
 
@@ -212,6 +214,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         this.length = posArray[0].length;
         this.width = posArray[0][0].length;
         this.tickCounter = 0;
+
+        this.status = "Standing By";
     }
 
     /*
@@ -275,7 +279,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // check to make sure output is not full before starting another operation
         if (primaryOutputSlot.getStackInSlot(0).getCount() >= primaryOutputSlot.getStackInSlot(0).getMaxStackSize()) {
             machineChangeOperation(false);
-            LOGGER.info("cannot insert item off");
+            this.status = "Not enough room to process current recipe";
+            return;
+        }
+
+        if(inputSlot.getStackInSlot(0) == ItemStack.EMPTY || inputSlot.getStackInSlot(0).getItem() == Items.AIR)  {
+            this.status = "Standing By";
             return;
         }
 
@@ -284,7 +293,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         // check if we have a recipe for item
         if (!recipeChecker(currentRecipe)) { return; }
-        if (!fluidRecipeChecker(currentRecipe))  {return;}
+        if (!fluidRecipeChecker(currentRecipe))  { return; }
 
         ovenOperation(currentRecipe);
     }
@@ -314,6 +323,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
         if(this.itemBacklog == ItemStack.EMPTY)  {return true;}
 
+        this.status = "Output is full";
         return false;
     }
 
@@ -326,6 +336,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         if(isRedstonePowered(this.redstoneIn)) {
             LOGGER.info("redstone turn off");
             machineChangeOperation(false);
+            this.status = "Red stone Turning off";
             return true;
         }
         return false;
@@ -369,18 +380,27 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
+    protected boolean isMachineRunning()  {
+        return this.isSmelting;
+    }
+
+    public String getStatus()  {
+        return this.status;
+    }
+
+
 
     /*
         Check if a new item has a recipe that the oven can use
      */
     private boolean recipeChecker(HoneyCombCokeOvenRecipe currentRecipe)  {
-        LOGGER.info("Recipe Check");
-
+        //LOGGER.info("Recipe Check");
 
         // check if we have a recipe for item
         if (currentRecipe == null) {
             machineChangeOperation(false);
-            //LOGGER.info("no recipe");
+            this.status = "No Recipe for Item";
+            LOGGER.info(inputSlot.getStackInSlot(0));
             return false;
         }
         return true;
@@ -403,6 +423,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 LOGGER.info(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() + " is not smaller than " + fluidTank.getCapacity());
                 LOGGER.info("fluid cannot insert as there is not enough tank space");
                 finishOperation();
+                this.status = "Not enough space in tank to process current recipe";
                 return false;
             }
 
@@ -412,6 +433,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 LOGGER.info(recipeFluidOutput.getDisplayName());
                 LOGGER.info(fluidTank.getFluid().getDisplayName());
                 finishOperation();
+                this.status = "Output Fluid does not match fluid in tank";
                 return false;
             }
 
@@ -464,6 +486,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         setOn(online);
         if(online)  {
             sendOutRedstone(15);
+            this.status = "Processing";
         }  else  {
             sendOutRedstone(0);
         }
@@ -526,11 +549,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
     }
 
-
-    public BlockPos getMultiBlockCenter()  {
-        return calcCenterBlock(this.getDirectionFacing());
-    }
-
     /*
         Method to set off updates
         This way markDirty is not called multiple times in one operation
@@ -542,7 +560,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             markDirty();
         }
     }
-
 
     /*
         Tells the server what to save to disk
@@ -557,6 +574,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         itemFluidOutputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_OUT));
         fluidTank.readFromNBT(nbt.getCompound(FLUID_TANK));
         stateData.readFromNBT(nbt);
+        this.status = nbt.getString(STATUS);
     }
 
     /*
@@ -572,6 +590,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         tag.put(FLUID_INVENTORY_OUT, itemFluidOutputSlot.serializeNBT());
         tag.put(FLUID_TANK, fluidTank.writeToNBT(new CompoundNBT()));
         stateData.putIntoNBT(tag);
+        tag.putString(STATUS, this.status);
         return tag;
     }
 
@@ -646,7 +665,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     /*
         Launches the GUI
      */
-    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+    public void openMultiBlockGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
@@ -677,8 +696,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public void autoBuildMultiBlock()  {
 
     }
-
-
 
     // override the always return true method
     @Override

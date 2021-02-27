@@ -1,11 +1,11 @@
 package com.thecowking.wrought.inventory.containers;
 
+import com.thecowking.wrought.blocks.Multiblock;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -26,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
+import static com.thecowking.wrought.blocks.Multiblock.*;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
@@ -39,18 +39,11 @@ public class HCCokeOvenContainer extends Container {
     private HCStateData stateData;
     private PlayerEntity player;
 
-    final static int ITEM_X = 14;
+    final static int ITEM_X = 15;
     final static int FLUID_ITEM_X = 149;
-    final static int INPUTS_Y = 22;
-    final static int OUTPUTS_Y = 72;
-
-
-    final static int INPUT_ITEM_SLOT_IDX = 0;
-    final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 1;
-    final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 2;
-    final static int FLUID_INPUT_ITEM_SLOT_IDX = 3;
-    final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 4;
-
+    final static int INPUTS_Y = 21;
+    final static int OUTPUTS_Y = 75;
+    final static int SLOT_SEP_X = 21;
 
 
 
@@ -67,18 +60,25 @@ public class HCCokeOvenContainer extends Container {
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                addSlot(new SlotItemHandler(h, INPUT_ITEM_SLOT_IDX, ITEM_X, INPUTS_Y));             // oven item input
-                addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));                  // oven item ouput
-                addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+10, OUTPUTS_Y));                  // oven item ouput
-                addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));    // fluid item input
-                addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));                 // fluid item output
+                // Primary Item Input Slot
+                addSlot(new SlotItemHandler(h, PRIMARY_INPUT_ITEM_IDX, ITEM_X, INPUTS_Y));
+                // Secondary Item Input Slow
+                addSlot(new SlotItemHandler(h, SECONDARY_INPUT_ITEM_IDX, ITEM_X+SLOT_SEP_X+1, INPUTS_Y));
+                // Primary Item Output Slot
+                addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));
+                // Secondary Item Output Slot
+                addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+SLOT_SEP_X, OUTPUTS_Y));
+                // Trinary Item Output Slot
+                addSlot(new SlotOutput(h, TRI_OUTPUT_ITEM_SLOT_IDX, ITEM_X+2*(SLOT_SEP_X), OUTPUTS_Y));
+                // Fluid Item Input Slot
+                addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));
+                // Fluid Item Output Slot
+                addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));
             });
         }
         layoutPlayerInventorySlots(10, 115);
         trackIntArray(stateData);
     }
-
-
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {

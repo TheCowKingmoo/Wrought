@@ -33,15 +33,15 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-    final static int INDICATOR_X_OFFSET = 60;
-    final static int INDICATOR_Y_OFFSET = 20;
-    final static int INDICATOR_HEIGHT = 20;
-    final static int INDICATOR_WIDTH = 20;
+    final static int INDICATOR_X_OFFSET = 82;
+    final static int INDICATOR_Y_OFFSET = 48;
+    final static int INDICATOR_HEIGHT = 11;
+    final static int INDICATOR_WIDTH = 11;
 
-    final static int TANK_X_OFFSET = 83;
-    final static int TANK_Y_OFFSET = 21;
+    final static int TANK_X_OFFSET = 129;
+    final static int TANK_Y_OFFSET = 19;
     final static int TANK_WIDTH = 17;
-    final static int TANK_HEIGHT = 69;
+    final static int TANK_HEIGHT = 74;
 
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
@@ -113,13 +113,17 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
 
         // progress bar exists behind the main background
         drawProgressBar(stack);
+        //draw fluid before main background
+        drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
+        //draw indicator before background
+        drawStatusIndicator(stack);
+
+
 
         // Draws the main background
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
         // Draws the fluid tank
-        drawFluid(stack, container.getFluid(), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
-        drawStatusIndicator(stack);
     }
 
     /*
@@ -146,7 +150,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
 
     protected void drawStatusIndicator(MatrixStack stack)  {
         int color = getStatusColor();
-        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 300.0F);
+        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
     }
 
 
@@ -218,7 +222,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         float minV = icon.getMinV();
         float maxV = icon.getMaxV();
 
-        float zLevel = 1.0f;
+        float zLevel = 0f;
 
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

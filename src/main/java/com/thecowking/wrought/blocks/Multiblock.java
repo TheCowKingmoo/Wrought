@@ -23,7 +23,9 @@ public class Multiblock {
     public static final String DIRECTION_FACING = "D_F";
     public static final String NUM_TICKS = "N_TICKS";
 
-    public static final String INVENTORY_IN = "inv_in";
+    public static final String PRIMARY_INVENTORY_IN = "p_inv_in";
+    public static final String SECONDARY_INVENTORY_IN = "s_inv_in";
+
     public static final String PRIMARY_INVENTORY_OUT = "p_inv_out";
     public static final String SECONDARY_INVENTORY_OUT = "s_inv_out";
 
@@ -47,10 +49,18 @@ public class Multiblock {
 
 
 
-    public static final int INDEX_ITEM_INPUT = 0;
-    public static final int INDEX_ITEM_OUTPUT = 1;
-    public static final int INDEX_FLUID_ITEM_INPUT = 2;
-    public static final int INDEX_FLUID_ITEM_OUTPUT = 3;
+    // Inputs
+    public final static int PRIMARY_INPUT_ITEM_IDX = 0;
+    public final static int SECONDARY_INPUT_ITEM_IDX = 1;
+    public final static int FLUID_INPUT_ITEM_SLOT_IDX = 2;
+    // Outputs
+    public final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 3;
+    public final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 4;
+    public final static int TRI_OUTPUT_ITEM_SLOT_IDX = 5;
+    public final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 6;
+
+    public final static int NUM_INPTUS = 3;
+
 
 
     public static TileEntity getTileFromPos(World worldIn, BlockPos posIn)  {return worldIn.getTileEntity(posIn);}

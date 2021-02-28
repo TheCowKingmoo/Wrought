@@ -51,15 +51,13 @@ public class Multiblock {
 
     // Inputs
     public final static int PRIMARY_INPUT_ITEM_IDX = 0;
-    public final static int SECONDARY_INPUT_ITEM_IDX = 1;
-    public final static int FLUID_INPUT_ITEM_SLOT_IDX = 2;
+    public final static int FLUID_INPUT_ITEM_SLOT_IDX = 1;
     // Outputs
-    public final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 3;
-    public final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 4;
-    public final static int TRI_OUTPUT_ITEM_SLOT_IDX = 5;
-    public final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 6;
+    public final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 2;
+    public final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 3;
+    public final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 4;
 
-    public final static int NUM_INPTUS = 3;
+    public final static int NUM_INPTUS = 2;
 
 
 

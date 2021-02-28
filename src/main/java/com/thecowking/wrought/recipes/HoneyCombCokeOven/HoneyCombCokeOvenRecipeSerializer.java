@@ -3,6 +3,7 @@ package com.thecowking.wrought.recipes.HoneyCombCokeOven;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -32,18 +33,35 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
 
     @Override
     public HoneyCombCokeOvenRecipe read(ResourceLocation recipeId, JsonObject json) {
+        // get outputs
         ItemStack primaryOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "primary_output"), true);
-        ItemStack secondaryOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "secondary_output"), true);
-        Ingredient input = Ingredient.deserialize(JSONUtils.getJsonObject(json, "input"));
-        ResourceLocation fluidId = new ResourceLocation(JSONUtils.getString(json, "fluid"));
-        int fluidAmount = JSONUtils.getInt(json, "fluidamount");
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidId);
-        if (fluid == null || fluid == FluidStack.EMPTY.getFluid()) {
-            throw new JsonSyntaxException("Unknown fluid: " + fluidId);
+        if (primaryOutput == null || primaryOutput == ItemStack.EMPTY) {
+            throw new JsonSyntaxException("Unknown Primary Output Itemstack: " + primaryOutput);
         }
-        FluidStack fluidStackOutput = new FluidStack(fluid, fluidAmount);
+        ItemStack secondaryOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "secondary_output"), true);
+        // get inputs
+        Ingredient primaryInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "primary_input"));
+        if (secondaryOutput == null || secondaryOutput == ItemStack.EMPTY) {
+            throw new JsonSyntaxException("Unknown Primary Input: " + primaryInput);
+        }
+        // get fluid
+        ResourceLocation fluidId = new ResourceLocation(JSONUtils.getString(json, "fluid"));
+        // get amount of fluid
+        int fluidAmount = JSONUtils.getInt(json, "fluidamount");
+
+        // create fluid stack
+        FluidStack fluidStackOutput = FluidStack.EMPTY;
+        if(fluidAmount != 0)  {
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidId);
+            if (fluid == null || fluid == FluidStack.EMPTY.getFluid()) {
+                throw new JsonSyntaxException("Unknown fluid: " + fluidId);
+            }
+            fluidStackOutput = new FluidStack(fluid, fluidAmount);
+        }
+
+        // get burn time
         int burnTime = JSONUtils.getInt(json, "burntime");
-        return new HoneyCombCokeOvenRecipe(recipeId, input, primaryOutput, secondaryOutput, fluidStackOutput, burnTime);
+        return new HoneyCombCokeOvenRecipe(recipeId, primaryInput, primaryOutput, secondaryOutput, fluidStackOutput, burnTime);
     }
 
     /*
@@ -58,14 +76,15 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
 
         FluidStack fluidStack = buffer.readFluidStack();
         int burntime = buffer.readInt();
-        Ingredient input = Ingredient.read(buffer);
-        return new HoneyCombCokeOvenRecipe(recipeId, input, primaryOutput, secondaryOutput, fluidStack, burntime);
+        Ingredient primaryInput = Ingredient.read(buffer);
+        return new HoneyCombCokeOvenRecipe(recipeId, primaryInput, primaryOutput, secondaryOutput, fluidStack, burntime);
     }
 
     @Override
     public void write(PacketBuffer buffer, HoneyCombCokeOvenRecipe recipe) {
-        Ingredient input = recipe.getIngredients().get(0);
-        input.write(buffer);
+        Ingredient primaryInput = recipe.getIngredients().get(0);
+
+        primaryInput.write(buffer);
         buffer.writeItemStack(recipe.getPrimaryOutput());
         buffer.writeItemStack(recipe.getSecondaryOutput());
         buffer.writeFluidStack(recipe.getRecipeFluidStackOutput());

@@ -1,8 +1,10 @@
 package com.thecowking.wrought.inventory.containers;
 
 import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.util.RecipeSerializerInit;
 import com.thecowking.wrought.util.RegistryHandler;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
@@ -11,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
@@ -20,12 +23,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
+import java.util.Set;
+
 import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
@@ -40,10 +47,10 @@ public class HCCokeOvenContainer extends Container {
     private PlayerEntity player;
 
     final static int ITEM_X = 15;
-    final static int FLUID_ITEM_X = 149;
+    final static int FLUID_ITEM_X = 150;
     final static int INPUTS_Y = 21;
-    final static int OUTPUTS_Y = 75;
-    final static int SLOT_SEP_X = 21;
+    final static int OUTPUTS_Y = 72;
+    final static int SLOT_SEP_X = 22;
 
 
 
@@ -62,14 +69,10 @@ public class HCCokeOvenContainer extends Container {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 // Primary Item Input Slot
                 addSlot(new SlotItemHandler(h, PRIMARY_INPUT_ITEM_IDX, ITEM_X, INPUTS_Y));
-                // Secondary Item Input Slow
-                addSlot(new SlotItemHandler(h, SECONDARY_INPUT_ITEM_IDX, ITEM_X+SLOT_SEP_X+1, INPUTS_Y));
                 // Primary Item Output Slot
                 addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));
                 // Secondary Item Output Slot
                 addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+SLOT_SEP_X, OUTPUTS_Y));
-                // Trinary Item Output Slot
-                addSlot(new SlotOutput(h, TRI_OUTPUT_ITEM_SLOT_IDX, ITEM_X+2*(SLOT_SEP_X), OUTPUTS_Y));
                 // Fluid Item Input Slot
                 addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));
                 // Fluid Item Output Slot
@@ -135,6 +138,7 @@ public class HCCokeOvenContainer extends Container {
         return controller.getStatus();
 
     }
+
 
     @Nonnull
     @Override

@@ -33,7 +33,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-    final static int INDICATOR_X_OFFSET = 82;
+    final static int INDICATOR_X_OFFSET = 39;
     final static int INDICATOR_Y_OFFSET = 48;
     final static int INDICATOR_HEIGHT = 11;
     final static int INDICATOR_WIDTH = 11;
@@ -118,12 +118,10 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         //draw indicator before background
         drawStatusIndicator(stack);
 
-
-
         // Draws the main background
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
-        // Draws the fluid tank
+
     }
 
     /*

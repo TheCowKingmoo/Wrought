@@ -6,10 +6,10 @@
   "secondary_output": {
     "item": "minecraft:charcoal"
   },
-  "input": {
+  "primary_input": {
     "tag": "minecraft:logs"
   },
   "fluid": "wrought:creosote_fluid",
   "fluidamount": 100,
-  "burntime": 5
+  "burntime": 10
 }

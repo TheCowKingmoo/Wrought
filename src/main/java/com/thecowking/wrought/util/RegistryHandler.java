@@ -8,6 +8,7 @@ import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
 import com.thecowking.wrought.items.items.AshItem;
+import com.thecowking.wrought.items.items.CokeBrickItem;
 import com.thecowking.wrought.items.items.CokeItem;
 import com.thecowking.wrought.items.items.SootItem;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
@@ -74,6 +75,9 @@ public class RegistryHandler {
 
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
+
+    //CokeBrick Item
+    public static final RegistryObject<Item> COKE_BRICK_ITEM = ITEMS.register("coke_brick_item", CokeBrickItem::new);
 
     //Soot Item
     public static final RegistryObject<Item> SOOT = ITEMS.register("soot", SootItem::new);

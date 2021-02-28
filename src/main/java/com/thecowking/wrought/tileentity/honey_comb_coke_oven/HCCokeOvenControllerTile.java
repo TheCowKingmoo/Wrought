@@ -146,12 +146,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
     // input and outputs
     protected InputItemHandler primaryInputSlot;
-    protected InputItemHandler secondaryInputSlot;
 
     // Outputs
     protected OutputItemHandler primaryOutputSlot;
     protected OutputItemHandler secondaryOutputSlot;
-    protected OutputItemHandler trinaryOutputSlot;
 
     // Fluid Item Input-Output
     protected FluidItemInputHandler itemFluidInputSlot;
@@ -163,10 +161,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private OutputFluidTank fluidTank;
 
     // used when player is directly accessing multi-block
-    private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(primaryInputSlot, secondaryInputSlot, itemFluidInputSlot, primaryOutputSlot, secondaryOutputSlot, trinaryOutputSlot, itemFluidOutputSlot));
+    private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(primaryInputSlot, itemFluidInputSlot, primaryOutputSlot, secondaryOutputSlot, itemFluidOutputSlot));
 
     // used when in world things interact with multi-block
-    private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(primaryInputSlot, secondaryInputSlot, itemFluidInputSlot, primaryOutputSlot, secondaryOutputSlot, trinaryOutputSlot, itemFluidOutputSlot));
+    private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(primaryInputSlot, itemFluidInputSlot, primaryOutputSlot, secondaryOutputSlot, itemFluidOutputSlot));
 
     // used to stop operation for when an item cannot be inserted into output slot
     private ItemStack itemBacklog;
@@ -202,13 +200,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         super(H_C_COKE_CONTROLLER_TILE.get());
 
         //init item intputs
-        this.primaryInputSlot = new InputItemHandler(1, this);
-        this.secondaryInputSlot = new InputItemHandler(1, this);
+        this.primaryInputSlot = new InputItemHandler(1, this, null, "primary");
 
         // init item outputs
         this.primaryOutputSlot = new OutputItemHandler(1);
         this.secondaryOutputSlot = new OutputItemHandler(1);
-        this.trinaryOutputSlot = new OutputItemHandler(1);
 
         // init fluid item input
         this.itemFluidInputSlot = new FluidItemInputHandler(1);
@@ -314,7 +310,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             return;
         }
 
-        // yank the current recipe for an item in
+        // yank the current recipe for an item in - primary input is treated as key
         HoneyCombCokeOvenRecipe currentRecipe = this.getRecipe(getPrimaryItemInput());
 
         // check if we have a recipe for item
@@ -396,10 +392,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             // unsure why but if i do not .copy() the outputs randomly multiplies by two on each successful operation
             itemBacklog = primaryOutputSlot.internalInsertItem(0, processingPrimaryItemStack.copy(), false);
             secondaryOutputSlot.internalInsertItem(0, processingSecondaryItemStack.copy(), false);
-            trinaryOutputSlot.internalInsertItem(0, processingTrinaryItemStack.copy(), false);
             processingPrimaryItemStack = ItemStack.EMPTY;
             processingSecondaryItemStack = ItemStack.EMPTY;
-            processingTrinaryItemStack = ItemStack.EMPTY;
 
             processingFluidStack = FluidStack.EMPTY;
         }
@@ -416,8 +410,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public String getStatus()  {
         return this.status;
     }
-
-
 
     /*
         Check if a new item has a recipe that the oven can use
@@ -470,12 +462,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return true;
     }
 
-
     private ItemStack getPrimaryItemInput()  {
         return primaryInputSlot.getStackInSlot(0);
-    }
-    private ItemStack getSecondaryItemInput()  {
-        return secondaryInputSlot.getStackInSlot(0);
     }
 
 
@@ -534,24 +522,39 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
     protected void processFluidContainerItem()  {
         LOGGER.info(fluidTank.getFluidAmount());
-        if(fluidTank.getFluidAmount() < 1000)  return;
-        if(itemFluidInputSlot.getStackInSlot(0).isEmpty())  return;
-        if(!(itemFluidOutputSlot.getStackInSlot(0).isEmpty()))  return;
 
+        // only try to process if we have at least one buckets worth
+        if(fluidTank.getFluidAmount() < 1000)  { return; }
+
+
+        LOGGER.info("1");
+
+        // only process if there is an item to process
+        if(itemFluidInputSlot.getStackInSlot(0).isEmpty())  { return; }
+
+        LOGGER.info("2");
+
+
+        // only proces if no other item is in the output (things like buckets dont stack)
+        if(!(itemFluidOutputSlot.getStackInSlot(0).isEmpty())) { return; }
+
+        LOGGER.info("3");
+
+        // get the item in the fluid item input slot
         ItemStack fluidContainer = itemFluidInputSlot.getStackInSlot(0);
 
-        //LazyOptional <net.minecraftforge.fluids.capability.IFluidHandler> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
         LazyOptional <net.minecraftforge.fluids.capability.IFluidHandlerItem> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
-
         // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
-        if(!itemFluidCapability.isPresent())  {
-            LOGGER.info("not a container!");
-            return;
-        }
+        if(!itemFluidCapability.isPresent())  { return; }
+
+        LOGGER.info("4");
+
 
         // if we have a bucket
         if(fluidContainer.getItem() instanceof BucketItem)  {
+            LOGGER.info("we got a bucket");
+
             ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, fluidTank.getFluid());
             if(fluidBucket.isEmpty())  return;
 
@@ -604,7 +607,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
         this.getPrimaryItemInput().deserializeNBT(nbt.getCompound(PRIMARY_INVENTORY_IN));
-        this.getSecondaryItemInput().deserializeNBT(nbt.getCompound(SECONDARY_INVENTORY_IN));
         primaryOutputSlot.deserializeNBT(nbt.getCompound(PRIMARY_INVENTORY_OUT));
         secondaryOutputSlot.deserializeNBT(nbt.getCompound(SECONDARY_INVENTORY_OUT));
         itemFluidInputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_IN));
@@ -621,7 +623,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
         tag.put(PRIMARY_INVENTORY_IN, getPrimaryItemInput().serializeNBT());
-        tag.put(SECONDARY_INVENTORY_IN, getSecondaryItemInput().serializeNBT());
         tag.put(PRIMARY_INVENTORY_OUT, primaryOutputSlot.serializeNBT());
         tag.put(SECONDARY_INVENTORY_OUT, secondaryOutputSlot.serializeNBT());
         tag.put(FLUID_INVENTORY_IN, itemFluidInputSlot.serializeNBT());

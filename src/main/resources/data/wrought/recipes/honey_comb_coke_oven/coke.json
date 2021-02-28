@@ -6,10 +6,10 @@
   "secondary_output": {
     "item": "wrought:soot"
   },
-  "input": {
+  "primary_input": {
     "item": "minecraft:coal"
   },
   "fluid": "wrought:creosote_fluid",
   "fluidamount": 250,
-  "burntime": 1
+  "burntime": 5
 }

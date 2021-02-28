@@ -86,7 +86,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                             HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) ctileEntity;
                             if(controllerTile.isFormed(controllerPos))  {
                                 // OPEN GUI
-                                controllerTile.openMultiBlockGUI(worldIn, posIn, player, controllerTile);
+                                controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
                                 return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
                             }
 

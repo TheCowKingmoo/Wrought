@@ -2,6 +2,7 @@ package com.thecowking.wrought.tileentity.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
 import com.thecowking.wrought.blocks.Multiblock;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
@@ -9,7 +10,6 @@ import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.util.*;
-import javafx.util.Pair;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -41,7 +41,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -658,7 +657,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
-        return new HCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, stateData);
+        return new HCCokeOvenContainerMultiblock(windowID, this.world, getControllerPos(), playerInv, stateData);
     }
 
     @Override
@@ -701,10 +700,27 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
+    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+        INamedContainerProvider containerProvider = new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent("Honey Comb Coke Oven Controller");
+            }
+
+            @Override
+            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory);
+            }
+        };
+        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
+    }
+
+
+
     /*
-        Launches the GUI
+        Launches the GUI for the completed multiblock
      */
-    public void openMultiBlockGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+    public void openGUIMultiblock(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
@@ -713,7 +729,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
+                return new HCCokeOvenContainerMultiblock(i, worldIn, getControllerPos(), playerInventory, stateData);
             }
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());

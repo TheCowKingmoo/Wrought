@@ -63,7 +63,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
             if (tileEntity instanceof HCCokeOvenControllerTile) {
                 HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
                 if(controllerTile.isFormed(controllerTile.getPos()) )  {
-                    controllerTile.openMultiBlockGUI(worldIn, posIn, player, controllerTile);
+                    controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");
                     // attempts to form the multi-blocks

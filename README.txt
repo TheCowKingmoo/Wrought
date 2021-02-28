@@ -29,6 +29,29 @@ Machines in Progress
 - Some sort of way to compress air and apply it to machines
 - A casting machine to convert fluid into ingots/plate/gears
 
+
+
+Blocks/Items
+   - Honeycomb Coke Oven Controller
+      - the main TE for the Coke Oven Multiblock
+   - Honeycomb Coke Oven Frame
+      - main construction block of the Coke Oven Multiblock
+      - only thing this TE knows is how to get to the controller
+   - Honeycomb Coke Oven Slab
+      - Not a TE
+      - For GUI use it looks at the block below it for a frame
+   - Honeycomb Coke Oven Stairs
+      - Same as slab
+   - Ash 
+      - byproduct of making charcoal
+   - Soot
+      - byproduct of making coke
+   - Coke
+      - A more refined version of coal
+
+
+
+
 Current Development is being tracked through Github Issues.
 
 Source Reading Material

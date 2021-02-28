@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.blocks.MultiBlock.Multiblock.*;
+import static com.thecowking.wrought.blocks.Multiblock.*;
 
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -29,7 +29,6 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
         slot = getSlotFromIndex(slot, index);
 
         if(handler instanceof FluidItemInputHandler)  {
-
             return ((FluidItemInputHandler)handler).insertItem(slot, stack, simulate);
         }  else if(handler instanceof InputItemHandler)  {
         }
@@ -43,7 +42,8 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     @Override
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if(slot == INDEX_ITEM_INPUT || slot == INDEX_FLUID_ITEM_INPUT)  {
+
+        if(slot < NUM_INPTUS)  {
             return ItemStack.EMPTY;
         }
         int index = getIndexForSlot(slot);

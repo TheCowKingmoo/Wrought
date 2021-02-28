@@ -10,7 +10,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -33,7 +36,13 @@ public class FluidInit {
 
     public static final ForgeFlowingFluid.Properties CREOSOTE_PROPERTIES = new ForgeFlowingFluid.Properties(() -> CREOSOTE_FLUID.get(),
             () -> CREOSOTE_FLOWING.get(),
-            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL).density(5).color(RenderHelper.convertARGBToInt(255,255,61, 0.5)).luminosity(10).overlay(CREOSOTE_OVERLAY_RL)).block(() -> FluidInit.CREOSOTE_BLOCK.get()).bucket(() -> RegistryHandler.CREOSOTE_BUCKET.get());
+            FluidAttributes.builder(CREOSOTE_STILL_RL, CREOSOTE_FLOWING_RL)
+                    .translationKey("Creosote")
+                    .density(5)
+                    .color(RenderHelper.convertARGBToInt(255,255,61, 0.5))
+                    .luminosity(10)
+                    .overlay(CREOSOTE_OVERLAY_RL))
+                    .block(() -> FluidInit.CREOSOTE_BLOCK.get()).bucket(() -> RegistryHandler.CREOSOTE_BUCKET.get());
 
 
     public static final RegistryObject<FlowingFluidBlock> CREOSOTE_BLOCK = RegistryHandler.BLOCKS.register("creosote",

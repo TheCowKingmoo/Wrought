@@ -1,6 +1,6 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.blocks.MultiBlock.honey_comb_coke_oven.HCCokeOvenScreen;
+import com.thecowking.wrought.client.HCCokeOvenScreenMultiblock;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientSetup {
 
     public static void init(final FMLClientSetupEvent event) {
-        ScreenManager.registerFactory(RegistryHandler.H_C_CONTAINER.get(), HCCokeOvenScreen::new);
+        ScreenManager.registerFactory(RegistryHandler.H_C_CONTAINER.get(), HCCokeOvenScreenMultiblock::new);
     }
 
     @SubscribeEvent

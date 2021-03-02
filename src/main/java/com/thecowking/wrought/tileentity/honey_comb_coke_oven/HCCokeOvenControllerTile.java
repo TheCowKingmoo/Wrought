@@ -61,12 +61,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-    // Members that make up the multi-block
-    protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block controllerBlock = H_C_COKE_CONTROLLER_BLOCK.get();
-    private static Block hatchBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block frameStairs = H_C_COKE_FRAME_STAIR.get();
-    private static Block frameSlab = H_C_COKE_FRAME_SLAB.get();
+
 
     // used to track info for the progress bar which gets sent to the client
     public final HCStateData stateData = new HCStateData();
@@ -74,67 +69,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // tracks if the tile entity needs a block update
     private boolean needUpdate = false;
 
-    /*
-    array holding the blocks location of all members in the multi-blocks
-    split up by the y level where posArray[0][x][z] = the bottom most layer
-     */
-    private final Block[][][] posArray = {
-            // bottom level
-            {
-                    {null, null,       null,       null,       null,       null,       null},
-                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
-                    {null, null,       null,       null,       null,       null,       null}
-            },
-            {
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null,  null, frameBlock, controllerBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null, null, frameStairs, frameStairs, frameStairs, null, null},
-                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
-                    {null, null, frameStairs, frameStairs, frameStairs, null, null}
-            },
-            {
-                    {null, null, null, null, null, null, null},
-                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
-                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
-                    {null, frameStairs, frameBlock, hatchBlock, frameBlock, frameStairs, null},
-                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
-                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
-                    {null, null, null, null, null, null, null}
-            }
-    };
+
 
     // used to track when we can start an operations
     // -> didnt want something that processes too fast
@@ -231,9 +166,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         this.stateData.timeElapsed = 0;
         this.stateData.timeComplete = 0;
 
-        this.height = posArray.length;
-        this.length = posArray[0].length;
-        this.width = posArray[0][0].length;
+
         this.tickCounter = 0;
 
         this.status = "Standing By";
@@ -738,25 +671,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // ------------------------MULTI-BLOCK STUFFS ------------------------------------------------
 
 
-    public void checkIfPlayerHasBlocksNeeded()  {
 
-    }
-
-    public HashMap<Block, Integer> getBlocksNeeded()  {
-        this.failures = new HashMap<>();
-        getMultiBlockMembers(getWorld(), null, false, this.getDirectionFacing());
-        return this.failures;
-    }
-
-    public void autoBuildMultiBlock()  {
-
-    }
-
-    // override the always return true method
-    @Override
-    public boolean checkIfCorrectFrame(Block block) {
-        return (block instanceof HCCokeOvenFrameBlock);
-    }
 
     /*
   Updates all information in all multiblock members
@@ -785,101 +700,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         }
     }
 
-        /*
-      This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
-      that the multi-blocks is being formed or destroyed.
-     */
-    public List<BlockPos> getMultiBlockMembers(World worldIn, PlayerEntity player, boolean destroy, Direction direction) {
-        BlockPos centerPos = calcCenterBlock(direction);
-        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
-        BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
-        List<BlockPos> multiblockMembers = new ArrayList();
 
-        // checks the central slice part of the structure to ensure the correct blocks exist
-        for (int y = 0; y < posArray.length; y++) {
-            for (int z = 0; z < posArray[0].length; z++) {
-                for (int x = 0; x < posArray[0][0].length; x++) {
-                    Block correctBlock = posArray[y][z][x];                            // get the blocks that should be at these coord's
-                    if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
-                        continue;
-                    }
-                    // get current blocks - adjusted for Direction
-                    BlockPos current = indexShifterBlockPos(getDirectionFacing(), correctLowCorner, x, y, z, length, width);
-                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
-                    if (currentBlock != correctBlock && !destroy) {
-                        if (!destroy) {
-                            if (player != null) {
-                                String msg = "Could not form because of block at Coord at X:" + current.getX() + " Y:" + current.getY() + " Z:" + current.getZ();
-                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
-                                msg = "Should be " + correctBlock.getBlock() + " not " + currentBlock.getBlock();
-                                player.sendStatusMessage(new TranslationTextComponent(msg), true);
-                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
-                            }
-                            // increment block
-                            if(this.failures != null)  {
-                                failures.put(correctBlock, failures.get(correctBlock)+1);
-                            }
-                            LOGGER.info("Could not form because of " + current);
-                            LOGGER.info("should be " + correctBlock + " not " + currentBlock);
-                            return null;
-                        }
-                    }  else  {
-                        // add blocks of things to be formed/deleted
-                        multiblockMembers.add(current);
-                    }
-                }
-            }
-        }  //end loop
-        return multiblockMembers;
-    }
 
-    /*
-      Moves what blocks we are looking at with respect to the posArray
-     */
-    public BlockPos indexShifterBlockPos(Direction inputDirection, BlockPos low, int x, int y, int z, int length, int width)  {
 
-        switch (inputDirection)  {
-            case NORTH:
-                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + z);
-            case SOUTH:
-                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + length - z - 1);
-            case WEST:
-                return new BlockPos(low.getX() + z, low.getY() + y, low.getZ() + x);
-            case EAST:
-                return new BlockPos(low.getX() + length - z - 1, low.getY() + y, low.getZ() + width - x - 1);
-        }
-        return null;
-    }
 
-    /*
-      Driver for forming the multiblock
-     */
-    public void tryToFormMultiBlock(World worldIn, PlayerEntity player, BlockPos posIn) {
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, player,false, getDirectionFacing());             // calc if every location has correct blocks
-        if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
-            setFormed(true);                                                                                        // change blocks state of controller
-            updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change blocks state of frames
-            assignJobs();                                                                                           // sets "jobs" on frame members as needed
-        }
-    }
 
-    /*
-      Driver for destroying multi-blocks
-     */
-    public void destroyMultiBlock(World worldIn, BlockPos posIn) {
-        if (!isFormed(getControllerPos())) {
-            return;
-        }
-        setFormed(false);
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, true, getDirectionFacing());
-        if (multiblockMembers != null) {
-            updateMultiBlockMemberTiles(multiblockMembers, true);
-        }
-    }
 
     /*
       Assigns out "jobs" to frame blocks that the controller needs to keep track of
      */
+    @Override
     public void assignJobs() {
         BlockPos inputPos = getRedstoneInBlockPos();
         BlockPos outputPos = getRedstoneOutBlockPos();

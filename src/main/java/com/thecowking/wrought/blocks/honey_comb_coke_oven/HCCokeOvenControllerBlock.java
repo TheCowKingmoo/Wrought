@@ -3,6 +3,7 @@ package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 import com.thecowking.wrought.blocks.INameableTile;
 import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.util.MultiBlockHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -63,11 +64,11 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
             if (tileEntity instanceof HCCokeOvenControllerTile) {
                 HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
                 if(controllerTile.isFormed(controllerTile.getPos()) )  {
-                    controllerTile.openMultiBlockGUI(worldIn, posIn, player, controllerTile);
+                    controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
                 }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
                     LOGGER.info("no gui- attempt to form");
                     // attempts to form the multi-blocks
-                    controllerTile.tryToFormMultiBlock(worldIn, player, posIn);
+                    MultiBlockHelper.tryToFormMultiBlock(worldIn, player, posIn, new HCCokeOven());
                 }  else  {
                     controllerTile.openGUI(worldIn, posIn, player, controllerTile);
                 }
@@ -77,23 +78,18 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
                 throw new IllegalStateException("Our named container provider is missing!");
             }
         }
+        super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
         return ActionResultType.SUCCESS;
     }
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {
-        TileEntity tileEntity = getTileFromPos(worldIn, posIn);
-        if(tileEntity instanceof HCCokeOvenControllerTile && !worldIn.isRemote)  {
-            HCCokeOvenControllerTile castedTile = (HCCokeOvenControllerTile) tileEntity;
-            castedTile.destroyMultiBlock(worldIn, posIn);
-            worldIn.removeTileEntity(posIn);
-        }
+        MultiBlockHelper.destroyMultiBlock(worldIn, posIn, new HCCokeOven());
     }
 
 
     @Override
     public void setTileName(String name) {
         this.tile = name;
-
     }
 }

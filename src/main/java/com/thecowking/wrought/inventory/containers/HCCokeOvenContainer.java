@@ -1,173 +1,40 @@
 package com.thecowking.wrought.inventory.containers;
 
-import com.thecowking.wrought.blocks.Multiblock;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.util.RecipeSerializerInit;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import com.thecowking.wrought.util.RegistryHandler;
-import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
-import com.thecowking.wrought.inventory.slots.SlotOutput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-
-import java.util.Set;
-
-import static com.thecowking.wrought.blocks.Multiblock.*;
-import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
-
-
-public class HCCokeOvenContainer extends Container {
-    private TileEntity tileEntity;
-    private IItemHandler playerInventory;
-    private static final Logger LOGGER = LogManager.getLogger();
-    private HCCokeOvenControllerTile controller;
-    private World world;
-    private BlockPos controllerPos;
-    private HCStateData stateData;
-    private PlayerEntity player;
-
-    final static int ITEM_X = 15;
-    final static int FLUID_ITEM_X = 150;
-    final static int INPUTS_Y = 21;
-    final static int OUTPUTS_Y = 72;
-    final static int SLOT_SEP_X = 22;
+import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER_BUILDER;
 
 
 
-    public HCCokeOvenContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, HCStateData stateData) {
-        super(H_C_CONTAINER.get(), windowId);
-        tileEntity = world.getTileEntity(pos);
-        this.playerInventory = new InvWrapper(playerInventory);
-        this.world = world;
-        this.controllerPos = pos;
-        this.controller = (HCCokeOvenControllerTile)tileEntity;
-        tileEntity = world.getTileEntity(pos);
-        this.stateData = stateData;
-        this.player = playerInventory.player;
+public class HCCokeOvenContainer extends PlayerLayoutContainer{
+    HCCokeOvenControllerTile tile;
+    public BlockPos controllerPos;
 
-        if (tileEntity != null) {
-            tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                // Primary Item Input Slot
-                addSlot(new SlotItemHandler(h, PRIMARY_INPUT_ITEM_IDX, ITEM_X, INPUTS_Y));
-                // Primary Item Output Slot
-                addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));
-                // Secondary Item Output Slot
-                addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+SLOT_SEP_X, OUTPUTS_Y));
-                // Fluid Item Input Slot
-                addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));
-                // Fluid Item Output Slot
-                addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));
-            });
-        }
-        layoutPlayerInventorySlots(10, 115);
-        trackIntArray(stateData);
-    }
+    public HCCokeOvenContainer(int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
+        super(H_C_CONTAINER_BUILDER.get(), id, world, controllerPos, playerInventory);
+        this.tile = (HCCokeOvenControllerTile)world.getTileEntity(controllerPos);
+        this.controllerPos = controllerPos;
 
-    private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
-        for (int i = 0 ; i < amount ; i++) {
-            addSlot(new SlotItemHandler(handler, index, x, y));
-            x += dx;
-            index++;
-        }
-        return index;
-    }
-
-    private int addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0 ; j < verAmount ; j++) {
-            index = addSlotRange(handler, index, x, y, horAmount, dx);
-            y += dy;
-        }
-        return index;
-    }
-
-    private void layoutPlayerInventorySlots(int leftCol, int topRow) {
-        // Player inventory
-        addSlotBox(playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
-
-        // Hotbar
-        topRow += 58;
-        addSlotRange(playerInventory, 0, leftCol, topRow, 9, 18);
-    }
-
-    public double getProgress()  {
-        if (stateData.timeComplete == 0)  {return 0;}
-        return (double)stateData.timeElapsed / (stateData.timeComplete);
-    }
-
-    public FluidStack getFluid()  {
-        return controller.getFluidInTank();
-    }
-
-    public double getPercentageInTank()  {
-       return ((double)getFluid().getAmount() / (double)getTankMaxSize());
-    }
-
-    public int getTankMaxSize()  {
-        return controller.getTankMaxSize();
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-       //BlockPos targetBlock = new BlockPos(playerIn.getLookVec());
-        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), controllerPos), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
+        //BlockPos targetBlock = new BlockPos(playerIn.getLookVec());
+        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), this.controllerPos), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
 
         //return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), targetBlock), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
     }
-
-    public String getStatus()  {
-        return controller.getStatus();
-
-    }
-
-
-    @Nonnull
-    @Override
-    public ItemStack transferStackInSlot(final PlayerEntity player, final int index) {
-        ItemStack returnStack = ItemStack.EMPTY;
-        final Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            final ItemStack slotStack = slot.getStack();
-            returnStack = slotStack.copy();
-            final int containerSlots = this.inventorySlots.size() - player.inventory.mainInventory.size();
-            if (index < containerSlots) {
-                if (!mergeItemStack(slotStack, containerSlots, this.inventorySlots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!mergeItemStack(slotStack, 0, containerSlots, false)) {
-                return ItemStack.EMPTY;
-            }
-            if (slotStack.getCount() == 0) {
-                slot.putStack(ItemStack.EMPTY);
-            } else {
-                slot.onSlotChanged();
-            }
-            if (slotStack.getCount() == returnStack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-            slot.onTake(player, slotStack);
-        }
-        return returnStack;
-    }
-
-
 }

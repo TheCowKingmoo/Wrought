@@ -1,12 +1,15 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -14,15 +17,25 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class InventoryUtils {
+
+    public static int lastIndex;
+    private static final Logger LOGGER = LogManager.getLogger();
+
+
     public static boolean canItemsStack(ItemStack a, ItemStack b) {
+
         // Determine if the item stacks can be merged
         if (a.isEmpty() || b.isEmpty()) return true;
         return ItemHandlerHelper.canItemStacksStack(a, b) && a.getCount() + b.getCount() <= a.getMaxStackSize();
@@ -96,5 +109,50 @@ public class InventoryUtils {
                 }
             }
         }
+    }
+
+
+    public static int getIndexOfSingleItemInPlayerInventory(PlayerEntity player, Item item)  {
+        if(lastIndex < player.inventory.mainInventory.size() && lastIndex > -1)  {
+            if(player.inventory.mainInventory.get(lastIndex).getItem() == item)  {
+                return lastIndex;
+            }
+        }
+
+        int index = -1;
+        for(int i = 0; i < player.inventory.mainInventory.size(); i++)  {
+            ItemStack currentPlayerItem = player.inventory.mainInventory.get(i);
+            if(currentPlayerItem.getItem() == item)  {
+                index = i;
+                break;
+            }
+        }
+        lastIndex = index;
+        return index;
+    }
+
+
+
+    public static HashMap<Block, Integer> checkVsPlayerInventory(HashMap<Block, Integer> missingBlocks, PlayerEntity player)  {
+        NonNullList<ItemStack> playerInventory = player.inventory.mainInventory;
+        HashMap<Block, Integer> inInventory = new HashMap<>();
+
+
+        for(Map.Entry<Block, Integer> e: missingBlocks.entrySet())  {
+            for(int i = 0; i < e.getValue(); i++)  {
+                int index = getIndexOfSingleItemInPlayerInventory(player, e.getKey().asItem());
+                if(index != -1)  {
+                    playerInventory.get(index).shrink(1);
+                    if(inInventory.get(e.getKey()) != null )  {
+                        inInventory.put(e.getKey(), inInventory.get(e.getKey())+1);
+                    }  else  {
+                        inInventory.put(e.getKey(), 1);
+                    }
+                }
+            }
+        }
+        LOGGER.info(inInventory);
+        return inInventory;
+
     }
 }

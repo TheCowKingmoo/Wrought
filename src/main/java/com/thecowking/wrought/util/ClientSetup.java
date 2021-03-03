@@ -1,6 +1,7 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.client.HCCokeOvenScreenMultiblock;
+import com.thecowking.wrought.client.screen.HCCokeOvenScreen;
+import com.thecowking.wrought.client.screen.HCCokeOvenScreenMultiblock;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,6 +15,7 @@ public class ClientSetup {
 
     public static void init(final FMLClientSetupEvent event) {
         ScreenManager.registerFactory(RegistryHandler.H_C_CONTAINER.get(), HCCokeOvenScreenMultiblock::new);
+        ScreenManager.registerFactory(RegistryHandler.H_C_CONTAINER_BUILDER.get(), HCCokeOvenScreen::new);
     }
 
     @SubscribeEvent
@@ -24,3 +26,5 @@ public class ClientSetup {
         }
     }
 }
+
+

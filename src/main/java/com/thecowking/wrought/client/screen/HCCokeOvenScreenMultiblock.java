@@ -1,10 +1,10 @@
-package com.thecowking.wrought.client;
+package com.thecowking.wrought.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 
-public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContainer> {
+public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContainerMultiblock> {
     final static int COOK_BAR_X_OFFSET = 14;
     final static  int COOK_BAR_Y_OFFSET = 40;
     final static  int COOK_BAR_ICON_U = 0;   // texture position of white arrow icon [u,v]
@@ -47,16 +47,14 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
-    private HCCokeOvenContainer ovenContainer;
+    private HCCokeOvenContainerMultiblock ovenContainer;
 
-    public HCCokeOvenScreenMultiblock(HCCokeOvenContainer container, PlayerInventory inv, ITextComponent name) {
+    public HCCokeOvenScreenMultiblock(HCCokeOvenContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.ovenContainer = container;
         this.xSize = 176;
         this.ySize = 240;
     }
-
-
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -71,25 +69,25 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
      */
 
     @Override
-    protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
+    protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
 
         // highlights the item the player is hovering over
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-            this.renderTooltip(matrixStack, this.hoveredSlot.getStack(), x, y);
+            this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
 
-        // detects when the player is hovering over the tank
+            // detects when the player is hovering over the tank
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
             FluidStack fluidStack = getFluidStackInTank();
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
             TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + container.getTankMaxSize());
-            renderTooltip(matrixStack, displayName, x, y+10);
-            renderTooltip(matrixStack, fluidAmount, x, y+27);
+            renderTooltip(stack, displayName, x, y+10);
+            renderTooltip(stack, fluidAmount, x, y+27);
             // debug
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
             TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
-            renderTooltip(matrixStack, displayName, x, y);
+            renderTooltip(stack, displayName, x, y);
         }  else  {
-            renderTooltip(matrixStack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
+            renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
         }
     }
 
@@ -101,8 +99,6 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     public int yStart() {
         return (this.height - this.ySize) / 2;
     }
-
-
 
 
     /*
@@ -165,7 +161,6 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
-
     }
 
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {

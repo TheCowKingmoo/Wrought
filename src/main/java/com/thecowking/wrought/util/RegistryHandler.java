@@ -5,6 +5,7 @@ import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
 import com.thecowking.wrought.items.items.AshItem;
@@ -64,15 +65,19 @@ public class RegistryHandler {
     public static final RegistryObject<Block> H_C_COKE_FRAME_STAIR = BLOCKS.register("h_c_coke_frame_stair", HCCokeOvenFrameStairs::new);
     public static final RegistryObject<Item> H_C_COKE_FRAME_STAIR_ITEM = ITEMS.register("h_c_coke_frame_stair", () -> new BlockItemBase(H_C_COKE_FRAME_STAIR.get()));
 
-
     //Honey Comb Coke Multi-Block
-    public static final RegistryObject<ContainerType<HCCokeOvenContainer>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
+    public static final RegistryObject<ContainerType<HCCokeOvenContainerMultiblock>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
-        return new HCCokeOvenContainer(windowId, world, pos, inv, new HCStateData());
+        return new HCCokeOvenContainerMultiblock(windowId, world, pos, inv, new HCStateData());
     }));
 
-
+    //Honey Comb Coke Multi-Block
+    public static final RegistryObject<ContainerType<HCCokeOvenContainer>> H_C_CONTAINER_BUILDER = CONTAINERS.register("h_c_coke_controller_block_builder", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new HCCokeOvenContainer(windowId, world, pos, inv);
+    }));
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
 

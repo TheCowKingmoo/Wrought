@@ -19,9 +19,6 @@ import java.util.function.Function;
 public class RenderHelper {
     private static final Logger LOGGER = LogManager.getLogger();
 
-
-
-
     // getting fluids texture source from cyclops core
     public static final Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER =
             location -> Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
@@ -59,7 +56,6 @@ public class RenderHelper {
         float f5 = (float)(endColor >> 16 & 255) / 255.0F;
         float f6 = (float)(endColor >> 8 & 255) / 255.0F;
         float f7 = (float)(endColor & 255) / 255.0F;
-
 
         //LOGGER.info("alpha = " + (startColor >> 24 & 255) + " r = " + (startColor >> 16 & 255) + " g =  " + (startColor >> 8 & 255) + " b = " + (startColor & 255));
 

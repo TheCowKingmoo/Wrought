@@ -2,6 +2,7 @@ package com.thecowking.wrought.tileentity.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
 import com.thecowking.wrought.blocks.Multiblock;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
@@ -9,7 +10,6 @@ import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.util.*;
-import javafx.util.Pair;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -41,7 +41,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -61,81 +60,13 @@ import static com.thecowking.wrought.util.RegistryHandler.*;
 public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
-
-    // Members that make up the multi-block
-    protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block controllerBlock = H_C_COKE_CONTROLLER_BLOCK.get();
-    private static Block hatchBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block frameStairs = H_C_COKE_FRAME_STAIR.get();
-    private static Block frameSlab = H_C_COKE_FRAME_SLAB.get();
-
     // used to track info for the progress bar which gets sent to the client
     public final HCStateData stateData = new HCStateData();
 
     // tracks if the tile entity needs a block update
     private boolean needUpdate = false;
 
-    /*
-    array holding the blocks location of all members in the multi-blocks
-    split up by the y level where posArray[0][x][z] = the bottom most layer
-     */
-    private final Block[][][] posArray = {
-            // bottom level
-            {
-                    {null, null,       null,       null,       null,       null,       null},
-                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, frameBlock, frameBlock, frameBlock, frameBlock, frameBlock, null},
-                    {null, null,       frameBlock, frameBlock, frameBlock, null,       null},
-                    {null, null,       null,       null,       null,       null,       null}
-            },
-            {
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null,  null, frameBlock, controllerBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {frameBlock,  Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock},
-                    {null,  frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, null},
-                    {null,  null, frameBlock, frameBlock, frameBlock, null, null}
-            },
-            {
-                    {null, null, frameStairs, frameStairs, frameStairs, null, null},
-                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {frameStairs, frameBlock, Blocks.AIR, Blocks.AIR, Blocks.AIR, frameBlock, frameStairs},
-                    {null, frameStairs, frameBlock, frameBlock, frameBlock, frameStairs, null},
-                    {null, null, frameStairs, frameStairs, frameStairs, null, null}
-            },
-            {
-                    {null, null, null, null, null, null, null},
-                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
-                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
-                    {null, frameStairs, frameBlock, hatchBlock, frameBlock, frameStairs, null},
-                    {null, frameSlab, frameBlock, frameBlock, frameBlock, frameSlab, null},
-                    {null, null, frameSlab, frameStairs, frameSlab, null, null},
-                    {null, null, null, null, null, null, null}
-            }
-    };
+
 
     // used to track when we can start an operations
     // -> didnt want something that processes too fast
@@ -232,9 +163,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         this.stateData.timeElapsed = 0;
         this.stateData.timeComplete = 0;
 
-        this.height = posArray.length;
-        this.length = posArray[0].length;
-        this.width = posArray[0][0].length;
+
         this.tickCounter = 0;
 
         this.status = "Standing By";
@@ -283,9 +212,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Main operation driver - checks all instances to make sure that we can actually run an operation
      */
     public void attemptRunOperation() {
-        LOGGER.info("Attempt Oven Operation");
-
-
         // Checks if we can fill the item in the fluid input with the tanks fluid
         processFluidContainerItem();
 
@@ -327,7 +253,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         true if we should continue on
      */
     private boolean processItemBackLog()  {
-        LOGGER.info("Process Item Backlog");
 
 
         if(this.itemBacklog == ItemStack.EMPTY)  {return true;}
@@ -353,10 +278,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Checks if redstone signal is on / off and turns off machine if on
      */
     private boolean redstonePowered()  {
-        LOGGER.info("Check Redstone Power");
 
         if(isRedstonePowered(this.redstoneIn)) {
-            LOGGER.info("redstone turn off");
             machineChangeOperation(false);
             this.status = "Red stone Turning off";
             return true;
@@ -370,11 +293,9 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      */
 
     private boolean processItem()  {
-        LOGGER.info("Process Item");
 
         // Check if there is a previous item and the item has "cooked" long enough
         if (processingPrimaryItemStack != ItemStack.EMPTY && this.stateData.timeElapsed++ < this.stateData.timeComplete) {
-            LOGGER.info("Burn Time = " + this.stateData.timeElapsed + " finishtime = " + this.stateData.timeComplete);
 
             this.needUpdate = true;
             this.stateData.timeElapsed++;
@@ -387,7 +308,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             // attempt to insert fluid from craft and fill leftovers into backlog tank
             fluidBacklog = fluidTank.internalFill(processingFluidStack, IFluidHandler.FluidAction.EXECUTE);
             // attempt to insert item from craft and fill leftovers into backlog container
-            LOGGER.info("inserting -> " + processingPrimaryItemStack);
 
             // unsure why but if i do not .copy() the outputs randomly multiplies by two on each successful operation
             itemBacklog = primaryOutputSlot.internalInsertItem(0, processingPrimaryItemStack.copy(), false);
@@ -431,7 +351,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Check if we can store a fluid for a new operation
      */
     private boolean fluidRecipeChecker(HoneyCombCokeOvenRecipe currentRecipe)  {
-        LOGGER.info("Fluid Reciepe Check");
 
         // get the fluid output from recipe
         FluidStack recipeFluidOutput = currentRecipe.getRecipeFluidStackOutput();
@@ -441,8 +360,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             // check if fluid matches tank and if tank has space for fluid
             if(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() > fluidTank.getCapacity())  {
-                LOGGER.info(fluidTank.getFluidAmount() + recipeFluidOutput.getAmount() + " is not smaller than " + fluidTank.getCapacity());
-                LOGGER.info("fluid cannot insert as there is not enough tank space");
                 finishOperation();
                 this.status = "Not enough space in tank to process current recipe";
                 return false;
@@ -450,9 +367,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             // check to see if that fluids match
             if (recipeFluidOutput.getFluid() != fluidTank.getFluid().getFluid()  )  {
-                LOGGER.info("fluid cannot insert fluid is not equal");
-                LOGGER.info(recipeFluidOutput.getDisplayName());
-                LOGGER.info(fluidTank.getFluid().getDisplayName());
                 finishOperation();
                 this.status = "Output Fluid does not match fluid in tank";
                 return false;
@@ -471,7 +385,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
      Method to run a single oven operation
      */
     private void ovenOperation(HoneyCombCokeOvenRecipe currentRecipe) {
-        LOGGER.info("Oven Operation");
         if(currentRecipe == null)  {return;}
 
         ItemStack primaryOutput = currentRecipe.getPrimaryOutput();
@@ -517,7 +430,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     /*
-    TODO - add support for tanks
     Processes items in the "bucket" slot
      */
     protected void processFluidContainerItem()  {
@@ -526,19 +438,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // only try to process if we have at least one buckets worth
         if(fluidTank.getFluidAmount() < 1000)  { return; }
 
-
-        LOGGER.info("1");
-
         // only process if there is an item to process
         if(itemFluidInputSlot.getStackInSlot(0).isEmpty())  { return; }
 
-        LOGGER.info("2");
-
-
         // only proces if no other item is in the output (things like buckets dont stack)
         if(!(itemFluidOutputSlot.getStackInSlot(0).isEmpty())) { return; }
-
-        LOGGER.info("3");
 
         // get the item in the fluid item input slot
         ItemStack fluidContainer = itemFluidInputSlot.getStackInSlot(0);
@@ -548,12 +452,10 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
         if(!itemFluidCapability.isPresent())  { return; }
 
-        LOGGER.info("4");
 
 
         // if we have a bucket
         if(fluidContainer.getItem() instanceof BucketItem)  {
-            LOGGER.info("we got a bucket");
 
             ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, fluidTank.getFluid());
             if(fluidBucket.isEmpty())  return;
@@ -562,20 +464,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, fluidTank.getFluid());
             if (filledContainer.isEmpty())  {
-                LOGGER.info("could not get filledcontainer");
                 return;
             }
-            LOGGER.info("container is ");
             LOGGER.info(filledContainer);
 
-            LOGGER.info("inserting into itemfluid ouptut");
             fluidTank.drain(1000, IFluidHandler.FluidAction.EXECUTE);
             fluidItemBacklog = itemFluidOutputSlot.internalInsertItem(0, filledContainer.copy(), false);
             this.needUpdate = true;
 
             // we have some sort of container
         }  else  {
-            LOGGER.info("processing!");
             IFluidHandlerItem fluidItemHandler = itemFluidCapability.resolve().get();
             FluidStack back = FluidUtil.tryFluidTransfer(fluidItemHandler, fluidTank, fluidTank.getFluid(), true);
             LOGGER.info(back.getDisplayName());
@@ -617,7 +515,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     /*
-        Tells the server what to read from disk on  chunk load
+        Tells the server what to read from disk on chunk load
      */
     @Override
     public CompoundNBT write(CompoundNBT tag) {
@@ -658,9 +556,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
-        return new HCCokeOvenContainer(windowID, this.world, getControllerPos(), playerInv, stateData);
+        return new HCCokeOvenContainerMultiblock(windowID, this.world, getControllerPos(), playerInv, stateData);
     }
 
+    /*
+        Name that is displayed on the GUI
+     */
     @Override
     public ITextComponent getDisplayName() {
         return new TranslationTextComponent("Coke Oven Controller");
@@ -686,7 +587,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn, World world) {
-        LOGGER.info("findRecipesByType - server");
         return world != null ? world.getRecipeManager().getRecipes().stream()
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
@@ -694,17 +594,34 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @SuppressWarnings("resource")
     @OnlyIn(Dist.CLIENT)
     public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn) {
-        LOGGER.info("findRecipesByType - client");
         ClientWorld world = Minecraft.getInstance().world;
         return world != null ? world.getRecipeManager().getRecipes().stream()
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
 
+    /*
+        Launches the GUI to auto build the multi block
+     */
+
+    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+        INamedContainerProvider containerProvider = new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent("Honey Comb Coke Oven Controller");
+            }
+
+            @Override
+            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory);
+            }
+        };
+        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
+    }
 
     /*
-        Launches the GUI
+        Launches the GUI for the completed multiblock
      */
-    public void openMultiBlockGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
+    public void openGUIMultiblock(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
         INamedContainerProvider containerProvider = new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
@@ -713,157 +630,17 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory, stateData);
+                return new HCCokeOvenContainerMultiblock(i, worldIn, getControllerPos(), playerInventory, stateData);
             }
         };
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
     }
 
-    // ------------------------MULTI-BLOCK STUFFS ------------------------------------------------
-
-
-    public void checkIfPlayerHasBlocksNeeded()  {
-
-    }
-
-    public HashMap<Block, Integer> getBlocksNeeded()  {
-        this.failures = new HashMap<>();
-        getMultiBlockMembers(getWorld(), null, false, this.getDirectionFacing());
-        return this.failures;
-    }
-
-    public void autoBuildMultiBlock()  {
-
-    }
-
-    // override the always return true method
-    @Override
-    public boolean checkIfCorrectFrame(Block block) {
-        return (block instanceof HCCokeOvenFrameBlock);
-    }
-
-    /*
-  Updates all information in all multiblock members
- */
-    private void updateMultiBlockMemberTiles(List<BlockPos> memberArray, boolean destroy) {
-        for (int i = 0; i < memberArray.size(); i++) {
-            BlockPos current = memberArray.get(i);
-            Block currentBlock = world.getBlockState(current).getBlock();                   //check blocks
-            if(currentBlock instanceof IMultiBlockFrame)  {
-                IMultiBlockFrame frameBlock = (IMultiBlockFrame) currentBlock;
-                if(destroy)  {
-                    frameBlock.removeFromMultiBlock(world.getBlockState(current),current, world);
-                }  else  {
-                    frameBlock.addingToMultblock(world.getBlockState(current), current, world);          // change blockstate and create TE
-                }
-                TileEntity currentTile = getTileFromPos(world, current);                    // get new TE
-                if (currentTile instanceof HCCokeOvenFrameTile) {
-                    HCCokeOvenFrameTile castedCurrent = (HCCokeOvenFrameTile) currentTile;
-                    if (destroy) {
-                        castedCurrent.destroyMultiBlock();   // remove blockstate
-                    } else {
-                        castedCurrent.setupMultiBlock(getControllerPos());  // dp TE things needed for multiblock setup
-                    }
-                }
-            }
-        }
-    }
-
-        /*
-      This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
-      that the multi-blocks is being formed or destroyed.
-     */
-    public List<BlockPos> getMultiBlockMembers(World worldIn, PlayerEntity player, boolean destroy, Direction direction) {
-        BlockPos centerPos = calcCenterBlock(direction);
-        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, this.length, this.height, this.width);
-        BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
-        List<BlockPos> multiblockMembers = new ArrayList();
-
-        // checks the central slice part of the structure to ensure the correct blocks exist
-        for (int y = 0; y < posArray.length; y++) {
-            for (int z = 0; z < posArray[0].length; z++) {
-                for (int x = 0; x < posArray[0][0].length; x++) {
-                    Block correctBlock = posArray[y][z][x];                            // get the blocks that should be at these coord's
-                    if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
-                        continue;
-                    }
-                    // get current blocks - adjusted for Direction
-                    BlockPos current = indexShifterBlockPos(getDirectionFacing(), correctLowCorner, x, y, z, length, width);
-                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
-                    if (currentBlock != correctBlock && !destroy) {
-                        if (!destroy) {
-                            if (player != null) {
-                                String msg = "Could not form because of block at Coord at X:" + current.getX() + " Y:" + current.getY() + " Z:" + current.getZ();
-                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
-                                msg = "Should be " + correctBlock.getBlock() + " not " + currentBlock.getBlock();
-                                player.sendStatusMessage(new TranslationTextComponent(msg), true);
-                                player.sendStatusMessage(new TranslationTextComponent(msg), false);
-                            }
-                            // increment block
-                            if(this.failures != null)  {
-                                failures.put(correctBlock, failures.get(correctBlock)+1);
-                            }
-                            LOGGER.info("Could not form because of " + current);
-                            LOGGER.info("should be " + correctBlock + " not " + currentBlock);
-                            return null;
-                        }
-                    }  else  {
-                        // add blocks of things to be formed/deleted
-                        multiblockMembers.add(current);
-                    }
-                }
-            }
-        }  //end loop
-        return multiblockMembers;
-    }
-
-    /*
-      Moves what blocks we are looking at with respect to the posArray
-     */
-    public BlockPos indexShifterBlockPos(Direction inputDirection, BlockPos low, int x, int y, int z, int length, int width)  {
-
-        switch (inputDirection)  {
-            case NORTH:
-                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + z);
-            case SOUTH:
-                return new BlockPos(low.getX() + x, low.getY() + y, low.getZ() + length - z - 1);
-            case WEST:
-                return new BlockPos(low.getX() + z, low.getY() + y, low.getZ() + x);
-            case EAST:
-                return new BlockPos(low.getX() + length - z - 1, low.getY() + y, low.getZ() + width - x - 1);
-        }
-        return null;
-    }
-
-    /*
-      Driver for forming the multiblock
-     */
-    public void tryToFormMultiBlock(World worldIn, PlayerEntity player, BlockPos posIn) {
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, player,false, getDirectionFacing());             // calc if every location has correct blocks
-        if (multiblockMembers != null) {                                                                            // if above check has no errors then it will not be null
-            setFormed(true);                                                                                        // change blocks state of controller
-            updateMultiBlockMemberTiles(multiblockMembers, false);                                            // change blocks state of frames
-            assignJobs();                                                                                           // sets "jobs" on frame members as needed
-        }
-    }
-
-    /*
-      Driver for destroying multi-blocks
-     */
-    public void destroyMultiBlock(World worldIn, BlockPos posIn) {
-        if (!isFormed(getControllerPos())) {
-            return;
-        }
-        setFormed(false);
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(worldIn, null, true, getDirectionFacing());
-        if (multiblockMembers != null) {
-            updateMultiBlockMemberTiles(multiblockMembers, true);
-        }
-    }
-
     /*
       Assigns out "jobs" to frame blocks that the controller needs to keep track of
+      eg: what blocks output / watch input for redstone
      */
+    @Override
     public void assignJobs() {
         BlockPos inputPos = getRedstoneInBlockPos();
         BlockPos outputPos = getRedstoneOutBlockPos();
@@ -876,7 +653,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
             ((HCCokeOvenFrameTile) te).setJob(JOB_REDSTONE_OUT);
         }
     }
-
 
     /*
       Calc's the position of the redstone input frame
@@ -909,8 +685,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return this.write(new CompoundNBT());
     }
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
-    {
+    public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
         this.write(nbt);
 
@@ -919,8 +694,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
-    {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
         this.read(world.getBlockState(packet.getPos()), packet.getNbtCompound());
     }
 

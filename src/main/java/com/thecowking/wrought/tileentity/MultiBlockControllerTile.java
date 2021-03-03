@@ -1,6 +1,7 @@
 package com.thecowking.wrought.tileentity;
 
 import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,6 +49,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
             return checkIfCorrectFrame(currentBlock);
         }
         return false;
+    }
+
+    public void assignJobs() {
     }
 
     /*
@@ -111,58 +115,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
         }
     }
 
-    /*
-West = -x
-East = +X
-North = -Z
-South = +Z
-this function will return the North-Western corner of the multi blocks to be formed
-*/
-    public BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int height, int shorterSide)  {
-        if(centerPos == null)  return null;
 
-        int xCoord = centerPos.getX();
-        int yCoord = centerPos.getY();
-        int zCoord = centerPos.getZ();
 
-        switch(inputDirection)  {
-            case NORTH:
-                return new BlockPos(xCoord - (shorterSide / 2), yCoord - (height / 2) , zCoord - (longerSide / 2));
-            case SOUTH:
-                return new BlockPos(xCoord  - (shorterSide / 2), yCoord  - (height / 2), zCoord - (longerSide / 2));
-            case WEST:
-                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
-            case EAST:
-                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
-            default:
-                return null;
-        }
-    }
-
-    /*
-West = -x
-East = +X
-North = -Z
-South = +Z
-this function will return the center most point based on the lengths of the mutli-blocks and the
-direction that is fed in
-*/
-    public BlockPos calcCenterBlock(Direction inputDirection)  {
-        int xCoord = this.pos.getX();
-        int yCoord = this.pos.getY();
-        int zCoord = this.pos.getZ();
-        switch(inputDirection)  {
-            case NORTH:
-                return new BlockPos(xCoord, yCoord, zCoord + (length / 2));
-            case SOUTH:
-                return new BlockPos(xCoord, yCoord, zCoord - (length / 2));
-            case WEST:
-                return new BlockPos(xCoord  + (length / 2), yCoord, zCoord);
-            case EAST:
-                return new BlockPos(xCoord  - (length / 2), yCoord, zCoord);
-        }
-        return null;
-    }
 
 
     /*
@@ -172,11 +126,6 @@ direction that is fed in
         this.world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
     }
 
-    /*
-     From here on all the following classes should be overwritten
-     */
-    @Override
-    public void tryToFormMultiBlock(World worldIn, BlockPos pos) {}
 
     @Override
     public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, IMultiBlockControllerTile tileEntity) {}

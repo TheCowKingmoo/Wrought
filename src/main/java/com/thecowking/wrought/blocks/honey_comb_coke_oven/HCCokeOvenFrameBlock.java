@@ -5,6 +5,7 @@ import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControll
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
 import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.util.MultiBlockHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -52,12 +53,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 return;
             }
 
-            // can finally get the controller tile entity
-            tileEntity = getTileFromPos(worldIn, controllerPos);
-            if(tileEntity instanceof HCCokeOvenControllerTile)  {
-                HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
-                controllerTile.destroyMultiBlock(worldIn, posIn);
-            }
+            MultiBlockHelper.destroyMultiBlock(worldIn, controllerPos, new HCCokeOven());
         }
 
     }
@@ -86,8 +82,8 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                             HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) ctileEntity;
                             if(controllerTile.isFormed(controllerPos))  {
                                 // OPEN GUI
-                                controllerTile.openMultiBlockGUI(worldIn, posIn, player, controllerTile);
-                                return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+                                controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
+                                return ActionResultType.SUCCESS;
                             }
 
                         }  else  {
@@ -108,6 +104,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
         }
-        return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+        super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+        return ActionResultType.SUCCESS;
     }
 }

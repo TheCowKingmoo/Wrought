@@ -88,7 +88,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         int red = RenderHelper.convertARGBToInt(255, 0, 0, 1);
         FontRenderer fontrenderer =  Minecraft.getInstance().fontRenderer;
         if(missingMembers.size() == 0)  {
-            LOGGER.info(startMessageX);
             drawString(stack, fontrenderer, "All Blocks Are Correct", startMessageX, startMessageY, green);
 
             buildButton.setShowButton(true);
@@ -133,7 +132,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int x, int y) {
         this.font.func_243248_b(stack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         displayMissingBlocks(stack, X_BORDER, this.titleY + X_BORDER);
-
     }
 
 

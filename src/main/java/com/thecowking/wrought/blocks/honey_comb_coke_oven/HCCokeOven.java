@@ -127,13 +127,14 @@ direction that is fed in
         } else if( x > 4)  {
             return controllerDirection;
         } else if(z < 2)  {
-            if(controllerDirection == Direction.NORTH || controllerDirection == Direction.SOUTH)  {
+
+            if(controllerDirection == Direction.NORTH)  {
                 return controllerDirection.rotateY();
             }  else  {
                 return controllerDirection.rotateY().getOpposite();
             }
         } else  {
-            if(controllerDirection == Direction.NORTH || controllerDirection == Direction.SOUTH)  {
+            if(controllerDirection == Direction.NORTH)  {
                 return controllerDirection.rotateY().getOpposite();
             }  else  {
                 return controllerDirection.rotateY();

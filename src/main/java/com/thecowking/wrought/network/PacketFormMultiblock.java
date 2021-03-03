@@ -33,6 +33,8 @@ public class PacketFormMultiblock {
         ctx.get().enqueueWork(() -> {
             ServerWorld serverWorld = ctx.get().getSender().getServerWorld();
             MultiBlockHelper.autoBuildMultiblock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
+            MultiBlockHelper.tryToFormMultiBlock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
+            ctx.get().getSender().closeScreen();
                 }
         );
         ctx.get().setPacketHandled(true);

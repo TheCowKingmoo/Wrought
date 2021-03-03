@@ -30,8 +30,8 @@ public class MultiBlockHelper {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /*
-Updates all information in all multiblock members
-*/
+        Updates blockstates of all members in mutlti-blocks
+    */
     private static void updateMultiBlockMemberTiles(World world, BlockPos controllerPos, List<BlockPos> memberArray, boolean destroy) {
 
         for (int i = 0; i < memberArray.size(); i++) {
@@ -58,12 +58,13 @@ Updates all information in all multiblock members
     }
 
     /*
-West = -x
-East = +X
-North = -Z
-South = +Z
-this function will return the North-Western corner of the multi blocks to be formed
-*/
+        West = -x
+        East = +X
+        North = -Z
+        South = +Z
+        this function will return the North-Western corner of the multi blocks to be formed
+        this is the lowest int value of the multiblock which makes it easier to iterate over when forming
+      */
     public static BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int height, int shorterSide)  {
         if(centerPos == null)  return null;
 
@@ -85,12 +86,10 @@ this function will return the North-Western corner of the multi blocks to be for
         }
     }
 
-
-
     /*
-This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
-that the multi-blocks is being formed or destroyed.
-*/
+        This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
+        that the multi-blocks is being formed or destroyed.
+    */
     public static List<BlockPos> getMultiBlockMembers(World world, PlayerEntity player, boolean destroy, Direction direction, BlockPos controllerPos, IMultiblockData data) {
         BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
@@ -118,8 +117,6 @@ that the multi-blocks is being formed or destroyed.
                                 player.sendStatusMessage(new TranslationTextComponent(msg), true);
                                 player.sendStatusMessage(new TranslationTextComponent(msg), false);
                             }
-                            LOGGER.info("Could not form because of " + current);
-                            LOGGER.info("should be " + correctBlock + " not " + currentBlock);
                             return null;
                         }
                     }  else  {
@@ -132,8 +129,10 @@ that the multi-blocks is being formed or destroyed.
         return multiblockMembers;
     }
 
-
-
+    /*
+        used for the controllers gui
+        checks for blocks in world that are missing are returns them as a hash map
+     */
     public static HashMap<Block, Integer> getMissingBlocks(World world, BlockPos controllerPos, IMultiblockData data) {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
@@ -171,9 +170,9 @@ that the multi-blocks is being formed or destroyed.
         return missingMembers;
     }
 
-
     /*
   Moves what blocks we are looking at with respect to the posArray
+  this essentially shifts what block in the world we are looking at with respect to direction and the posArray
  */
     public static BlockPos indexShifterBlockPos(Direction inputDirection, BlockPos low, int x, int y, int z, int length, int width)  {
 
@@ -190,11 +189,6 @@ that the multi-blocks is being formed or destroyed.
         return null;
     }
 
-    public boolean checkIfCorrectFrame(Block block) {
-        return (block instanceof HCCokeOvenFrameBlock);
-    }
-
-
     /*
       Driver for destroying multi-blocks
      */
@@ -208,6 +202,10 @@ that the multi-blocks is being formed or destroyed.
             updateMultiBlockMemberTiles(world, controllerPos, multiblockMembers, true);
         }
     }
+
+    /*
+        Conv method to get the controller TE
+     */
     public static MultiBlockControllerTile getControllerTile(World world, BlockPos controllerPos)  {
         TileEntity te = world.getTileEntity(controllerPos);
         if(te == null)  return null;
@@ -217,26 +215,17 @@ that the multi-blocks is being formed or destroyed.
     }
 
     /*
-    Driver for forming the multiblock
+    Driver for forming and double checking correct blocks are in the place for the multi block
     */
     public static void tryToFormMultiBlock(World world, PlayerEntity player, BlockPos controllerPos, IMultiblockData data) {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
-
-
         if(world.isRemote())  return;
-        LOGGER.info("world is not client");
-
 
         // null check
         if(controllerTile == null)  return;
 
-        LOGGER.info("controller not null");
-
         // ensure that the controller is not already formed
         if(controllerTile.isFormed()) return;
-
-
-        LOGGER.info("controller not formed");
 
         // get list of all future multiblock members -> not that this will be null if any problems are detected
         List<BlockPos> multiblockMembers = getMultiBlockMembers(world, player,false, controllerTile.getDirectionFacing(), controllerPos, data);
@@ -244,12 +233,13 @@ that the multi-blocks is being formed or destroyed.
             controllerTile.setFormed(true);
             updateMultiBlockMemberTiles(world, controllerPos, multiblockMembers, false);
             controllerTile.assignJobs();
-        }  else  {
-            LOGGER.info("Did not form");
         }
     }
 
 
+    /*
+        Method that will check a players inventory for correct blocks to build the multi block structure with
+     */
     public static void autoBuildMultiblock(World world, PlayerEntity player, BlockPos controllerPos, IMultiblockData data)  {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
@@ -277,6 +267,7 @@ that the multi-blocks is being formed or destroyed.
                             player.inventory.mainInventory.get(index).shrink(1);
                             LOGGER.info(correctBlock);
 
+                            // TODO - new method for placing that checks players permissons and other edge cases
                             if(correctBlock instanceof StairsBlock)  {
                                 LOGGER.info("at stairs");
                                 Direction d = data.getStairsDirection(direction,z,x);
@@ -294,9 +285,7 @@ that the multi-blocks is being formed or destroyed.
                     }
                 }
             }
-        }  //end loop
+        }
     }
-
-
 
 }

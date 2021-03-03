@@ -120,4 +120,25 @@ direction that is fed in
         return null;
     }
 
+
+    public Direction getStairsDirection(Direction controllerDirection, int x, int z)  {
+        if(x < 2)  {
+            return controllerDirection.getOpposite();
+        } else if( x > 4)  {
+            return controllerDirection;
+        } else if(z < 2)  {
+            if(controllerDirection == Direction.NORTH || controllerDirection == Direction.SOUTH)  {
+                return controllerDirection.rotateY();
+            }  else  {
+                return controllerDirection.rotateY().getOpposite();
+            }
+        } else  {
+            if(controllerDirection == Direction.NORTH || controllerDirection == Direction.SOUTH)  {
+                return controllerDirection.rotateY().getOpposite();
+            }  else  {
+                return controllerDirection.rotateY();
+            }
+        }
+    }
+
 }

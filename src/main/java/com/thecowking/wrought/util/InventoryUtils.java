@@ -144,7 +144,7 @@ public class InventoryUtils {
                 if(index != -1)  {
                     playerInventory.get(index).shrink(1);
                     if(inInventory.get(e.getKey()) != null )  {
-                        inInventory.put(e.getKey(), e.getValue()+1);
+                        inInventory.put(e.getKey(), inInventory.get(e.getKey())+1);
                     }  else  {
                         inInventory.put(e.getKey(), 1);
                     }

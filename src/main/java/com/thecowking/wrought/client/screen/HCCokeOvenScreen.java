@@ -98,7 +98,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         drawString(stack, fontrenderer, "Block(s) To Build", startMessageX,
                 startMessageY, RenderHelper.convertARGBToInt(255, 0, 0, 1));
 
-
         boolean goodToGo = true;
         for(Map.Entry<Block, Integer> e: missingMembers.entrySet())  {
             Integer integerNumInv = inInvetory.get(e.getKey());
@@ -108,6 +107,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
             }
             int numNeeded = e.getValue();
             int color = red;
+
 
             if(numInv >= numNeeded)  {
                 color = green;

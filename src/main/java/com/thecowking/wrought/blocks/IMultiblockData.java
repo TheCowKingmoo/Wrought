@@ -15,6 +15,7 @@ public interface IMultiblockData {
     public Block[][][] getPosArray();
     public Block getBlockMember(int x, int y, int z);
     public BlockPos calcCenterBlock(Direction inputDirection, BlockPos controllerPos, IMultiblockData data);
+    public Direction getStairsDirection(Direction controllerDirection, int x, int z);
 
 
 

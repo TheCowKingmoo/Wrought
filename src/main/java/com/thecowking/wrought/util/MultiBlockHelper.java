@@ -8,6 +8,7 @@ import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.thecowking.wrought.blocks.Multiblock.DIRECTION_FACING;
 import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
 
 public class MultiBlockHelper {
@@ -269,12 +271,21 @@ that the multi-blocks is being formed or destroyed.
                     BlockPos current = indexShifterBlockPos(direction, correctLowCorner, x, y, z, data.getLength(), data.getWidth());
                     Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
                     if (currentBlock != correctBlock && currentBlock == Blocks.AIR) {
-
                         // find the index of the item in inventory
                         int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
                         if(index != -1)  {
                             player.inventory.mainInventory.get(index).shrink(1);
-                            world.setBlockState(current, correctBlock.getDefaultState());
+                            LOGGER.info(correctBlock);
+
+                            if(correctBlock instanceof StairsBlock)  {
+                                LOGGER.info("at stairs");
+                                Direction d = data.getStairsDirection(direction,z,x);
+                                LOGGER.info(d);
+                                world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, d));
+                            }  else  {
+                                world.setBlockState(current, correctBlock.getDefaultState());
+                            }
+
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");
                         }

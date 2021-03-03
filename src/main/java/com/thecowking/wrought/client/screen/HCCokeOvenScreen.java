@@ -25,8 +25,11 @@ import java.util.Map;
 public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     private HCCokeOvenContainer container;
     private BuildButton buildButton;
+    private final int BUILD_BUTTON_HEIGHT = 25;
+    private final int BUILD_BUTTON_WIDTH = 50;
 
     private final int MESSAGE_Y_SEPERATION = 10;
+    private final int X_BORDER = 15;
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui_build.png");
     private static final Logger LOGGER = LogManager.getLogger();
@@ -47,7 +50,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     @Override
     protected void init()  {
         super.init();
-        this.buildButton = new BuildButton(xStart(), yStart(), 50, 50, this.container.controllerPos);
+        this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.controllerPos, this);
         addButton(this.buildButton);
         if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOven());}
 
@@ -81,18 +84,20 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     }
 
     public void displayMissingBlocks(MatrixStack stack, int startMessageX, int startMessageY)  {
+        int green = RenderHelper.convertARGBToInt(0, 255, 0, 1);
+        int red = RenderHelper.convertARGBToInt(255, 0, 0, 1);
         FontRenderer fontrenderer =  Minecraft.getInstance().fontRenderer;
         if(missingMembers.size() == 0)  {
-            drawCenteredString(stack, fontrenderer, "all blocks are correct", startMessageX,
-                    startMessageY, RenderHelper.convertARGBToInt(0, 255, 0, 1));
+            LOGGER.info(startMessageX);
+            drawString(stack, fontrenderer, "All Blocks Are Correct", startMessageX, startMessageY, green);
+
             buildButton.setShowButton(true);
 
             return;
         }
 
 
-        int green = RenderHelper.convertARGBToInt(0, 255, 0, 1);
-        int red = RenderHelper.convertARGBToInt(255, 0, 0, 1);
+
 
 
         drawString(stack, fontrenderer, "Block(s) To Build", startMessageX,
@@ -127,7 +132,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int x, int y) {
         this.font.func_243248_b(stack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
-        displayMissingBlocks(stack, this.titleX, this.titleY + MESSAGE_Y_SEPERATION);
+        displayMissingBlocks(stack, X_BORDER, this.titleY + X_BORDER);
 
     }
 

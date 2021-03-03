@@ -78,6 +78,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
                 throw new IllegalStateException("Our named container provider is missing!");
             }
         }
+        super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
         return ActionResultType.SUCCESS;
     }
 

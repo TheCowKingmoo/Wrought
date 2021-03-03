@@ -83,7 +83,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                             if(controllerTile.isFormed(controllerPos))  {
                                 // OPEN GUI
                                 controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
-                                return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+                                return ActionResultType.SUCCESS;
                             }
 
                         }  else  {
@@ -104,6 +104,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
         }
-        return super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+        super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
+        return ActionResultType.SUCCESS;
     }
 }

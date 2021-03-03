@@ -1,10 +1,16 @@
 package com.thecowking.wrought.tileentity;
 
+import com.thecowking.wrought.blocks.IMultiblockData;
 import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -12,9 +18,13 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,16 +37,14 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
 
     private int needsUpdate = 0;
 
-
-    protected int length;
-    protected int width;
-    protected int height;
+    protected IMultiblockData data;
 
     protected final int TICKSPEROPERATION = 20;
 
 
-    public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn) {
+    public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, IMultiblockData data) {
         super(tileEntityTypeIn);
+        this.data = data;
     }
 
     /*
@@ -64,6 +72,24 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
         }
         return null;
     }
+
+
+
+    /*
+        Launches the GUI for the completed multiblock
+     */
+    public void openGUIMultiblock(World world, PlayerEntity player) {
+        NetworkHooks.openGui((ServerPlayerEntity) player, this.data.getContainerProvider(world, this.pos), this.pos);
+    }
+
+    public IMultiblockData getData()  {
+        return null;
+    }
+
+    public IIntArray getStateData()  {
+        return null;
+    }
+
 
     /*
       This is called when a controller is right clicked by a player when the multi-blocks is not formed

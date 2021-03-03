@@ -1,6 +1,8 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.blocks.blast_furance.BlastFurnaceBrickControllerBlock;
+import com.thecowking.wrought.blocks.blast_furance.BlastFurnaceBrickFrameBlock;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
@@ -12,9 +14,10 @@ import com.thecowking.wrought.items.items.AshItem;
 import com.thecowking.wrought.items.items.CokeBrickItem;
 import com.thecowking.wrought.items.items.CokeItem;
 import com.thecowking.wrought.items.items.SootItem;
+import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
+import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BucketItem;
@@ -69,7 +72,7 @@ public class RegistryHandler {
     public static final RegistryObject<ContainerType<HCCokeOvenContainerMultiblock>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
-        return new HCCokeOvenContainerMultiblock(windowId, world, pos, inv, new HCStateData());
+        return new HCCokeOvenContainerMultiblock(windowId, world, pos, inv);
     }));
 
     //Honey Comb Coke Multi-Block
@@ -93,6 +96,21 @@ public class RegistryHandler {
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
     public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
+
+
+    //Blast Furnace Controller
+    public static final RegistryObject<Block> BLAST_FURANCE_BRICK_CONTROLLER = BLOCKS.register("blast_furnace_brick_controller", BlastFurnaceBrickControllerBlock::new);
+    public static final RegistryObject<Item> BLAST_FURANCE_BRICK_CONTROLLER_ITEM = ITEMS.register("blast_furnace_brick_controller", () -> new BlockItemBase(BLAST_FURANCE_BRICK_CONTROLLER.get()));
+    public static final RegistryObject<TileEntityType<BlastFurnaceBrickControllerTile>> BLAST_FURANCE_BRICK_CONTROLLER_TILE = TILES.register("blast_furnace_brick_controller", () -> TileEntityType.Builder.create(BlastFurnaceBrickControllerTile::new, BLAST_FURANCE_BRICK_CONTROLLER.get()).build(null));
+
+
+
+    //Blast Furnace Frame
+    public static final RegistryObject<Block> BLAST_FURANCE_BRICK_FRAME = BLOCKS.register("blast_furnace_brick_frame", BlastFurnaceBrickFrameBlock::new);
+    public static final RegistryObject<Item> BLAST_FURANCE_BRICK_FRAME_ITEM = ITEMS.register("blast_furnace_brick_frame", () -> new BlockItemBase(BLAST_FURANCE_BRICK_FRAME.get()));
+    public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURANCE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
+
+
 
 
 

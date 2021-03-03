@@ -11,6 +11,8 @@ public class Multiblock {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
     public static final IntegerProperty REDSTONE = BlockStateProperties.POWER_0_15;
+    public static final BooleanProperty JOB = BooleanProperty.create("job");
+
 
 
     public static final String JOB_ENERGY_IN = "E_IN";
@@ -34,6 +36,10 @@ public class Multiblock {
     public static final String FLUID_TANK = "fluid_tank";
 
     public static final String STATUS = "status";
+
+    public static final String BURN_TIME = "burn_time";
+    public static final String BURN_COMPLETE_TIME = "burn_complete_time";
+
 
 
 

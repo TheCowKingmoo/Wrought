@@ -9,4 +9,5 @@ public interface IMultiBlockControllerTile {
     boolean isValidMultiBlockFormer(Item item);
     void openGUI(World worldIn, BlockPos pos, PlayerEntity player, IMultiBlockControllerTile tileEntity);
     void setDirty(boolean b);
+
 }

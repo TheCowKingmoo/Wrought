@@ -1,10 +1,19 @@
 package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiblockData;
+import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
 import static com.thecowking.wrought.util.RegistryHandler.*;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_SLAB;
@@ -141,5 +150,20 @@ direction that is fed in
             }
         }
     }
+
+    public INamedContainerProvider getContainerProvider(World world, BlockPos controllerPos)  {
+        return new INamedContainerProvider() {
+            @Override
+            public ITextComponent getDisplayName() {
+                return new TranslationTextComponent("Honey Comb Coke Oven");
+            }
+
+            @Override
+            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                return new HCCokeOvenContainerMultiblock(i, world, controllerPos, playerInventory);
+            }
+        };
+    }
+
 
 }

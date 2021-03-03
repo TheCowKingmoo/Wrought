@@ -1,6 +1,8 @@
 package com.thecowking.wrought.tileentity.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
+import com.thecowking.wrought.blocks.IMultiblockData;
+import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOven;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
@@ -28,6 +30,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -59,9 +62,6 @@ import static com.thecowking.wrought.util.RegistryHandler.*;
 
 public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    // used to track info for the progress bar which gets sent to the client
-    public final HCStateData stateData = new HCStateData();
 
     // tracks if the tile entity needs a block update
     private boolean needUpdate = false;
@@ -123,12 +123,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // lets us know when the current item is done cooking
     public int operationComplete;
 
-    // used to let autobuilding know what blocks are still needed
-    HashMap<Block, Integer> failures;
+
+    public int timeElapsed = 0;
+    public int timeComplete = 0;
+
+
+
+
 
     public HCCokeOvenControllerTile() {
-
-        super(H_C_COKE_CONTROLLER_TILE.get());
+        super(H_C_COKE_CONTROLLER_TILE.get(), new HCCokeOven());
 
         //init item intputs
         this.primaryInputSlot = new InputItemHandler(1, this, null, "primary");
@@ -160,8 +164,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // TODO - get rid of state data
         this.operationProgression = 0;
         this.operationComplete = 0;
-        this.stateData.timeElapsed = 0;
-        this.stateData.timeComplete = 0;
 
 
         this.tickCounter = 0;
@@ -295,16 +297,16 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     private boolean processItem()  {
 
         // Check if there is a previous item and the item has "cooked" long enough
-        if (processingPrimaryItemStack != ItemStack.EMPTY && this.stateData.timeElapsed++ < this.stateData.timeComplete) {
+        if (processingPrimaryItemStack != ItemStack.EMPTY && this.timeElapsed++ < this.timeComplete) {
 
             this.needUpdate = true;
-            this.stateData.timeElapsed++;
+            this.timeElapsed++;
             return false;
 
             // item has cooked long enough -> insert outputs and move onto next operation
         }  else if(processingPrimaryItemStack != ItemStack.EMPTY) {
             this.needUpdate = true;
-            this.stateData.timeElapsed = 0;
+            this.timeElapsed = 0;
             // attempt to insert fluid from craft and fill leftovers into backlog tank
             fluidBacklog = fluidTank.internalFill(processingFluidStack, IFluidHandler.FluidAction.EXECUTE);
             // attempt to insert item from craft and fill leftovers into backlog container
@@ -390,7 +392,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         ItemStack primaryOutput = currentRecipe.getPrimaryOutput();
 
         FluidStack fluidOutput = this.getRecipe(getPrimaryItemInput()).getRecipeFluidStackOutput();
-        this.stateData.timeComplete = currentRecipe.getBurnTime();
+        this.timeComplete = currentRecipe.getBurnTime();
         this.operationComplete = currentRecipe.getBurnTime();
 
 
@@ -510,7 +512,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         itemFluidInputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_IN));
         itemFluidOutputSlot.deserializeNBT(nbt.getCompound(FLUID_INVENTORY_OUT));
         fluidTank.readFromNBT(nbt.getCompound(FLUID_TANK));
-        stateData.readFromNBT(nbt);
+        this.timeElapsed = nbt.getInt(BURN_TIME);
+        this.timeComplete = nbt.getInt(BURN_COMPLETE_TIME);
         this.status = nbt.getString(STATUS);
     }
 
@@ -526,7 +529,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         tag.put(FLUID_INVENTORY_IN, itemFluidInputSlot.serializeNBT());
         tag.put(FLUID_INVENTORY_OUT, itemFluidOutputSlot.serializeNBT());
         tag.put(FLUID_TANK, fluidTank.writeToNBT(new CompoundNBT()));
-        stateData.putIntoNBT(tag);
+        tag.putInt(BURN_TIME, this.timeElapsed);
+        tag.putInt(BURN_COMPLETE_TIME, this.timeComplete);
         tag.putString(STATUS, this.status);
         return tag;
     }
@@ -556,7 +560,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     @Nullable
     @Override
     public Container createMenu(final int windowID, final PlayerInventory playerInv, final PlayerEntity playerIn) {
-        return new HCCokeOvenContainerMultiblock(windowID, this.world, getControllerPos(), playerInv, stateData);
+        return new HCCokeOvenContainerMultiblock(windowID, this.world, getControllerPos(), playerInv);
     }
 
     /*
@@ -618,23 +622,14 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
     }
 
-    /*
-        Launches the GUI for the completed multiblock
-     */
-    public void openGUIMultiblock(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
-        INamedContainerProvider containerProvider = new INamedContainerProvider() {
-            @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("Honey Comb Coke Oven");
-            }
 
-            @Override
-            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainerMultiblock(i, worldIn, getControllerPos(), playerInventory, stateData);
-            }
-        };
-        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
+    @Override
+    public IMultiblockData getData()  {
+        return new HCCokeOven();
     }
+
+
+
 
     /*
       Assigns out "jobs" to frame blocks that the controller needs to keep track of

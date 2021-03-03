@@ -1,6 +1,5 @@
 package com.thecowking.wrought.inventory.containers;
 
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

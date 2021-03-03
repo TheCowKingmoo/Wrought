@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "wrought:blocks/blast_furnace_brick_frame",
+    "up": "wrought:blocks/blast_furnace_brick_frame",
+    "north": "wrought:blocks/blast_furnace_brick_frame",
+    "south": "wrought:blocks/blast_furnace_brick_frame",
+    "east": "wrought:blocks/blast_furnace_brick_frame",
+    "west": "wrought:blocks/blast_furnace_brick_frame"
+  }
+}

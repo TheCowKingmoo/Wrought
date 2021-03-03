@@ -32,7 +32,7 @@ public class PacketFormMultiblock {
     public void handle(Supplier<NetworkEvent.Context> ctx)  {
         ctx.get().enqueueWork(() -> {
             ServerWorld serverWorld = ctx.get().getSender().getServerWorld();
-            MultiBlockHelper.tryToFormMultiBlock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
+            MultiBlockHelper.autoBuildMultiblock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
                 }
         );
         ctx.get().setPacketHandled(true);

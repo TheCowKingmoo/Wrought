@@ -7,7 +7,9 @@ import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -244,6 +246,46 @@ that the multi-blocks is being formed or destroyed.
             LOGGER.info("Did not form");
         }
     }
+
+
+    public static void autoBuildMultiblock(World world, PlayerEntity player, BlockPos controllerPos, IMultiblockData data)  {
+        MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
+        Direction direction = controllerTile.getDirectionFacing();
+
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
+        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
+
+        // checks the central slice part of the structure to ensure the correct blocks exist
+        for (int y = 0; y < data.getHeight(); y++) {
+            for (int z = 0; z < data.getLength(); z++) {
+                for (int x = 0; x < data.getWidth(); x++) {
+                    // get block that should be at these coords
+                    Block correctBlock = data.getBlockMember(y,z,x);
+                    if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
+                        continue;
+                    }
+                    // get current blocks - adjusted for Direction
+                    BlockPos current = indexShifterBlockPos(direction, correctLowCorner, x, y, z, data.getLength(), data.getWidth());
+                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
+                    if (currentBlock != correctBlock && currentBlock == Blocks.AIR) {
+
+                        // find the index of the item in inventory
+                        int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
+                        if(index != -1)  {
+                            player.inventory.mainInventory.get(index).shrink(1);
+                            world.setBlockState(current, correctBlock.getDefaultState());
+                        }  else  {
+                            LOGGER.info("Cannot find item in players inventory");
+                        }
+
+
+                    }
+                }
+            }
+        }  //end loop
+    }
+
 
 
 }

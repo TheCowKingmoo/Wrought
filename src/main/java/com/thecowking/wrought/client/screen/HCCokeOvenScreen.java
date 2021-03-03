@@ -6,6 +6,7 @@ import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOven;
 import com.thecowking.wrought.client.button.BuildButton;
 import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.util.InventoryUtils;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.block.Block;
@@ -25,11 +26,13 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
     private HCCokeOvenContainer container;
     private BuildButton buildButton;
 
-    private final int MESSAGE_Y_SEPERATION = 15;
+    private final int MESSAGE_Y_SEPERATION = 10;
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui_build.png");
     private static final Logger LOGGER = LogManager.getLogger();
     private HashMap<Block, Integer> missingMembers;
+    private HashMap<Block, Integer> inInvetory;
+
 
 
     public HCCokeOvenScreen(HCCokeOvenContainer container, PlayerInventory inv, ITextComponent name)  {
@@ -38,6 +41,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.ySize = 240;
         this.container = container;
         this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOven());
+        this.inInvetory = InventoryUtils.checkVsPlayerInventory(missingMembers, inv.player);
     }
 
     @Override
@@ -46,6 +50,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.buildButton = new BuildButton(xStart(), yStart(), 50, 50, this.container.controllerPos);
         addButton(this.buildButton);
         if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOven());}
+
     }
 
 
@@ -84,17 +89,39 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
             return;
         }
-        buildButton.setShowButton(false);
 
-        drawString(stack, fontrenderer, "Missing Block(s): ", startMessageX,
+
+        int green = RenderHelper.convertARGBToInt(0, 255, 0, 1);
+        int red = RenderHelper.convertARGBToInt(255, 0, 0, 1);
+
+
+        drawString(stack, fontrenderer, "Block(s) To Build", startMessageX,
                 startMessageY, RenderHelper.convertARGBToInt(255, 0, 0, 1));
 
-        for(Map.Entry<Block, Integer> e: missingMembers.entrySet())  {
-            startMessageY = startMessageY + MESSAGE_Y_SEPERATION;
 
+        boolean goodToGo = true;
+        for(Map.Entry<Block, Integer> e: missingMembers.entrySet())  {
+            Integer integerNumInv = inInvetory.get(e.getKey());
+            int numInv = 0;
+            if (integerNumInv != null)  {
+                numInv = integerNumInv.intValue();
+            }
+            int numNeeded = e.getValue();
+            int color = red;
+
+            if(numInv >= numNeeded)  {
+                color = green;
+            } else  {
+                goodToGo = false;
+            }
+            // write the number of needed blocks to place in world
+            startMessageY = startMessageY + MESSAGE_Y_SEPERATION;
             drawString(stack, fontrenderer, e.getKey().getTranslationKey() + " x " + e.getValue(), startMessageX + 4,
-                    startMessageY, RenderHelper.convertARGBToInt(255, 0, 0, 1));
+                    startMessageY, color);
         }
+
+        buildButton.setShowButton(goodToGo);
+
     }
 
     @Override

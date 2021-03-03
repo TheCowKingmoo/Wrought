@@ -1,5 +1,6 @@
 package com.thecowking.wrought;
 
+import com.thecowking.wrought.network.Networking;
 import com.thecowking.wrought.util.ClientSetup;
 import com.thecowking.wrought.util.RegistryHandler;
 import net.minecraft.block.Block;
@@ -40,10 +41,15 @@ public class Wrought
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
+
+
         // register blocks
         RegistryHandler.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
+
+
+        Networking.registerMessages();
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

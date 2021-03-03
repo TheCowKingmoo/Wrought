@@ -129,6 +129,45 @@ that the multi-blocks is being formed or destroyed.
     }
 
 
+
+    public static HashMap<Block, Integer> getMissingBlocks(World world, BlockPos controllerPos, IMultiblockData data) {
+        MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
+        Direction direction = controllerTile.getDirectionFacing();
+
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
+        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
+        HashMap<Block, Integer> missingMembers= new HashMap<>();
+
+        // checks the central slice part of the structure to ensure the correct blocks exist
+        for (int y = 0; y < data.getHeight(); y++) {
+            for (int z = 0; z < data.getLength(); z++) {
+                for (int x = 0; x < data.getWidth(); x++) {
+                    // get block that should be at these coords
+                    Block correctBlock = data.getBlockMember(y,z,x);
+                    if (correctBlock == null) {                                // skip the "null" positions (don't care whats in here)
+                        continue;
+                    }
+                    // get current blocks - adjusted for Direction
+                    BlockPos current = indexShifterBlockPos(direction, correctLowCorner, x, y, z, data.getLength(), data.getWidth());
+                    Block currentBlock = world.getBlockState(current).getBlock();   // get the actual blocks at pos
+                    if (currentBlock != correctBlock) {
+                        if(missingMembers == null)  {
+                            LOGGER.info("somehow missing");
+                        }
+                        if(missingMembers.get(correctBlock) == null)  {
+                            missingMembers.put(correctBlock, 1);
+                        }  else  {
+                            missingMembers.put(correctBlock, missingMembers.get(correctBlock)  + 1);
+                        }
+                    }
+                }
+            }
+        }  //end loop
+        return missingMembers;
+    }
+
+
     /*
   Moves what blocks we are looking at with respect to the posArray
  */
@@ -179,11 +218,21 @@ that the multi-blocks is being formed or destroyed.
     public static void tryToFormMultiBlock(World world, PlayerEntity player, BlockPos controllerPos, IMultiblockData data) {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
 
+
+        if(world.isRemote())  return;
+        LOGGER.info("world is not client");
+
+
         // null check
         if(controllerTile == null)  return;
 
+        LOGGER.info("controller not null");
+
         // ensure that the controller is not already formed
         if(controllerTile.isFormed()) return;
+
+
+        LOGGER.info("controller not formed");
 
         // get list of all future multiblock members -> not that this will be null if any problems are detected
         List<BlockPos> multiblockMembers = getMultiBlockMembers(world, player,false, controllerTile.getDirectionFacing(), controllerPos, data);
@@ -191,6 +240,8 @@ that the multi-blocks is being formed or destroyed.
             controllerTile.setFormed(true);
             updateMultiBlockMemberTiles(world, controllerPos, multiblockMembers, false);
             controllerTile.assignJobs();
+        }  else  {
+            LOGGER.info("Did not form");
         }
     }
 

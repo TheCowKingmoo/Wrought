@@ -27,6 +27,8 @@ public class PlayerLayoutContainer extends Container {
     protected BlockPos controllerPos;
     protected PlayerEntity player;
     protected IItemHandler playerInventory;
+    private final int TOP_ROW = 115;
+    private final int LEFT_COL = 10;
 
 
     protected PlayerLayoutContainer(@Nullable ContainerType<?> type, int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
@@ -34,7 +36,7 @@ public class PlayerLayoutContainer extends Container {
         this.world = world;
         this.controllerPos = controllerPos;
         this.playerInventory = new InvWrapper(playerInventory);
-        layoutPlayerInventorySlots(10, 115);
+        layoutPlayerInventorySlots(LEFT_COL, TOP_ROW);
     }
 
     @Override

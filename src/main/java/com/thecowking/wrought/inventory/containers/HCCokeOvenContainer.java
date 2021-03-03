@@ -14,16 +14,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER_BUILDER;
 
 
 
 public class HCCokeOvenContainer extends PlayerLayoutContainer{
     HCCokeOvenControllerTile tile;
+    public BlockPos controllerPos;
 
     public HCCokeOvenContainer(int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
         super(H_C_CONTAINER_BUILDER.get(), id, world, controllerPos, playerInventory);
         this.tile = (HCCokeOvenControllerTile)world.getTileEntity(controllerPos);
+        this.controllerPos = controllerPos;
 
     }
 

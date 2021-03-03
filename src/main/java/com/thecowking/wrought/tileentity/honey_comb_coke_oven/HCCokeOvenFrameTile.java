@@ -19,7 +19,7 @@ public class HCCokeOvenFrameTile extends MultiBlockFrameTile {
 
     public HCCokeOvenFrameTile() {
         super(H_C_COKE_FRAME_TILE.get());
-        LOGGER.info("FRAME TILE MADE");
+        //LOGGER.info("FRAME TILE MADE");
     }
 
     public HCCokeOvenControllerTile getControllerTile()  {

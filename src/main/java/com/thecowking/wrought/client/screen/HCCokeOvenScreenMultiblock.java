@@ -1,4 +1,4 @@
-package com.thecowking.wrought.client;
+package com.thecowking.wrought.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -161,7 +161,6 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
-
     }
 
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {

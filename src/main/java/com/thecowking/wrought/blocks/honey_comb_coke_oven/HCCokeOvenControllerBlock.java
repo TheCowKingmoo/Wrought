@@ -43,7 +43,7 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {
-        MultiBlockHelper.destroyMultiBlock(worldIn, posIn, new HCCokeOvenData());
+        MultiBlockHelper.destroyMultiBlock(worldIn, posIn);
     }
 
     @Override

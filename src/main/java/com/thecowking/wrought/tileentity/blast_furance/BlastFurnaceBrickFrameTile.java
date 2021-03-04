@@ -13,14 +13,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURANCE_BRICK_FRAME_TILE;
+import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURNACE_BRICK_FRAME_TILE;
 
 
 public class BlastFurnaceBrickFrameTile extends MultiBlockFrameTile {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public BlastFurnaceBrickFrameTile() {
-        super(BLAST_FURANCE_BRICK_FRAME_TILE.get());
+        super(BLAST_FURNACE_BRICK_FRAME_TILE.get());
     }
 
     public BlastFurnaceBrickControllerTile getControllerTile()  {

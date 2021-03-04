@@ -55,7 +55,7 @@ public class BlastFurnaceBrickControllerBlock extends MultiBlockControllerBlock 
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {
-        MultiBlockHelper.destroyMultiBlock(worldIn, posIn, new HCCokeOvenData());
+        MultiBlockHelper.destroyMultiBlock(worldIn, posIn);
     }
 
 

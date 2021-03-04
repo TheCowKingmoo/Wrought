@@ -9,6 +9,7 @@ import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import com.thecowking.wrought.util.*;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
@@ -57,7 +58,7 @@ import java.util.stream.Collectors;
 import static com.thecowking.wrought.data.MultiblockData.*;
 import static com.thecowking.wrought.util.RegistryHandler.*;
 
-public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements INamedContainerProvider {
+public class HCCokeOvenControllerTile extends MultiBlockControllerTileFluid implements INamedContainerProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     // tracks if the tile entity needs a block update
@@ -85,9 +86,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
 
-    // main tank
-    private OutputFluidTank fluidTank;
-
     // used when player is directly accessing multi-block
     private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(primaryInputSlot, itemFluidInputSlot, primaryOutputSlot, secondaryOutputSlot, itemFluidOutputSlot));
 
@@ -108,9 +106,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     // output fluid from current recipe
     private FluidStack processingFluidStack;
 
-    // holds the string that is displayed on the status button
-    private String status;
-
     // used to stop operations if the bucket slot cannot be used
     private ItemStack fluidItemBacklog;
 
@@ -121,15 +116,12 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public int operationComplete;
 
 
-    public int timeElapsed = 0;
-    public int timeComplete = 0;
-
 
 
 
 
     public HCCokeOvenControllerTile() {
-        super(H_C_COKE_CONTROLLER_TILE.get(), new HCCokeOvenData());
+        super(H_C_COKE_CONTROLLER_TILE.get(), new HCCokeOvenData(), 16000);
 
         //init item intputs
         this.primaryInputSlot = new InputItemHandler(1, this, null, "primary");
@@ -144,8 +136,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         // init fluid item output
         this.itemFluidOutputSlot = new FluidItemOutputHandler(1);
 
-        //init tank
-        this.fluidTank = new OutputFluidTank(16000);
+
 
         //init internal stack for processing
         this.itemBacklog = ItemStack.EMPTY;
@@ -172,7 +163,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         Getters
      */
     public World getWorld()  {return this.world;}
-    public FluidStack getFluidInTank()  {return fluidTank.getFluid();}
 
 
     /*
@@ -324,11 +314,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
         return this.isSmelting;
     }
 
-
-
-    public String getStatus()  {
-        return this.status;
-    }
 
     /*
         Check if a new item has a recipe that the oven can use
@@ -640,9 +625,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     }
 
 
-    public int getTankMaxSize()  {
-        return fluidTank.getCapacity();
-    }
 
 
     @Override

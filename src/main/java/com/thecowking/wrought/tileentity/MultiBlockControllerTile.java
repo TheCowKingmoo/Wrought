@@ -2,6 +2,7 @@ package com.thecowking.wrought.tileentity;
 
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
+import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.block.Block;
@@ -24,6 +25,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +37,14 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     protected BlockPos redstoneIn;
     protected BlockPos redstoneOut;
 
+    // holds the string that is displayed on the status button
+    protected String status;
+
+
+
+    public int timeElapsed = 0;
+    public int timeComplete = 0;
+
     private int needsUpdate = 0;
 
     protected IMultiblockData data;
@@ -42,10 +52,17 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     protected final int TICKSPEROPERATION = 20;
 
 
+
+
+
+
+
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, IMultiblockData data) {
         super(tileEntityTypeIn);
         this.data = data;
     }
+
+
 
     /*
     Does the needed checks and casting to see if current BlockPos holds a correct member of multi-blocks
@@ -61,6 +78,12 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
 
     public void assignJobs() {
     }
+
+    public String getStatus()  {
+        return this.status;
+    }
+
+
 
     /*
       Grabs the Frame Tile Entity

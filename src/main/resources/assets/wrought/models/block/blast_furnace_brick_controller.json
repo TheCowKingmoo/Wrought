@@ -3,7 +3,7 @@
   "textures": {
     "down": "wrought:blocks/blast_furnace_brick_controller",
     "up": "wrought:blocks/blast_furnace_brick_controller",
-    "north": "wrought:blocks/blast_furnace_brick_controller",
+    "north": "wrought:blocks/blast_furnace_brick_controller_front",
     "south": "wrought:blocks/blast_furnace_brick_controller",
     "east": "wrought:blocks/blast_furnace_brick_controller",
     "west": "wrought:blocks/blast_furnace_brick_controller"

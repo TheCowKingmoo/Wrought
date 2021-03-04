@@ -1,8 +1,6 @@
 package com.thecowking.wrought.blocks;
 
 
-
-import com.thecowking.wrought.data.HCCokeOvenData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.util.MultiBlockHelper;

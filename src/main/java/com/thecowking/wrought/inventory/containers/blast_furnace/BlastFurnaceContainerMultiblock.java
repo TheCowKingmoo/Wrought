@@ -3,6 +3,8 @@ package com.thecowking.wrought.inventory.containers.blast_furnace;
 import com.thecowking.wrought.inventory.containers.PlayerLayoutContainer;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
+import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,13 +18,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.thecowking.wrought.data.MultiblockData.*;
+import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURANCE_MULTIBLOCK_CONTAINER;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
 public class BlastFurnaceContainerMultiblock extends PlayerLayoutContainer {
     private TileEntity tileEntity;
     private static final Logger LOGGER = LogManager.getLogger();
-    private HCCokeOvenControllerTile controller;
+    private BlastFurnaceBrickControllerTile controller;
 
     final static int ITEM_X = 15;
     final static int FLUID_ITEM_X = 150;
@@ -31,10 +34,10 @@ public class BlastFurnaceContainerMultiblock extends PlayerLayoutContainer {
     final static int SLOT_SEP_X = 22;
 
     public BlastFurnaceContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
-        super(H_C_CONTAINER.get(), windowId, world, pos, playerInventory);
+        super(BLAST_FURANCE_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
 
         this.tileEntity = world.getTileEntity(pos);
-        this.controller = (HCCokeOvenControllerTile)tileEntity;
+        this.controller = (BlastFurnaceBrickControllerTile)tileEntity;
 
         if(this.controller != null && !(controller.isFormed()))  {
             // basic auto building screen
@@ -62,7 +65,7 @@ public class BlastFurnaceContainerMultiblock extends PlayerLayoutContainer {
 
     }
 
-    public HCCokeOvenControllerTile getController()  {
+    public BlastFurnaceBrickControllerTile getController()  {
         return this.controller;
     }
 

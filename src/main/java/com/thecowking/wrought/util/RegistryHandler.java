@@ -1,8 +1,7 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.blocks.blast_furance.BlastFurnaceBrickControllerBlock;
-import com.thecowking.wrought.blocks.blast_furance.BlastFurnaceBrickFrameBlock;
+import com.thecowking.wrought.blocks.blast_furance.*;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
@@ -103,14 +102,26 @@ public class RegistryHandler {
     //Blast Furnace Controller
     public static final RegistryObject<Block> BLAST_FURANCE_BRICK_CONTROLLER = BLOCKS.register("blast_furnace_brick_controller", BlastFurnaceBrickControllerBlock::new);
     public static final RegistryObject<Item> BLAST_FURANCE_BRICK_CONTROLLER_ITEM = ITEMS.register("blast_furnace_brick_controller", () -> new BlockItemBase(BLAST_FURANCE_BRICK_CONTROLLER.get()));
-    public static final RegistryObject<TileEntityType<BlastFurnaceBrickControllerTile>> BLAST_FURANCE_BRICK_CONTROLLER_TILE = TILES.register("blast_furnace_brick_controller", () -> TileEntityType.Builder.create(BlastFurnaceBrickControllerTile::new, BLAST_FURANCE_BRICK_CONTROLLER.get()).build(null));
-
-
+    public static final RegistryObject<TileEntityType<BlastFurnaceBrickControllerTile>> BLAST_FURNACE_BRICK_CONTROLLER_TILE = TILES.register("blast_furnace_brick_controller", () -> TileEntityType.Builder.create(BlastFurnaceBrickControllerTile::new, BLAST_FURANCE_BRICK_CONTROLLER.get()).build(null));
 
     //Blast Furnace Frame
     public static final RegistryObject<Block> BLAST_FURANCE_BRICK_FRAME = BLOCKS.register("blast_furnace_brick_frame", BlastFurnaceBrickFrameBlock::new);
     public static final RegistryObject<Item> BLAST_FURANCE_BRICK_FRAME_ITEM = ITEMS.register("blast_furnace_brick_frame", () -> new BlockItemBase(BLAST_FURANCE_BRICK_FRAME.get()));
-    public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURANCE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
+    public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURNACE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
+
+
+    //Refactory Brick
+    public static final RegistryObject<Block> REFACTORY_BRICK = BLOCKS.register("refactory_brick_block", RefactoryBrickBlock::new);
+    public static final RegistryObject<Item> REFACTORY_BRICK_ITEM = ITEMS.register("refactory_brick_block", () -> new BlockItemBase(REFACTORY_BRICK.get()));
+
+    //Refactory Brick Stairs
+    public static final RegistryObject<Block> REFACTORY_BRICK_STAIR = BLOCKS.register("refactory_brick_stair", RefactoryBrickStairs::new);
+    public static final RegistryObject<Item> REFACTORY_BRICK_STAIR_ITEM = ITEMS.register("refactory_brick_stair", () -> new BlockItemBase(REFACTORY_BRICK_STAIR.get()));
+
+    //Refactory Brick Slab
+    public static final RegistryObject<Block> REFACTORY_BRICK_SLAB = BLOCKS.register("refactory_brick_slab", RefactoryBrickSlab::new);
+    public static final RegistryObject<Item> REFACTORY_BRICK_SLAB_ITEM = ITEMS.register("refactory_brick_slab", () -> new BlockItemBase(REFACTORY_BRICK_SLAB.get()));
+
 
     //Blast Furnace Container Auto Builder
     public static final RegistryObject<ContainerType<BlastFurnaceContainerBuilder>> BLAST_FURNACE_BUILDER_CONTAINER = CONTAINERS.register("blast_furance_builder_container", () -> IForgeContainerType.create((windowId, inv, data) -> {

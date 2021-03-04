@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -102,6 +103,7 @@ split up by the y level where posArray[0][x][z] = the bottom most layer
     }
     public Block[][][] getPosArray()  {return this.posArray;}
     public Block getBlockMember(int x, int y, int z)  {return this.posArray[x][y][z];}
+    public int getControllerYIndex()  {return 3;}
 
     /*
 West = -x
@@ -129,7 +131,7 @@ direction that is fed in
     }
 
 
-    public Direction getStairsDirection(Direction controllerDirection, int x, int z)  {
+    public Direction getStairsDirection(BlockPos controllerPos, BlockPos blockPos, Direction controllerDirection, int x, int z)  {
         if(x < 2)  {
             return controllerDirection.getOpposite();
         } else if( x > 4)  {
@@ -167,6 +169,40 @@ direction that is fed in
                 return new HCCokeOvenContainer(i, world, controllerPos, playerInventory);
             }
         };
+    }
+
+    @Override
+    public SlabType getSlabDirection(int y) {
+        return SlabType.BOTTOM;
+    }
+
+    /*
+        West = -x
+        East = +X
+        North = -Z
+        South = +Z
+        this function will return the North-Western corner of the multi blocks to be formed
+        this is the lowest int value of the multiblock which makes it easier to iterate over when forming
+      */
+    public BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int shorterSide) {
+        if(centerPos == null)  return null;
+
+        int xCoord = centerPos.getX();
+        int yCoord = centerPos.getY();
+        int zCoord = centerPos.getZ();
+
+        switch(inputDirection)  {
+            case NORTH:
+                return new BlockPos(xCoord - (shorterSide / 2), yCoord - getControllerYIndex() , zCoord - (longerSide / 2));
+            case SOUTH:
+                return new BlockPos(xCoord  - (shorterSide / 2), yCoord  - getControllerYIndex(), zCoord - (longerSide / 2));
+            case WEST:
+                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - getControllerYIndex(), zCoord  - (shorterSide / 2));
+            case EAST:
+                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - getControllerYIndex(), zCoord  - (shorterSide / 2));
+            default:
+                return null;
+        }
     }
 
 

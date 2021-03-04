@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "wrought:blocks/refactory_brick_block",
+    "top": "wrought:blocks/refactory_brick_block",
+    "side": "wrought:blocks/refactory_brick_block"
+  }
+}

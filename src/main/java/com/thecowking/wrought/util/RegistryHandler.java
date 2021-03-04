@@ -6,8 +6,10 @@ import com.thecowking.wrought.blocks.blast_furance.BlastFurnaceBrickFrameBlock;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.init.FluidInit;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
+import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
+import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
 import com.thecowking.wrought.items.items.AshItem;
@@ -110,7 +112,20 @@ public class RegistryHandler {
     public static final RegistryObject<Item> BLAST_FURANCE_BRICK_FRAME_ITEM = ITEMS.register("blast_furnace_brick_frame", () -> new BlockItemBase(BLAST_FURANCE_BRICK_FRAME.get()));
     public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURANCE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
 
+    //Blast Furnace Container Auto Builder
+    public static final RegistryObject<ContainerType<BlastFurnaceContainerBuilder>> BLAST_FURNACE_BUILDER_CONTAINER = CONTAINERS.register("blast_furance_builder_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new BlastFurnaceContainerBuilder(windowId, world, pos, inv);
+    }));
 
+
+    //Blast Furnace Container Auto Builder
+    public static final RegistryObject<ContainerType<BlastFurnaceContainerMultiblock>> BLAST_FURANCE_MULTIBLOCK_CONTAINER = CONTAINERS.register("blast_furance_multiblock_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new BlastFurnaceContainerMultiblock(windowId, world, pos, inv);
+    }));
 
 
 

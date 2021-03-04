@@ -1,27 +1,21 @@
 package com.thecowking.wrought.blocks;
 
-import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
+import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import static com.thecowking.wrought.blocks.Multiblock.FORMED;
-import static com.thecowking.wrought.blocks.Multiblock.REDSTONE;
+import static com.thecowking.wrought.data.MultiblockData.FORMED;
+import static com.thecowking.wrought.data.MultiblockData.REDSTONE;
 import javax.annotation.Nullable;
 
 
@@ -39,14 +33,14 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrame {
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return state.get(Multiblock.FORMED);
+        return state.get(MultiblockData.FORMED);
     }
 
     // creates the tile entity
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if(state.get(Multiblock.FORMED))  {
+        if(state.get(MultiblockData.FORMED))  {
             return new HCCokeOvenFrameTile();
         }
         return null;

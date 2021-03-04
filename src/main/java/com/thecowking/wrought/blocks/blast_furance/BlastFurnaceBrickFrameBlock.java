@@ -1,7 +1,7 @@
 package com.thecowking.wrought.blocks.blast_furance;
 
 import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
-import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTile;
 import net.minecraft.block.Block;
@@ -16,14 +16,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
-import static com.thecowking.wrought.blocks.Multiblock.FORMED;
+import static com.thecowking.wrought.data.MultiblockData.FORMED;
 
 public class BlastFurnaceBrickFrameBlock extends MultiBlockFrameBlock {
 
 
     public BlastFurnaceBrickFrameBlock()  {
         super();
-        setDefaultState(this.getDefaultState().with(Multiblock.JOB, false));
+        setDefaultState(this.getDefaultState().with(MultiblockData.JOB, false));
     }
     /*
     If part of a multi-blocks it finds the controller to start the process of taking the multi-blocks
@@ -37,7 +37,7 @@ public class BlastFurnaceBrickFrameBlock extends MultiBlockFrameBlock {
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         super.fillStateContainer(builder);
-        builder.add(BlockStateProperties.FACING, Multiblock.JOB);
+        builder.add(BlockStateProperties.FACING, MultiblockData.JOB);
     }
 
 
@@ -77,15 +77,15 @@ public class BlastFurnaceBrickFrameBlock extends MultiBlockFrameBlock {
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return state.get(Multiblock.JOB);
+        return state.get(MultiblockData.JOB);
     }
 
 
     @SuppressWarnings("deprecation")
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
-        if (player instanceof ServerPlayerEntity && state.get(Multiblock.FORMED)) {
-            if(state.get(Multiblock.JOB))  {
+        if (player instanceof ServerPlayerEntity && state.get(MultiblockData.FORMED)) {
+            if(state.get(MultiblockData.JOB))  {
                 // hit a watcher
                 BlastFurnaceBrickControllerTile controller = ((BlastFurnaceBrickFrameTile)world.getTileEntity(posIn)).getControllerTile();
                 controller.openGUI(world, posIn, player, controller);

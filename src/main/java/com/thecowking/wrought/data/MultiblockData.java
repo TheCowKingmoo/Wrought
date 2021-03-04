@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks;
+package com.thecowking.wrought.data;
 
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class Multiblock {
+public class MultiblockData {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
     public static final IntegerProperty REDSTONE = BlockStateProperties.POWER_0_15;
@@ -39,11 +39,6 @@ public class Multiblock {
 
     public static final String BURN_TIME = "burn_time";
     public static final String BURN_COMPLETE_TIME = "burn_complete_time";
-
-
-
-
-
 
 
     public static final String REDSTONE_IN_X = "R_IN_X";

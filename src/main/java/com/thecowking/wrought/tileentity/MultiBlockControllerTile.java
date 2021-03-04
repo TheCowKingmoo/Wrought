@@ -1,9 +1,9 @@
 package com.thecowking.wrought.tileentity;
 
-import com.thecowking.wrought.blocks.IMultiblockData;
-import com.thecowking.wrought.blocks.Multiblock;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.data.IMultiblockData;
+import com.thecowking.wrought.data.MultiblockData;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,7 +28,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBlockControllerTile, ITickableTileEntity {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -78,16 +78,16 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     /*
         Launches the GUI for the completed multiblock
      */
-    public void openGUIMultiblock(World world, PlayerEntity player) {
-        NetworkHooks.openGui((ServerPlayerEntity) player, this.data.getContainerProvider(world, this.pos), this.pos);
+    public void openGUI(World world, PlayerEntity player, boolean isFormed) {
+
+        NetworkHooks.openGui((ServerPlayerEntity) player, this.data.getContainerProvider(world, this.pos, isFormed), this.pos);
     }
+
+
+
 
     public IMultiblockData getData()  {
-        return null;
-    }
-
-    public IIntArray getStateData()  {
-        return null;
+        return this.data;
     }
 
 
@@ -166,7 +166,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
 
 
     public boolean isFormed()  {
-        return this.getBlockState().get(Multiblock.FORMED);
+        return this.getBlockState().get(MultiblockData.FORMED);
     }
 
 

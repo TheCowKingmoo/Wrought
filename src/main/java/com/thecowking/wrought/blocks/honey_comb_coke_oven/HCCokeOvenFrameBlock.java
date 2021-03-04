@@ -1,10 +1,11 @@
 package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
+import com.thecowking.wrought.data.HCCokeOvenData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
-import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
     /*
@@ -29,7 +30,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
         if(!(player instanceof ServerPlayerEntity))  {
             return;
         }
-        if(state.get(Multiblock.FORMED))  {
+        if(state.get(MultiblockData.FORMED))  {
             updateMultiBlock(worldIn, posIn);
         }
         super.onBlockHarvested(worldIn, posIn, state, player);
@@ -53,7 +54,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                 return;
             }
 
-            MultiBlockHelper.destroyMultiBlock(worldIn, controllerPos, new HCCokeOven());
+            MultiBlockHelper.destroyMultiBlock(worldIn, controllerPos, new HCCokeOvenData());
         }
 
     }
@@ -63,7 +64,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
 
         // make sure correct side
-        if (player instanceof ServerPlayerEntity && state.get(Multiblock.FORMED)) {
+        if (player instanceof ServerPlayerEntity && state.get(MultiblockData.FORMED)) {
             // get TE
             TileEntity tileEntity = worldIn.getTileEntity(posIn);
             // make sure TE is correct TE
@@ -82,7 +83,7 @@ public class HCCokeOvenFrameBlock extends MultiBlockFrameBlock {
                             HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) ctileEntity;
                             if(controllerTile.isFormed(controllerPos))  {
                                 // OPEN GUI
-                                controllerTile.openGUIMultiblock(worldIn, player);
+                                controllerTile.openGUI(worldIn, player, true);
                                 return ActionResultType.SUCCESS;
                             }
 

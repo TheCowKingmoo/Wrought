@@ -2,7 +2,7 @@ package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlockFrameBlock;
-import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.data.MultiblockData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class HCCokeOvenFrameSlab extends SlabBlock implements IMultiBlockFrame {
     public HCCokeOvenFrameSlab() {
@@ -39,7 +39,7 @@ public class HCCokeOvenFrameSlab extends SlabBlock implements IMultiBlockFrame {
         if(!(player instanceof ServerPlayerEntity))  {
             return;
         }
-        if(state.get(Multiblock.FORMED))  {
+        if(state.get(MultiblockData.FORMED))  {
             BlockPos pos = getUnderlyingBlock(posIn);
             if(pos != null) {
                 Block b = worldIn.getBlockState(pos).getBlock();
@@ -60,7 +60,7 @@ public class HCCokeOvenFrameSlab extends SlabBlock implements IMultiBlockFrame {
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
-        if (player instanceof ServerPlayerEntity && worldIn.getBlockState(posIn).get(Multiblock.FORMED)) {
+        if (player instanceof ServerPlayerEntity && worldIn.getBlockState(posIn).get(MultiblockData.FORMED)) {
             BlockPos frameBlockPos = getUnderlyingBlock(posIn);
             Block frameBlock = worldIn.getBlockState(frameBlockPos).getBlock();
             if (frameBlock instanceof MultiBlockFrameBlock) {

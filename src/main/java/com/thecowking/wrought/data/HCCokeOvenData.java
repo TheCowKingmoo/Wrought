@@ -1,7 +1,7 @@
-package com.thecowking.wrought.blocks.honey_comb_coke_oven;
+package com.thecowking.wrought.data;
 
-import com.thecowking.wrought.blocks.IMultiblockData;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -18,7 +17,7 @@ import net.minecraft.world.World;
 import static com.thecowking.wrought.util.RegistryHandler.*;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_SLAB;
 
-public class HCCokeOven implements IMultiblockData {
+public class HCCokeOvenData implements IMultiblockData {
     // Members that make up the multi-block
     protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
     private static Block controllerBlock = H_C_COKE_CONTROLLER_BLOCK.get();
@@ -112,19 +111,19 @@ South = +Z
 this function will return the center most point based on the lengths of the mutli-blocks and the
 direction that is fed in
 */
-    public BlockPos calcCenterBlock(Direction inputDirection, BlockPos controllerPos, IMultiblockData data)  {
+    public BlockPos calcCenterBlock(Direction inputDirection, BlockPos controllerPos)  {
         int xCoord = controllerPos.getX();
         int yCoord = controllerPos.getY();
         int zCoord = controllerPos.getZ();
         switch(inputDirection)  {
             case NORTH:
-                return new BlockPos(xCoord, yCoord, zCoord + (data.getLength() / 2));
+                return new BlockPos(xCoord, yCoord, zCoord + (getLength() / 2));
             case SOUTH:
-                return new BlockPos(xCoord, yCoord, zCoord - (data.getLength() / 2));
+                return new BlockPos(xCoord, yCoord, zCoord - (getLength() / 2));
             case WEST:
-                return new BlockPos(xCoord  + (data.getLength() / 2), yCoord, zCoord);
+                return new BlockPos(xCoord  + (getLength() / 2), yCoord, zCoord);
             case EAST:
-                return new BlockPos(xCoord  - (data.getLength() / 2), yCoord, zCoord);
+                return new BlockPos(xCoord  - (getLength() / 2), yCoord, zCoord);
         }
         return null;
     }
@@ -151,7 +150,7 @@ direction that is fed in
         }
     }
 
-    public INamedContainerProvider getContainerProvider(World world, BlockPos controllerPos)  {
+    public INamedContainerProvider getContainerProvider(World world, BlockPos controllerPos, boolean isFormed)  {
         return new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
@@ -160,7 +159,12 @@ direction that is fed in
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainerMultiblock(i, world, controllerPos, playerInventory);
+                if(isFormed)  {
+                    // Multiblock container
+                    return new HCCokeOvenContainerMultiblock(i, world, controllerPos, playerInventory);
+                }
+                // autobuilding container
+                return new HCCokeOvenContainer(i, world, controllerPos, playerInventory);
             }
         };
     }

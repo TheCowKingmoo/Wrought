@@ -1,16 +1,13 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.blocks.IMultiBlockControllerBlock;
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
-import com.thecowking.wrought.blocks.IMultiblockData;
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
+import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -23,8 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.thecowking.wrought.blocks.Multiblock.DIRECTION_FACING;
-import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
+import static com.thecowking.wrought.data.MultiblockData.getTileFromPos;
 
 public class MultiBlockHelper {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -72,6 +68,8 @@ public class MultiBlockHelper {
         int yCoord = centerPos.getY();
         int zCoord = centerPos.getZ();
 
+        LOGGER.info("in = " + inputDirection);
+
         switch(inputDirection)  {
             case NORTH:
                 return new BlockPos(xCoord - (shorterSide / 2), yCoord - (height / 2) , zCoord - (longerSide / 2));
@@ -91,7 +89,7 @@ public class MultiBlockHelper {
         that the multi-blocks is being formed or destroyed.
     */
     public static List<BlockPos> getMultiBlockMembers(World world, PlayerEntity player, boolean destroy, Direction direction, BlockPos controllerPos, IMultiblockData data) {
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
         List<BlockPos> multiblockMembers = new ArrayList();
@@ -137,8 +135,9 @@ public class MultiBlockHelper {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
 
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        LOGGER.info("low = " + lowCorner);
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
         HashMap<Block, Integer> missingMembers= new HashMap<>();
 
@@ -244,7 +243,7 @@ public class MultiBlockHelper {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
 
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
         BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
 

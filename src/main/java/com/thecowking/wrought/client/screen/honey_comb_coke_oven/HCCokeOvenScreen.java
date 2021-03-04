@@ -1,11 +1,11 @@
-package com.thecowking.wrought.client.screen;
+package com.thecowking.wrought.client.screen.honey_comb_coke_oven;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOven;
+import com.thecowking.wrought.data.HCCokeOvenData;
 import com.thecowking.wrought.client.button.BuildButton;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.util.InventoryUtils;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import com.thecowking.wrought.util.RenderHelper;
@@ -43,7 +43,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.xSize = 176;
         this.ySize = 240;
         this.container = container;
-        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOven());
+        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOvenData());
         this.inInvetory = InventoryUtils.checkVsPlayerInventory(missingMembers, inv.player);
     }
 
@@ -52,7 +52,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         super.init();
         this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.controllerPos, this);
         addButton(this.buildButton);
-        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOven());}
+        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOvenData());}
 
     }
 

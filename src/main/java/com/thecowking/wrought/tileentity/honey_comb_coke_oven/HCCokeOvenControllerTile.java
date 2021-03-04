@@ -1,12 +1,10 @@
 package com.thecowking.wrought.tileentity.honey_comb_coke_oven;
 
-import com.thecowking.wrought.blocks.IMultiBlockFrame;
-import com.thecowking.wrought.blocks.IMultiblockData;
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOven;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainer;
-import com.thecowking.wrought.inventory.containers.HCCokeOvenContainerMultiblock;
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
-import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.data.IMultiblockData;
+import com.thecowking.wrought.data.HCCokeOvenData;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
+import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
@@ -30,7 +28,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -57,7 +54,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 import static com.thecowking.wrought.util.RegistryHandler.*;
 
 public class HCCokeOvenControllerTile extends MultiBlockControllerTile implements INamedContainerProvider {
@@ -132,7 +129,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
 
 
     public HCCokeOvenControllerTile() {
-        super(H_C_COKE_CONTROLLER_TILE.get(), new HCCokeOven());
+        super(H_C_COKE_CONTROLLER_TILE.get(), new HCCokeOvenData());
 
         //init item intputs
         this.primaryInputSlot = new InputItemHandler(1, this, null, "primary");
@@ -603,33 +600,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
 
-    /*
-        Launches the GUI to auto build the multi block
-     */
-
-    public void openGUI(World worldIn, BlockPos pos, PlayerEntity player, HCCokeOvenControllerTile tileEntity) {
-        INamedContainerProvider containerProvider = new INamedContainerProvider() {
-            @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("Honey Comb Coke Oven Controller");
-            }
-
-            @Override
-            public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                return new HCCokeOvenContainer(i, worldIn, getControllerPos(), playerInventory);
-            }
-        };
-        NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, ((HCCokeOvenControllerTile) tileEntity).getPos());
-    }
-
-
-    @Override
-    public IMultiblockData getData()  {
-        return new HCCokeOven();
-    }
-
-
-
 
     /*
       Assigns out "jobs" to frame blocks that the controller needs to keep track of
@@ -639,11 +609,11 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTile implement
     public void assignJobs() {
         BlockPos inputPos = getRedstoneInBlockPos();
         BlockPos outputPos = getRedstoneOutBlockPos();
-        TileEntity te = Multiblock.getTileFromPos(this.world, inputPos);
+        TileEntity te = MultiblockData.getTileFromPos(this.world, inputPos);
         if (te instanceof HCCokeOvenFrameTile) {
             ((HCCokeOvenFrameTile) te).setJob(JOB_REDSTONE_IN);
         }
-        te = Multiblock.getTileFromPos(this.world, outputPos);
+        te = MultiblockData.getTileFromPos(this.world, outputPos);
         if (te instanceof HCCokeOvenFrameTile) {
             ((HCCokeOvenFrameTile) te).setJob(JOB_REDSTONE_OUT);
         }

@@ -1,0 +1,30 @@
+{
+  "type": "wrought:blast_furnace",
+  "primary_item_output": {
+    "item": "wrought:coke"
+  },
+  "secondary_item_output": {
+    "item": "wrought:soot"
+  },
+  "trinary_item_output": {
+    "item": "wrought:soot"
+  },
+  "primary_item_input": {
+    "item": "minecraft:coal"
+  },
+  "secondary_item_input": {
+    "item": "minecraft:coal"
+  },
+  "trinary_item_input": {
+    "item": "minecraft:coal"
+  },
+  "fuel": {
+    "tag": "forge:coke"
+  },
+  "primaryFluidOutput": "wrought:creosote_fluid",
+  "secondaryFluidOutput": "wrought:creosote_fluid",
+  "primaryFluidOutputAmount": 1000,
+  "secondaryFluidOutputAmount": 1000,
+
+  "burntime": 5
+}

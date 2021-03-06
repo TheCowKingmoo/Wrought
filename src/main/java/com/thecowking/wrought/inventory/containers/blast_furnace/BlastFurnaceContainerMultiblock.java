@@ -92,10 +92,6 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
         return (double)controller.timeElapsed / (controller.timeComplete);
     }
 
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return true;
-    }
 
     public String getStatus()  {
         return controller.getStatus();

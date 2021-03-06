@@ -3,7 +3,7 @@ package com.thecowking.wrought.util;
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipeSerializer;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.IHoneyCombCokeOvenRecipe;
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -16,7 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class RecipeSerializerInit {
 
     public static final IRecipeSerializer<HoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new HoneyCombCokeOvenRecipeSerializer();
-    public static final IRecipeType<IHoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_TYPE = registerType(IHoneyCombCokeOvenRecipe.RECIPE_TYPE_ID);
+    public static final IRecipeType<IWroughtRecipe> HONEY_COMB_OVEN_TYPE = registerType(IWroughtRecipe.RECIPE_TYPE_ID);
 
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Wrought.MODID);
 

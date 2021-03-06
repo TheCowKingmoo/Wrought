@@ -1,4 +1,4 @@
-package com.thecowking.wrought.recipes.HoneyCombCokeOven;
+package com.thecowking.wrought.recipes;
 
 import com.thecowking.wrought.Wrought;
 import net.minecraft.item.crafting.IRecipe;
@@ -10,7 +10,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
 
-public interface IHoneyCombCokeOvenRecipe extends IRecipe<RecipeWrapper> {
+public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
 
     ResourceLocation RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");
 

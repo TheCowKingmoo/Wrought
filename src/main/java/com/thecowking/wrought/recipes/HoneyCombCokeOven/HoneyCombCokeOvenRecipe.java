@@ -1,8 +1,7 @@
 package com.thecowking.wrought.recipes.HoneyCombCokeOven;
 
-import com.thecowking.wrought.util.MultiStack;
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.util.RecipeSerializerInit;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -14,10 +13,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class HoneyCombCokeOvenRecipe implements IHoneyCombCokeOvenRecipe {
+public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
     private static final Logger LOGGER = LogManager.getLogger();
     NonNullList<Ingredient> ingredientList;
 

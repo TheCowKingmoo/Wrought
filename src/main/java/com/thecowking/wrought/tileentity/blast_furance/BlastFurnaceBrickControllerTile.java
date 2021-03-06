@@ -4,9 +4,17 @@ import com.thecowking.wrought.data.BlastFurnaceData;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURNACE_BRICK_CONTROLLER_TILE;
 
@@ -37,14 +45,22 @@ public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFlu
     // used when player is directly accessing multi-block
     private final LazyOptional<IItemHandler> everything = LazyOptional.of(() -> new CombinedInvWrapper(oreInputSlot, fluxInputSlot, auxInputSlot, primaryOutputSlot, secondaryOutputSlot, trinaryOutputSlot, metalFluidItemInputSlot, slagFluidItemInputSlot, metalFluidItemOutputSlot, slagFluidItemOutputSlot, fuelInputSlot));
 
+
     // used when in world things interact with multi-block
     private final LazyOptional<IItemHandler> automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(oreInputSlot, fluxInputSlot, auxInputSlot, primaryOutputSlot, secondaryOutputSlot, trinaryOutputSlot, metalFluidItemInputSlot, slagFluidItemInputSlot, metalFluidItemOutputSlot, slagFluidItemOutputSlot, fuelInputSlot));
 
     private final int tankIndex = 0;
 
 
+    private int ORE_FLUID_TANK_INDEX = 0;
+    private int FLUX_FLUID_TANK_INDEX = 1;
+    private int AUX_FLUID_TANK_INDEX = 2;
+    private static int NUMBER_INTERNAL_TANKS = 3;
+    private static int DEFAULT_TANK_SIZE = 16000;
+
+
     public BlastFurnaceBrickControllerTile() {
-        super(BLAST_FURNACE_BRICK_CONTROLLER_TILE.get(), new BlastFurnaceData(), 1, 16000);
+        super(BLAST_FURNACE_BRICK_CONTROLLER_TILE.get(), new BlastFurnaceData(), NUMBER_INTERNAL_TANKS, DEFAULT_TANK_SIZE);
         initSlots();
     }
 
@@ -76,6 +92,30 @@ public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFlu
     public void tick() {
         super.tick();
         this.status = "Blast Furnace";
+    }
+
+
+    /*
+    lets the world around it know what can be automated
+ */
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (world != null && world.getBlockState(pos).getBlock() != this.getBlockState().getBlock()) {//if the blocks at myself isn't myself, allow full access (Block Broken)
+                return everything.cast();
+            }
+            if (side == null) {
+                return everything.cast();
+            } else {
+                return automation.cast();
+            }
+        }
+        if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)  {
+            return LazyOptional.of(() -> getFluidTanks()).cast();
+        }
+
+        return super.getCapability(cap, side);
     }
 
 

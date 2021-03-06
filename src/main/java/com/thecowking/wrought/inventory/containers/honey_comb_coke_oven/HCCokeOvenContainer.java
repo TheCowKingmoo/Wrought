@@ -24,11 +24,4 @@ public class HCCokeOvenContainer extends PlayerLayoutContainer {
 
     }
 
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        //BlockPos targetBlock = new BlockPos(playerIn.getLookVec());
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), this.controllerPos), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
-
-        //return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), targetBlock), playerIn, RegistryHandler.H_C_COKE_CONTROLLER_BLOCK.get());
-    }
 }

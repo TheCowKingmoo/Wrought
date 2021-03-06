@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory.containers.blast_furnace;
 
+import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.containers.PlayerLayoutContainer;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
@@ -22,47 +23,64 @@ import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURANCE_MULTIBLO
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
-public class BlastFurnaceContainerMultiblock extends PlayerLayoutContainer {
-    private TileEntity tileEntity;
+public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
     private static final Logger LOGGER = LogManager.getLogger();
     private BlastFurnaceBrickControllerTile controller;
 
-    final static int ITEM_X = 15;
+    final static int INPUT_OUTPUT_X = 15;
+    final static int SLOT_SEP_X = 22;
+
+
     final static int FLUID_ITEM_X = 150;
     final static int INPUTS_Y = 21;
     final static int OUTPUTS_Y = 72;
-    final static int SLOT_SEP_X = 22;
 
     public BlastFurnaceContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
         super(BLAST_FURANCE_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
 
-        this.tileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world.getTileEntity(pos);
         this.controller = (BlastFurnaceBrickControllerTile)tileEntity;
 
         if(this.controller != null && !(controller.isFormed()))  {
             // basic auto building screen
+            LOGGER.info("get builder screen");
 
 
         }  else  {
-
-            if (tileEntity != null) {
-
-                tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                    // Primary Item Input Slot
-                    addSlot(new SlotItemHandler(h, PRIMARY_INPUT_ITEM_IDX, ITEM_X, INPUTS_Y));
+            LOGGER.info("get multiblock");
+            controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+                    int i = 0;
+                    int slot = 0;
+                    // Add Ore Input Slot
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X, INPUTS_Y));
                     // Primary Item Output Slot
-                    addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += SLOT_SEP_X), OUTPUTS_Y));
+
+                    // Add Flux Input Slot
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, SECONDARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X+SLOT_SEP_X, OUTPUTS_Y));
-                    // Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, FLUID_INPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, INPUTS_Y));
-                    // Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, FLUID_OUTPUT_ITEM_SLOT_IDX, FLUID_ITEM_X, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += SLOT_SEP_X), OUTPUTS_Y));
+
+                    // Add Aux Input Slot
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
+                    // Trinary Item Output Slot
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += 2*SLOT_SEP_X), OUTPUTS_Y));
+
+                    // Add Fuel Slot
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
+
+                    // Add Molten Metal Fluid Item Input Slot
+                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
+                    // Add Molten Metal Fluid Item Output Slot
+                    addSlot(new SlotOutput(h, slot++,INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
+
+                    // Add Molten Slag Fluid Item Input Slot
+                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
+                    // Add Molten Slag Fluid Item Output Slot
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
                 });
-            }
 
         }
-
     }
 
     public BlastFurnaceBrickControllerTile getController()  {
@@ -72,18 +90,6 @@ public class BlastFurnaceContainerMultiblock extends PlayerLayoutContainer {
     public double getProgress()  {
         if (controller.timeComplete == 0)  {return 0;}
         return (double)controller.timeElapsed / (controller.timeComplete);
-    }
-
-    public FluidStack getFluid()  {
-        return controller.getFluidInTank();
-    }
-
-    public double getPercentageInTank()  {
-       return ((double)getFluid().getAmount() / (double)getTankMaxSize());
-    }
-
-    public int getTankMaxSize()  {
-        return controller.getTankMaxSize();
     }
 
     @Override

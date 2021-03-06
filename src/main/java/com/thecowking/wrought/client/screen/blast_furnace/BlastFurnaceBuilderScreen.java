@@ -43,20 +43,18 @@ public class BlastFurnaceBuilderScreen extends ContainerScreen<BlastFurnaceConta
         this.xSize = 176;
         this.ySize = 240;
         this.container = container;
-        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new BlastFurnaceData());
+        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.getControllerPos(), new BlastFurnaceData());
         this.inInvetory = InventoryUtils.checkVsPlayerInventory(missingMembers, inv.player);
     }
 
     @Override
     protected void init()  {
         super.init();
-        this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.controllerPos, this);
+        this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.getControllerPos(), this);
         addButton(this.buildButton);
-        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new BlastFurnaceData());}
+        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.getControllerPos(), new BlastFurnaceData());}
 
     }
-
-
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -94,9 +92,6 @@ public class BlastFurnaceBuilderScreen extends ContainerScreen<BlastFurnaceConta
 
             return;
         }
-
-
-
 
 
         drawString(stack, fontrenderer, "Block(s) To Build", startMessageX,

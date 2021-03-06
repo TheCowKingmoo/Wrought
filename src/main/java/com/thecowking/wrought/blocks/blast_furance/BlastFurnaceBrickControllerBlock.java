@@ -39,19 +39,6 @@ public class BlastFurnaceBrickControllerBlock extends MultiBlockControllerBlock 
         return new BlastFurnaceBrickControllerTile();
     }
 
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction[] d = context.getNearestLookingDirections();
-        for(int i = 0; i < d.length; i++)  {
-            if(d[i] != Direction.UP && d[i] != Direction.DOWN)  {
-                return getDefaultState().with(BlockStateProperties.FACING, d[i].getOpposite());
-            }
-        }
-        return getDefaultState().with(BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite());
-    }
-
-
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {

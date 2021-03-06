@@ -1,6 +1,8 @@
 package com.thecowking.wrought.inventory.containers.honey_comb_coke_oven;
 
-import com.thecowking.wrought.inventory.containers.PlayerLayoutContainer;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
@@ -12,18 +14,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 
 import static com.thecowking.wrought.data.MultiblockData.*;
 import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER;
 
 
-public class HCCokeOvenContainerMultiblock extends PlayerLayoutContainer {
+public class HCCokeOvenContainerMultiblock extends MultiBlockContainerFluid {
     private TileEntity tileEntity;
-    private static final Logger LOGGER = LogManager.getLogger();
-    private HCCokeOvenControllerTile controller;
+
+    public HCCokeOvenControllerTile controller;
 
     final static int ITEM_X = 15;
     final static int FLUID_ITEM_X = 150;
@@ -47,6 +46,7 @@ public class HCCokeOvenContainerMultiblock extends PlayerLayoutContainer {
 
                 tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Primary Item Input Slot
+
                     addSlot(new SlotItemHandler(h, PRIMARY_INPUT_ITEM_IDX, ITEM_X, INPUTS_Y));
                     // Primary Item Output Slot
                     addSlot(new SlotOutput(h, PRIMARY_OUTPUT_ITEM_SLOT_IDX, ITEM_X, OUTPUTS_Y));
@@ -63,25 +63,9 @@ public class HCCokeOvenContainerMultiblock extends PlayerLayoutContainer {
 
     }
 
-    public HCCokeOvenControllerTile getController()  {
-        return this.controller;
-    }
-
     public double getProgress()  {
         if (controller.timeComplete == 0)  {return 0;}
         return (double)controller.timeElapsed / (controller.timeComplete);
-    }
-
-    public FluidStack getFluid()  {
-        return controller.getFluidInTank();
-    }
-
-    public double getPercentageInTank()  {
-       return ((double)getFluid().getAmount() / (double)getTankMaxSize());
-    }
-
-    public int getTankMaxSize()  {
-        return controller.getTankMaxSize();
     }
 
     @Override
@@ -89,9 +73,5 @@ public class HCCokeOvenContainerMultiblock extends PlayerLayoutContainer {
         return true;
     }
 
-    public String getStatus()  {
-        return controller.getStatus();
-
-    }
 
 }

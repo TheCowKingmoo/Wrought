@@ -151,7 +151,6 @@ public class InventoryUtils {
                 }
             }
         }
-        LOGGER.info(inInventory);
         return inInventory;
 
     }

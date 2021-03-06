@@ -4,6 +4,7 @@ import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -13,7 +14,11 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -37,15 +42,22 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     protected BlockPos redstoneIn;
     protected BlockPos redstoneOut;
 
+    // tracks if the tile entity needs a block update
+    protected boolean needUpdate = false;
+
     // holds the string that is displayed on the status button
     protected String status;
+
+    // used to track when we can start an operations
+    // -> didnt want something that processes too fast
+    protected int tickCounter;
 
 
 
     public int timeElapsed = 0;
     public int timeComplete = 0;
 
-    private int needsUpdate = 0;
+    protected int needsUpdate = 0;
 
     protected IMultiblockData data;
 
@@ -60,6 +72,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, IMultiblockData data) {
         super(tileEntityTypeIn);
         this.data = data;
+        this.status = "not init";
     }
 
 
@@ -112,6 +125,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
     public IMultiblockData getData()  {
         return this.data;
     }
+    public BlockPos getPos()  {return this.pos;}
 
 
     /*
@@ -195,6 +209,95 @@ public class MultiBlockControllerTile extends MultiBlockTile implements IMultiBl
 
     @Override
     public void tick() {
+        // check if we are in correct instance
+        if (this.world == null || this.world.isRemote) {
+            finishOperation();
+            return;
+        }
+
+        // check if we have a multi-block
+        if (!isFormed(getControllerPos())) {
+            finishOperation();
+            return;
+        }
+
+        // Check if enough time passed for an operation
+        // note - don't really care about writing this to mem
+        if(tickCounter < this.TICKSPEROPERATION)  {
+            tickCounter++;
+            finishOperation();
+            return;
+        }
+        tickCounter = 0;
+
+        attemptRunOperation();
+        finishOperation();
+    }
+
+
+    public void attemptRunOperation() {
+        //LOGGER.info("operation has not been config'd");
+    }
+
+
+
+    /*
+    Method to set off updates
+    This way markDirty is not called multiple times in one operation
+ */
+    public void finishOperation()  {
+        if (this.needUpdate)  {
+            this.needUpdate = false;
+            blockUpdate();
+            markDirty();
+        }
+    }
+
+
+
+
+
+
+    @Override
+    public CompoundNBT getUpdateTag()  {
+        return this.write(new CompoundNBT());
+    }
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT nbt = new CompoundNBT();
+        this.write(nbt);
+
+        // the number here is generally ignored for non-vanilla TileEntities, 0 is safest
+        return new SUpdateTileEntityPacket(this.getPos(), 0, nbt);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
+        this.read(world.getBlockState(packet.getPos()), packet.getNbtCompound());
+    }
+
+
+    /*
+        Tells the server what to save to disk
+     */
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+        this.timeElapsed = nbt.getInt(BURN_TIME);
+        this.timeComplete = nbt.getInt(BURN_COMPLETE_TIME);
+        this.status = nbt.getString(STATUS);
+    }
+
+    /*
+        Tells the server what to read from disk on chunk load
+     */
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        tag = super.write(tag);
+        tag.putInt(BURN_TIME, this.timeElapsed);
+        tag.putInt(BURN_COMPLETE_TIME, this.timeComplete);
+        tag.putString(STATUS, this.status);
+        return tag;
     }
 
 

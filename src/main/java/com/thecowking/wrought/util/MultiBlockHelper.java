@@ -109,7 +109,6 @@ public class MultiBlockHelper {
 
         BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
         BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
-        LOGGER.info("low = " + lowCorner);
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
         HashMap<Block, Integer> missingMembers= new HashMap<>();
 
@@ -236,13 +235,9 @@ public class MultiBlockHelper {
                         int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
                         if(index != -1)  {
                             player.inventory.mainInventory.get(index).shrink(1);
-                            LOGGER.info(correctBlock);
-
                             // TODO - new method for placing that checks players permissons and other edge cases
                             if(correctBlock instanceof StairsBlock)  {
-                                LOGGER.info("at stairs");
                                 Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
-                                LOGGER.info(stairsDirection);
                                 world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
                             }  else if(correctBlock instanceof SlabBlock)  {
                                 world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
@@ -253,8 +248,6 @@ public class MultiBlockHelper {
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");
                         }
-
-
                     }
                 }
             }

@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
     This Class is meant to layout the players inventory in a container
  */
 public class PlayerLayoutContainer extends Container {
-    private static final Logger LOGGER = LogManager.getLogger();
     protected World world;
     protected BlockPos controllerPos;
     protected PlayerEntity player;

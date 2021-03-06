@@ -1,6 +1,7 @@
 package com.thecowking.wrought.inventory.slots;
 
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.util.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
@@ -19,13 +20,13 @@ import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
 
 public class InputItemHandler extends ItemStackHandler {
     private static final Logger LOGGER = LogManager.getLogger();
-    private HCCokeOvenControllerTile tile;
+    private MultiBlockControllerTile tile;
     private InputItemHandler primary;
     private Set<IRecipe<?>> recipes;
     private String id;
 
 
-    public InputItemHandler(int size, HCCokeOvenControllerTile tile, InputItemHandler primary, String id)  {
+    public InputItemHandler(int size, MultiBlockControllerTile tile, InputItemHandler primary, String id)  {
         super(size);
         this.tile = tile;
         this.primary = primary;

@@ -314,18 +314,15 @@ direction that is fed in
 
     }
 
-
-
     public INamedContainerProvider getContainerProvider(World world, BlockPos controllerPos, boolean isFormed) {
         return new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("Honey Comb Coke Oven");
+                return new TranslationTextComponent("Blast Furnace");
             }
 
             @Override
             public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                LOGGER.info(isFormed);
                 if(isFormed)  {
                     return new BlastFurnaceContainerMultiblock(i, world, controllerPos, playerInventory);
                 }
@@ -349,8 +346,6 @@ direction that is fed in
         int xCoord = centerPos.getX();
         int yCoord = centerPos.getY();
         int zCoord = centerPos.getZ();
-
-        LOGGER.info("center = " + centerPos);
 
         switch(inputDirection)  {
             case NORTH:

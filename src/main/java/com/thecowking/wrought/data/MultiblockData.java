@@ -33,7 +33,7 @@ public class MultiblockData {
 
     public static final String FLUID_INVENTORY_IN = "fluid_inv_in";
     public static final String FLUID_INVENTORY_OUT = "fluid_inv_out";
-    public static final String FLUID_TANK = "fluid_tank";
+    public static final String FLUID_TANK = "fluid_tank_";
 
     public static final String STATUS = "status";
 

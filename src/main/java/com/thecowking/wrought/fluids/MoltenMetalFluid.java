@@ -1,34 +1,42 @@
 package com.thecowking.wrought.fluids;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.state.StateContainer;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.util.WroughtFluidUtil;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
-public class MoltenMetalFluid extends ForgeFlowingFluid {
-    private final float EXPLOSION_RESIST = 100.0f;
-    private final int TICK_RATE = 60;
+public class MoltenMetalFluid  {
+    private String id;
+    private int colour;
+    private Material material;
 
-    public MoltenMetalFluid(Properties properties) {
-        super(properties);
+
+
+    public MoltenMetalFluid(String id, Material material, Block ingotBlock)  {
+        this.id = id;
+        this.colour = ingotBlock.getMaterialColor().colorValue;
+        this.material = material;
+        createFluid();
     }
 
-//    public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
 
-    @Override
-    public boolean isSource(FluidState state) {
-        return false;
+    public MoltenMetalFluid(String id, Material material, int colour)  {
+        this.id = id;
+        this.colour = colour;
+        this.material = material;
+        createFluid();
     }
 
-    @Override
-    public int getLevel(FluidState state) {
-        return state.get(LEVEL_1_8);
+    private void createFluid()  {
+        WroughtFluidUtil.createFluidBlock(this.id, this.material, this.colour, 1200, 1200, new ResourceLocation(Wrought.MODID, "blocks/molten_still"), new ResourceLocation(Wrought.MODID,"blocks/molten_flow"), new ResourceLocation(Wrought.MODID,"blocks/molten_overlay"));
     }
 
-    @Override
-    protected void fillStateContainer(StateContainer.Builder<Fluid, FluidState> builder) {
-        super.fillStateContainer(builder);
-        builder.add(LEVEL_1_8);
+    private void addToTag()  {
+
     }
+
+
 
 }

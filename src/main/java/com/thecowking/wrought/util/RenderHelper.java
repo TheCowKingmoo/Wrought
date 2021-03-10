@@ -90,8 +90,6 @@ public class RenderHelper {
         LOGGER.info("RGBA = " + RGBA);
         return RGBA;
 
-
-
     }
 
 }

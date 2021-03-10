@@ -2,7 +2,6 @@ package com.thecowking.wrought.tileentity.blast_furance;
 
 import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURNACE_BRICK_FRAME_TILE;
+import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURNACE_BRICK_FRAME_TILE;
 
 
 public class BlastFurnaceBrickFrameTile extends MultiBlockFrameTile {

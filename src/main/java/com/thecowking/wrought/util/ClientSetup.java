@@ -4,6 +4,7 @@ import com.thecowking.wrought.client.screen.blast_furnace.BlastFurnaceBuilderScr
 import com.thecowking.wrought.client.screen.blast_furnace.BlastFurnaceMultiblockScreen;
 import com.thecowking.wrought.client.screen.honey_comb_coke_oven.HCCokeOvenScreen;
 import com.thecowking.wrought.client.screen.honey_comb_coke_oven.HCCokeOvenScreenMultiblock;
+import com.thecowking.wrought.init.RegistryHandler;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;

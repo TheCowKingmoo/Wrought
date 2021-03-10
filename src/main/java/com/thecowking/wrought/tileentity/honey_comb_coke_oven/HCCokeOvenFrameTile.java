@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_TILE;
+import static com.thecowking.wrought.init.RegistryHandler.H_C_COKE_FRAME_TILE;
 
 
 public class HCCokeOvenFrameTile extends MultiBlockFrameTile {

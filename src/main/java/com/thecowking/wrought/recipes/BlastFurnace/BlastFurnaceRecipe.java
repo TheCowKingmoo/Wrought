@@ -1,18 +1,14 @@
 package com.thecowking.wrought.recipes.BlastFurnace;
 
 import com.thecowking.wrought.recipes.IWroughtRecipe;
-import com.thecowking.wrought.util.RecipeSerializerInit;
-import net.minecraft.fluid.Fluid;
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 

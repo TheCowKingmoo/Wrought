@@ -1,7 +1,7 @@
 package com.thecowking.wrought.recipes.HoneyCombCokeOven;
 
 import com.thecowking.wrought.recipes.IWroughtRecipe;
-import com.thecowking.wrought.util.RecipeSerializerInit;
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;

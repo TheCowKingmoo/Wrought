@@ -1,4 +1,4 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.init;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;

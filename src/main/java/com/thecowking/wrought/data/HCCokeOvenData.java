@@ -15,8 +15,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import static com.thecowking.wrought.util.RegistryHandler.*;
-import static com.thecowking.wrought.util.RegistryHandler.H_C_COKE_FRAME_SLAB;
+import static com.thecowking.wrought.init.RegistryHandler.*;
+import static com.thecowking.wrought.init.RegistryHandler.H_C_COKE_FRAME_SLAB;
 
 public class HCCokeOvenData implements IMultiblockData {
     // Members that make up the multi-block

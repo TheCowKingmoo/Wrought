@@ -21,7 +21,7 @@
   "fuel": {
     "tag": "forge:coke"
   },
-  "primaryFluidOutput": "wrought:creosote_fluid",
+  "primaryFluidOutput": "wrought:molten_iron",
   "secondaryFluidOutput": "wrought:creosote_fluid",
   "primaryFluidOutputAmount": 1000,
   "secondaryFluidOutputAmount": 1000,

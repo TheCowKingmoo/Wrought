@@ -2,13 +2,11 @@ package com.thecowking.wrought.tileentity.blast_furance;
 
 import com.thecowking.wrought.data.BlastFurnaceData;
 import com.thecowking.wrought.inventory.slots.*;
-import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -16,7 +14,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.thecowking.wrought.util.RegistryHandler.BLAST_FURNACE_BRICK_CONTROLLER_TILE;
+import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURNACE_BRICK_CONTROLLER_TILE;
 
 
 public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFluid {

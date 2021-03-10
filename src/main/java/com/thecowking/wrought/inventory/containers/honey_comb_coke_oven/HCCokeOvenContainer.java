@@ -2,14 +2,11 @@ package com.thecowking.wrought.inventory.containers.honey_comb_coke_oven;
 
 import com.thecowking.wrought.inventory.containers.PlayerLayoutContainer;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.util.RegistryHandler;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import static com.thecowking.wrought.util.RegistryHandler.H_C_CONTAINER_BUILDER;
+import static com.thecowking.wrought.init.RegistryHandler.H_C_CONTAINER_BUILDER;
 
 
 

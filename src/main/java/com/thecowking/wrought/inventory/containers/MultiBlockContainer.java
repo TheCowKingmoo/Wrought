@@ -1,12 +1,9 @@
 package com.thecowking.wrought.inventory.containers;
 
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.util.RegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;

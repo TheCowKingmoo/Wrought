@@ -2,8 +2,7 @@ package com.thecowking.wrought.inventory.slots;
 
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.util.RecipeSerializerInit;
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemStackHandler;

@@ -1,5 +1,6 @@
 package com.thecowking.wrought.util;
 
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;

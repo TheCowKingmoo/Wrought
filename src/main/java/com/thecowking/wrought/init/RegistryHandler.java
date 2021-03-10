@@ -1,10 +1,10 @@
-package com.thecowking.wrought.util;
+package com.thecowking.wrought.init;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.blast_furance.*;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
-import com.thecowking.wrought.init.FluidInit;
+import com.thecowking.wrought.fluids.Creosote;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
@@ -20,6 +20,10 @@ import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTil
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FlowingFluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
@@ -27,6 +31,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -37,17 +42,17 @@ public class RegistryHandler {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Wrought.MODID);
     private static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Wrought.MODID);
     private static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,  Wrought.MODID);
-
-
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, Wrought.MODID);
 
 
     public static void init()  {
-        FluidInit.FLUIDS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        FLUIDS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RecipeSerializerInit.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        FluidInit.createNewMoltenMetalFluid();
     }
 
     //Honey Comb Coke Controller
@@ -139,8 +144,20 @@ public class RegistryHandler {
     }));
 
 
+    //FLUIDS
 
+    // Creosote
+    public static final RegistryObject<FlowingFluid> CREOSOTE_FLUID = FLUIDS.register("creosote_fluid", () -> new ForgeFlowingFluid.Source(Creosote.CREOSOTE_PROPERTIES));
+    public static final RegistryObject<FlowingFluid> CREOSOTE_FLOWING = FLUIDS.register("creosote_flowing", () -> new Creosote());
+
+    public static final RegistryObject<FlowingFluidBlock> CREOSOTE_BLOCK = RegistryHandler.BLOCKS.register("creosote",
+            () -> new FlowingFluidBlock(() -> CREOSOTE_FLUID.get(), Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0f).noDrops()));
     //Creosote Bucket
-    public static final RegistryObject<BucketItem> CREOSOTE_BUCKET = ITEMS.register("creosote_bucket", () -> new BucketItem(() -> FluidInit.CREOSOTE_FLUID.get(), new Item.Properties().maxStackSize(1)) );
+    public static final RegistryObject<BucketItem> CREOSOTE_BUCKET = ITEMS.register("creosote_bucket", () -> new BucketItem(() -> CREOSOTE_FLUID.get(), new Item.Properties().maxStackSize(1)) );
+
+
+
+    //Molten Iron
+
 
 }

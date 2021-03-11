@@ -74,11 +74,7 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
         }
 
         // Fuel
-        ItemStack fuel = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "fuel"), true);
-        if (fuel == null || fuel == ItemStack.EMPTY) {
-            //throw new JsonSyntaxException("Unknown Primary Input: " + primaryItemInput);
-            // set to any burnable thing
-        }
+        Ingredient fuel = Ingredient.deserialize(JSONUtils.getJsonObject(json, "fuel"));
 
         // get fluid
         ResourceLocation primaryFluidOutputID = new ResourceLocation(JSONUtils.getString(json, "primaryFluidOutput"));
@@ -139,7 +135,7 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
             }
         }
 
-        ItemStack fuel = buffer.readItemStack();
+        Ingredient fuel = Ingredient.read(buffer);
 
         Ingredient primaryItemInput = Ingredient.read(buffer);
         Ingredient secondaryItemInput = Ingredient.read(buffer);
@@ -179,7 +175,7 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
             buffer.writeItemStack(itemOutputs.get(i));
         }
 
-        buffer.writeItemStack(recipe.getFuel());
+        recipe.getFuel().write(buffer);
 
         List<Ingredient> itemInputs = recipe.getItemInputs();
         for(int i = 0; i < itemInputs.size(); i++)  {

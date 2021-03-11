@@ -13,7 +13,8 @@ import static com.thecowking.wrought.data.MultiblockData.*;
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public AutomationCombinedInvWrapper(IItemHandlerModifiable... itemHandler)  {
+    public AutomationCombinedInvWrapper(IItemHandlerModifiable[] itemHandler)  {
+
         super(itemHandler);
     }
 

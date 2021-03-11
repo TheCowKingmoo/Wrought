@@ -1,13 +1,17 @@
 package com.thecowking.wrought.data;
 
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
+import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +21,10 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Set;
+
 import static com.thecowking.wrought.init.RegistryHandler.*;
+import static com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile.findRecipesByType;
 
 public class BlastFurnaceData implements IMultiblockData {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -232,6 +239,17 @@ public class BlastFurnaceData implements IMultiblockData {
     public int getWidth()  {
         return posArray[0][0].length;
     }
+
+    @Override
+    public int getNumberItemInputSlots() {
+        return 0;
+    }
+
+    @Override
+    public int getNumberItemOutputSlots() {
+        return 0;
+    }
+
     public int getLength()  {
         return posArray[0].length;
     }
@@ -357,5 +375,17 @@ direction that is fed in
             default:
                 return null;
         }
+    }
+
+    public BlockPos getRedstoneInBlockPos(BlockPos controllerPos) {
+        return null;
+    }
+
+    public BlockPos getRedstoneOutBlockPos(BlockPos controllerPos) {
+        return null;
+    }
+
+    public Set<IRecipe<?>> getRecipesByType(World world) {
+        return RecipeUtil.findRecipesByType(RecipeSerializerInit.BLAST_FURNACE_TYPE, world);
     }
 }

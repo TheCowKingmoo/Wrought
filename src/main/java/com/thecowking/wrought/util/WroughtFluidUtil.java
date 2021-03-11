@@ -40,7 +40,8 @@ public class WroughtFluidUtil {
         flowingFluid.update(RegistryHandler.FLUIDS.register(id + "_flowing", () -> new ForgeFlowingFluid.Flowing(fluidProperties)));
 
         // add a tag
-        FluidTags.createOptional(block.getId());
+        FluidTags.makeWrapperTag(new ResourceLocation("forge", id).toString());
+        //FluidTags.createOptional(block.getId(), fluidProperties)
         return block;
     }
 

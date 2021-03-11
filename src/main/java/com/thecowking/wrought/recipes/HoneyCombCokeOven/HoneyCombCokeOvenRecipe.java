@@ -1,81 +1,102 @@
 package com.thecowking.wrought.recipes.HoneyCombCokeOven;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+
 public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
+
     private static final Logger LOGGER = LogManager.getLogger();
     NonNullList<Ingredient> ingredientList;
 
 
     private final ResourceLocation id;
-    private Ingredient primaryInput;
-
-    private FluidStack fluidStack;
-    private final ItemStack primaryOutput;
-    private ItemStack secondaryOutput;
+    private List<FluidStack> fluidStack
+            ;
+    private List<Ingredient> inputs;
+    private List<ItemStack> outputs;
 
 
     private int burnTime = 0;
 
     public HoneyCombCokeOvenRecipe(ResourceLocation id, Ingredient primaryInput, ItemStack primaryOutput, ItemStack secondaryOutput, FluidStack fluidStack, int burnTime) {
         this.id = id;
-        this.primaryInput = primaryInput;
-        this.primaryOutput = primaryOutput;
-        this.secondaryOutput = secondaryOutput;
-        this.fluidStack = fluidStack;
+        this.inputs = new ArrayList<>();
+        this.inputs.add(primaryInput);
+        this.outputs = new ArrayList<>();
+        this.outputs.add(primaryOutput);
+        this.outputs.add(secondaryOutput);
+        this.fluidStack = new ArrayList<>();
+        this.fluidStack.add(fluidStack);
         this.burnTime = burnTime;
         ingredientList = NonNullList.create();
         ingredientList.add(primaryInput);
     }
 
     public ItemStack getPrimaryOutput()  {
-        return this.primaryOutput;
+        return this.outputs.get(0);
     }
 
     public ItemStack getSecondaryOutput()  {
-        return this.secondaryOutput;
+        return this.outputs.get(1);
     }
-
-    public Ingredient getPrimaryInput()  {return this.primaryInput;}
 
     public int getNumInput()  {
         return this.ingredientList.size();
     }
+    public List<Ingredient> getItemInputs() { return this.inputs;}
+
+    public List<ItemStack> getItemOutputs() {
+        return this.outputs;
+    }
+
+    public int getNumInputs() {
+        return inputs.size();
+    }
+
+    public int getNumFluidOutputs() {
+        return this.fluidStack.size();
+    }
+
+    public List<FluidStack> getFluidOutputs() {
+        return this.fluidStack;
+    }
 
 
-    @Override
     public boolean matches(RecipeWrapper inv, World worldIn) {
-        return this.primaryInput.test(inv.getStackInSlot(0));
+        return this.inputs.get(0).test(inv.getStackInSlot(0));
     }
 
     public boolean matches(ItemStack stack) {
-        return this.primaryInput.test(stack);
+        return this.inputs.get(0).test(stack);
     }
 
 
     @Override
     public ItemStack getCraftingResult(RecipeWrapper inv) {
-        return this.primaryOutput;
+        return this.outputs.get(0);
     }
 
     @Override
     public ItemStack getRecipeOutput() {
         return null;
     }
-
-    public ItemStack getRecipeItemStackOutput()  {return this.primaryOutput;}
-    public FluidStack getRecipeFluidStackOutput()  {return this.fluidStack;}
 
     @Override
     public ResourceLocation getId() {
@@ -84,12 +105,12 @@ public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return RecipeSerializerInit.EXAMPLE_SERIALIZER.get();
+        return RecipeSerializerInit.HONEY_COMB_SERIALIZER.get();
     }
 
     @Override
     public Ingredient getInput() {
-        return this.primaryInput;
+        return this.inputs.get(0);
     }
 
     @Override
@@ -99,5 +120,23 @@ public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
 
     public int getBurnTime() {
         return burnTime;
+    }
+
+
+
+    @Nonnull
+    @Override
+    public IRecipeType<?> getType() {
+        return Registry.RECIPE_TYPE.getOrDefault(RecipeSerializerInit.HONEY_COMB_RECIPE_TYPE_ID);
+    }
+
+    public List<FluidStack> getFluidStackOutput() {
+        return this.fluidStack;
+    }
+    public Ingredient getInput(int index)  {return  this.inputs.get(index); }
+
+    @Override
+    public FluidStack getFluidOutput(int index) {
+        return this.fluidStack.get(index);
     }
 }

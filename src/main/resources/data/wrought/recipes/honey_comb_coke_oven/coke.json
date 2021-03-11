@@ -7,9 +7,9 @@
     "item": "wrought:soot"
   },
   "primary_input": {
-    "item": "minecraft:coal"
+    "tag": "minecraft:coals"
   },
-  "fluid": "wrought:creosote_fluid",
+  "fluid": "wrought:creosote",
   "fluidamount": 250,
   "burntime": 5
 }

@@ -1,13 +1,17 @@
 package com.thecowking.wrought.data;
 
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
+import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -15,8 +19,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Set;
+
 import static com.thecowking.wrought.init.RegistryHandler.*;
 import static com.thecowking.wrought.init.RegistryHandler.H_C_COKE_FRAME_SLAB;
+import static com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile.findRecipesByType;
 
 public class HCCokeOvenData implements IMultiblockData {
     // Members that make up the multi-block
@@ -98,6 +105,15 @@ split up by the y level where posArray[0][x][z] = the bottom most layer
     public int getWidth()  {
         return posArray[0][0].length;
     }
+
+    public int getNumberItemInputSlots() {
+        return 1;
+    }
+
+    public int getNumberItemOutputSlots() {
+        return 2;
+    }
+
     public int getLength()  {
         return posArray[0].length;
     }
@@ -203,6 +219,25 @@ direction that is fed in
             default:
                 return null;
         }
+    }
+
+
+    /*
+      Calc's the position of the redstone input frame
+     */
+    public BlockPos getRedstoneInBlockPos(BlockPos controllerPos) {
+        return new BlockPos(controllerPos.getX(), controllerPos.getY() + 1, controllerPos.getZ());
+    }
+
+    /*
+  Calc's the position of the redstone output frame
+  */
+    public BlockPos getRedstoneOutBlockPos(BlockPos controllerPos) {
+        return new BlockPos(controllerPos.getX(), controllerPos.getY() - 1, controllerPos.getZ());
+    }
+
+    public Set<IRecipe<?>> getRecipesByType(World world) {
+        return RecipeUtil.findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, world);
     }
 
 

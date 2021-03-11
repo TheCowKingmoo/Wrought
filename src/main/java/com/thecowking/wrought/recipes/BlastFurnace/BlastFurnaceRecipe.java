@@ -1,18 +1,24 @@
 package com.thecowking.wrought.recipes.BlastFurnace;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BlastFurnaceRecipe implements IWroughtRecipe {
+    ResourceLocation RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "blast_furnace");
+
 
     private final int ORE_INDEX = 0;
     private final int FLUX_INDEX = 1;
@@ -25,12 +31,14 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
 
     private List<FluidStack> fluidOutputs;
 
-    private ItemStack fuel;
+    private Ingredient fuel;
 
     private int burnTime = 0;
 
+
+
     public BlastFurnaceRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<ItemStack> itemOuputs, List<FluidStack> fluidOutputs,
-                              ItemStack fuel, int burnTime) {
+                              Ingredient fuel, int burnTime) {
         this.id = id;
 
         this.itemInputs = itemInputs;
@@ -70,9 +78,36 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
 
 
     public List<Ingredient> getItemInputs()  {return this.itemInputs;}
+
+    @Override
+    public List<ItemStack> getItemOutputs() {
+        return null;
+    }
+
+    @Override
+    public int getNumInputs() {
+        return 0;
+    }
+
+    @Override
+    public int getNumFluidOutputs() {
+        return 0;
+    }
+
     public List<ItemStack> getItemOuputs()  {return  this.itemOuputs;}
     public List<FluidStack> getFluidOutputs()  {return this.fluidOutputs;}
-    public ItemStack getFuel()  {return this.fuel;}
+
+    @Override
+    public Ingredient getInput(int index) {
+        return null;
+    }
+
+    @Override
+    public FluidStack getFluidOutput(int index) {
+        return null;
+    }
+
+    public Ingredient getFuel()  {return this.fuel;}
     public int getBurnTime()  {return  this.burnTime;}
 
     @Override
@@ -92,8 +127,6 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
 
 
 
-
-
     @Override
     public ItemStack getRecipeOutput() {
         return null;
@@ -106,12 +139,22 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return RecipeSerializerInit.EXAMPLE_SERIALIZER.get();
+        return RecipeSerializerInit.BLAST_FURNACE_SERIALIZER.get();
     }
 
 
     @Override
     public Ingredient getInput() {
         return getPrimaryItemInput();
+    }
+
+    @Nonnull
+    @Override
+    public IRecipeType<?> getType() {
+        return Registry.RECIPE_TYPE.getOrDefault(RECIPE_TYPE_ID);
+    }
+
+    public List<FluidStack> getFluidStackOutput() {
+        return this.fluidOutputs;
     }
 }

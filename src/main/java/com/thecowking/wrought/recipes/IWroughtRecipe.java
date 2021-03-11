@@ -1,29 +1,41 @@
 package com.thecowking.wrought.recipes;
 
 import com.thecowking.wrought.Wrought;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
 
-    ResourceLocation RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");
 
     @Nonnull
     @Override
-    default IRecipeType<?> getType() {
-        return Registry.RECIPE_TYPE.getOrDefault(RECIPE_TYPE_ID);
-    }
+    public IRecipeType<?> getType();
+
+    public List<FluidStack> getFluidStackOutput();
 
     @Override
     default boolean canFit(int width, int height) {
         return false;
     }
+
+    public List<Ingredient> getItemInputs();
+    public List<ItemStack> getItemOutputs();
+    public int getNumInputs();
+    public int getNumFluidOutputs();
+    public List<FluidStack> getFluidOutputs();
+    public Ingredient getInput(int index);
+    public FluidStack getFluidOutput(int index);
+    public int getBurnTime();
+
 
     Ingredient getInput();
 }

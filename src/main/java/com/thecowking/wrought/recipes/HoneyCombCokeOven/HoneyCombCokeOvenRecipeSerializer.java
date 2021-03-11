@@ -87,7 +87,7 @@ public class HoneyCombCokeOvenRecipeSerializer extends ForgeRegistryEntry<IRecip
         primaryInput.write(buffer);
         buffer.writeItemStack(recipe.getPrimaryOutput());
         buffer.writeItemStack(recipe.getSecondaryOutput());
-        buffer.writeFluidStack(recipe.getRecipeFluidStackOutput());
+        buffer.writeFluidStack(recipe.getFluidOutput(0));
         buffer.writeInt(recipe.getBurnTime());
     }
 }

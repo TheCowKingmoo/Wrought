@@ -33,7 +33,7 @@ public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFlu
 
 
     public BlastFurnaceBrickControllerTile() {
-        super(BLAST_FURNACE_BRICK_CONTROLLER_TILE.get(), new BlastFurnaceData(), NUMBER_INTERNAL_TANKS, DEFAULT_TANK_SIZE);
+        super(BLAST_FURNACE_BRICK_CONTROLLER_TILE.get(), 3, 3, true, new BlastFurnaceData(), NUMBER_INTERNAL_TANKS, DEFAULT_TANK_SIZE);
     }
 
 

@@ -31,11 +31,15 @@ public class OutputFluidTank extends FluidTank {
 
     public FluidStack internalFill(FluidStack resource, FluidAction action)  {
         if(resource == FluidStack.EMPTY)  {return FluidStack.EMPTY;}
+        int amountToFill = resource.getAmount();
+        LOGGER.info("amount to insert = " + resource.getAmount());
         Fluid f = resource.getFluid();
 
-        int amountLeft = super.fill(resource, action);
+        int amountFilled = super.fill(resource, action);
+        int amountLeft = amountToFill - amountFilled;
 
         if(amountLeft != 0)  {
+            LOGGER.info("insert amoutn left = " + amountLeft);
             return new FluidStack(f, amountLeft);
         }
         return FluidStack.EMPTY;

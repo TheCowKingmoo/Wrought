@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -88,11 +89,18 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     protected InputItemHandler inputSlots;
     //Output Slots
     protected OutputItemHandler outputSlots;
+    //Items currently being cooked
+    protected ItemStack[] processingItemStacks;
     //Backlog Items
     protected ItemStack[] itemBacklogs;
 
+    /*
+        Basic operation
+        item inserted into input slot -> moves into processing stack -> attempt insert into output slot -> leftovers in backlog
+     */
+
     //Fuel Slot
-    protected InputItemHandler fuelInputSlot;
+    protected InputFuelHandler fuelInputSlot;
 
     //Holds all the handlers
     protected List<IItemHandlerModifiable> allHandlers;
@@ -101,37 +109,36 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     //Handlers when the world interacts with the multiblock
     protected LazyOptional<IItemHandler> automation;
 
-    protected int numInputOutputSlots = 0;
 
 
-    protected ItemStack[] processingItemStacks;
+    protected int numInputSlots;
+    protected int numOutputSlots;
+    protected boolean hasFuelSlot;
 
 
-
-
-    public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, IMultiblockData data) {
+    public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, int numberInputSlots, int numberOutputSlots, boolean fuelSlot, IMultiblockData data) {
         super(tileEntityTypeIn);
         this.data = data;
         this.status = "not init";
+        this.numInputSlots = numberInputSlots;
+        this.numOutputSlots = numberOutputSlots;
+        this.hasFuelSlot = fuelSlot;
 
         initSlots();
 
-        // build all slots that will be inserted/outputted via gui or world
-        buildAllHandlers();
-
-        IItemHandlerModifiable[] arr = new IItemHandlerModifiable[allHandlers.size()];
-        this.allHandlers.toArray(arr);
-
-        this.everything = LazyOptional.of(() -> new CombinedInvWrapper(arr));
-        this.automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(arr));
     }
 
     public void initSlots()  {
 
         // input
-        this.inputSlots = new InputItemHandler(data.getNumberItemInputSlots(), this, null, "input_slots");
+        this.inputSlots = new InputItemHandler(numInputSlots, this, null, "input_slots");
         // output
-        this.outputSlots = new OutputItemHandler(data.getNumberItemOutputSlots());
+        this.outputSlots = new OutputItemHandler(numOutputSlots);
+
+        //fuel
+        if(this.hasFuelSlot)  {
+            this.fuelInputSlot = new InputFuelHandler(1, this, null, "fuel");
+        }
 
         // processing slots
         this.processingItemStacks = new ItemStack[data.getNumberItemOutputSlots()];
@@ -139,15 +146,19 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         //backlogs
         this.itemBacklogs = new ItemStack[data.getNumberItemOutputSlots()];
 
-        //Fuel Input Slot
-        this.fuelInputSlot = new InputItemHandler(1, this, null, "fuel");
+        for(int i = 0; i < this.outputSlots.getSlots(); i++)  {
+            processingItemStacks[i] = ItemStack.EMPTY;
+            itemBacklogs[i] = ItemStack.EMPTY;
+        }
     }
 
     public void buildAllHandlers()  {
-        List<IItemHandlerModifiable> allHandlers = new ArrayList<>();
-        allHandlers.add(inputSlots);
-        allHandlers.add(outputSlots);
-        allHandlers.add(fuelInputSlot);
+        this.allHandlers = new ArrayList<>();
+        this.allHandlers.add(inputSlots);
+        this.allHandlers.add(outputSlots);
+        if(this.hasFuelSlot)  {
+            allHandlers.add(fuelInputSlot);
+        }
     }
 
 
@@ -305,7 +316,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
-    protected boolean processAllItemBacklogs()  {
+    protected boolean processAllBackLog()  {
         for(int i = 0; i < itemBacklogs.length; i++)  {
             if(!(processItemBackLog(i)))  {
                 return false;
@@ -354,7 +365,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         }
         if(localClog)  {
             this.clogged = true;
-            this.status = "clogged";
+            this.status = "item clogged";
             return false;
         }
         return true;
@@ -364,11 +375,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public boolean finishedProcessingCurrentOperation()  {
         // Check if there is a previous item and the item has "cooked" long enough
         if (this.isRunning && this.timeElapsed++ < this.timeComplete) {
-
             this.needUpdate = true;
             this.timeElapsed++;
             return false;
-
         }
         // item has cooked long enough -> insert outputs and move onto next operation
         return true;
@@ -463,15 +472,20 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     Check if a new item has a recipe that the oven can use
  */
     protected boolean recipeChecker(IWroughtRecipe currentRecipe)  {
-
         // check if we have a recipe for item
         if (currentRecipe == null) {
             machineChangeOperation(false);
             this.status = "No Recipe for Item";
             return false;
         }
-        return true;
+        // check if it all matches
+        if(currentRecipe.matches(new RecipeWrapper(this.inputSlots), this.world))  {
+            return true;
+        }
+        return false;
     }
+
+
 
 
     //TODO - cut down lag by making state machine based off of insertion
@@ -480,21 +494,27 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
      */
     public void attemptRunOperation() {
+        LOGGER.info("run process backlogs");
         // Check if any of the item backlogs is clogged - note that another operation will not happen until tickCount has passed if these fail
-        if(!processAllItemBacklogs())  { return; }
+        if(!processAllBackLog())  { return; }
+        LOGGER.info("run redstone check");
         // check if redstone is turning machine off
         if(redstonePowered())  { return; }
+        LOGGER.info("run current op check");
         // increment how long current item has cooked
-        if(finishedProcessingCurrentOperation())  { return; }
-
+        if(!finishedProcessingCurrentOperation())  { return; }
+        LOGGER.info("run outputs full check");
         // check to make sure output is not full before starting another operation
         if(areOutputsFull())  {return; }
+        LOGGER.info("run processing");
         // moves things in processingItemStacks into OutputSlots
         if(!processing())  {return; }
-
+        LOGGER.info("recipe check");
         // New operation and new recipe
         IWroughtRecipe currentRecipe = this.getRecipe();
-        if (!recipeChecker(currentRecipe)) { return; }
+        //LOGGER.info(currentRecipe.getItemOutputs().get(0).getDisplayName());
+        if (!(recipeChecker(currentRecipe))) { return; }
+        LOGGER.info("run operation");
         mutliBlockOperation(currentRecipe);
 
 
@@ -506,18 +526,21 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public void mutliBlockOperation(IWroughtRecipe currentRecipe)  {
         if(currentRecipe == null)  {return;}
 
-        List<ItemStack> outputs = currentRecipe.getItemOutputs();
-
         //FluidStack fluidOutput = this.getRecipe(getPrimaryItemInput()).getRecipeFluidStackOutput();
         this.timeComplete = currentRecipe.getBurnTime();
 
-        for(int i = 0; i < outputs.size(); i++)  {
-            this.processingItemStacks[i] = outputs.get(i);
+        // consume all inputs that are needed
+        for(int i = 0; i < currentRecipe.getNumInputs(); i++)  {
+            // TODO - shrink by dynamic num
+            this.inputSlots.getStackInSlot(i).shrink(1);
+        }
+
+        // insert outputs into processing
+        for(int i = 0; i < currentRecipe.getNumOutputs(); i++)  {
+            this.processingItemStacks[i] = currentRecipe.getOutput(i);
         }
         this.needUpdate = true;
-        if(!this.isRunning)  {
-            machineChangeOperation(true);
-        }
+        machineChangeOperation(true);
     }
 
 
@@ -578,8 +601,11 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
                 return everything.cast();
             }
             if (side == null) {
+                LOGGER.info("everything");
                 return everything.cast();
             } else {
+                LOGGER.info("automation");
+
                 return automation.cast();
             }
         }

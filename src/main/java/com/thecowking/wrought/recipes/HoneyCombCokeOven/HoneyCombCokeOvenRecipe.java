@@ -69,6 +69,10 @@ public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
     public int getNumInputs() {
         return inputs.size();
     }
+    public int getNumOutputs() {
+        return outputs.size();
+    }
+
 
     public int getNumFluidOutputs() {
         return this.fluidStack.size();
@@ -80,7 +84,11 @@ public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
 
 
     public boolean matches(RecipeWrapper inv, World worldIn) {
-        return this.inputs.get(0).test(inv.getStackInSlot(0));
+        for(int i = 0; i < getNumInputs(); i++)  {
+            if(i > this.inputs.size())  return false;
+            if(!this.inputs.get(i).test(inv.getStackInSlot(i)))  return false;
+        }
+        return true;
     }
 
     public boolean matches(ItemStack stack) {
@@ -134,6 +142,16 @@ public class HoneyCombCokeOvenRecipe implements IWroughtRecipe {
         return this.fluidStack;
     }
     public Ingredient getInput(int index)  {return  this.inputs.get(index); }
+
+    @Override
+    public ItemStack getOutput(int index) {
+        return this.outputs.get(index);
+    }
+
+    @Override
+    public ItemStack getInputItemStack(int index) {
+        return this.inputs.get(index).getMatchingStacks()[0];
+    }
 
     @Override
     public FluidStack getFluidOutput(int index) {

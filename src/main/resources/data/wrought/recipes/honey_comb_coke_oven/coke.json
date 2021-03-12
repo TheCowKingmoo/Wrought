@@ -7,7 +7,8 @@
     "item": "wrought:soot"
   },
   "primary_input": {
-    "tag": "minecraft:coals"
+    "tag": "minecraft:coals",
+    "count": 1
   },
   "fluid": "wrought:creosote",
   "fluidamount": 250,

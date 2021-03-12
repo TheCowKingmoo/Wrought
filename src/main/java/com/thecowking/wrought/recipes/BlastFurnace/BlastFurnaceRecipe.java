@@ -90,6 +90,11 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
     }
 
     @Override
+    public int getNumOutputs() {
+        return 0;
+    }
+
+    @Override
     public int getNumFluidOutputs() {
         return 0;
     }
@@ -100,6 +105,16 @@ public class BlastFurnaceRecipe implements IWroughtRecipe {
     @Override
     public Ingredient getInput(int index) {
         return null;
+    }
+
+    @Override
+    public ItemStack getOutput(int index) {
+        return null;
+    }
+
+    @Override
+    public ItemStack getInputItemStack(int index) {
+        return this.itemInputs.get(index).getMatchingStacks()[0];
     }
 
     @Override

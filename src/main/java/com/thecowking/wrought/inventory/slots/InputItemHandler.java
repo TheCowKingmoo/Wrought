@@ -5,6 +5,7 @@ import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,42 +31,22 @@ public class InputItemHandler extends ItemStackHandler {
         this.tile = tile;
         this.primary = primary;
         this.id = id;
-
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        return checkRecipe(slot,stack,simulate);
-        //return super.insertItem(slot, stack, simulate);
-    }
 
-
-    public ItemStack checkRecipe(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-
-        HoneyCombCokeOvenRecipe currentRecipe = getRecipe(stack);
-        if(currentRecipe == null)  {
-            return stack;
-        }
-
-        return super.insertItem(slot, stack, simulate);
-    }
-
-
-    public HoneyCombCokeOvenRecipe getRecipe(ItemStack stack)  {
-        if (stack == null) {
-            return null;
-        }
-        Set<IRecipe<?>> recipes = findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, tile.getWorld());
-
-        for (IRecipe<?> iRecipe : recipes) {
-            HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
-            if (recipe.matches(stack))  {
-                return recipe;
+        //if( slot > tile.numInputSlots)  {
+            if(this.tile.itemUsedInRecipe(stack, slot))  {
+                return super.insertItem(slot, stack, simulate);
             }
-        }
-        return null;
+        //}
+        return stack;
     }
+
+
+
 
 
 

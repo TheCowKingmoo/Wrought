@@ -19,10 +19,10 @@
     "item": "minecraft:coal"
   },
   "fuel": {
-    "tag": "forge:coke"
+    "item": "wrought:coke"
   },
   "primaryFluidOutput": "wrought:molten_iron",
-  "secondaryFluidOutput": "wrought:creosote_fluid",
+  "secondaryFluidOutput": "wrought:creosote",
   "primaryFluidOutputAmount": 1000,
   "secondaryFluidOutputAmount": 1000,
 

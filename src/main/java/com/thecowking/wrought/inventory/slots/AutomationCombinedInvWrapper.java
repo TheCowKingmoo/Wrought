@@ -45,14 +45,13 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     @Override
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-
-        if(slot < NUM_INPTUS)  {
-            return ItemStack.EMPTY;
-        }
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = getSlotFromIndex(slot, index);
-        return handler.extractItem(slot, amount, simulate);
+        if(handler instanceof OutputItemHandler || handler instanceof FluidItemOutputHandler)  {
+            slot = getSlotFromIndex(slot, index);
+            return handler.extractItem(slot, amount, simulate);
+        }
+        return ItemStack.EMPTY;
     }
 
 

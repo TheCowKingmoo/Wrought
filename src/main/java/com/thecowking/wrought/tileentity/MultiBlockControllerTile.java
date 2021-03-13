@@ -12,6 +12,8 @@ import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControll
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -21,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -35,6 +38,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
@@ -44,7 +49,6 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +56,10 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.thecowking.wrought.data.MultiblockData.*;
 
@@ -111,9 +117,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
 
 
-    protected int numInputSlots;
-    protected int numOutputSlots;
-    protected boolean hasFuelSlot;
+    public int numInputSlots;
+    public int numOutputSlots;
+    public boolean hasFuelSlot;
 
 
     public MultiBlockControllerTile(TileEntityType<?> tileEntityTypeIn, int numberInputSlots, int numberOutputSlots, boolean fuelSlot, IMultiblockData data) {
@@ -125,6 +131,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         this.hasFuelSlot = fuelSlot;
 
         initSlots();
+
+
 
     }
 
@@ -247,8 +255,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             MultiBlockFrameTile frameTile = getFrameTile(this.redstoneOut);
             if(frameTile != null)  {
                 frameTile.setRedstonePower(power);
-            }  else  {
-                LOGGER.info("redstone out blocks is null");
             }
         }
     }
@@ -459,8 +465,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public IWroughtRecipe getRecipe() {
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
 
+
+
         for (IRecipe<?> iRecipe : recipes) {
-            HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
+            IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
             if (recipe.matches(new RecipeWrapper(this.inputSlots), this.world)) {
                 return recipe;
             }
@@ -468,10 +476,28 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return null;
     }
 
+
+    public boolean itemUsedInRecipe(ItemStack input, int index) {
+        Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
+        for (IRecipe<?> iRecipe : recipes) {
+            IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
+            LOGGER.info("testing " + recipe.getInput(index).toString());
+            LOGGER.info(" with " + input.getTranslationKey());
+            LOGGER.info( " slot = " + index  );
+            if(recipe.getInput(index).test(input))  {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
     /*
     Check if a new item has a recipe that the oven can use
  */
-    protected boolean recipeChecker(IWroughtRecipe currentRecipe)  {
+    public boolean recipeChecker(IWroughtRecipe currentRecipe)  {
         // check if we have a recipe for item
         if (currentRecipe == null) {
             machineChangeOperation(false);
@@ -494,27 +520,32 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
      */
     public void attemptRunOperation() {
-        LOGGER.info("run process backlogs");
+        LOGGER.info("backlog");
+
         // Check if any of the item backlogs is clogged - note that another operation will not happen until tickCount has passed if these fail
         if(!processAllBackLog())  { return; }
-        LOGGER.info("run redstone check");
         // check if redstone is turning machine off
+        LOGGER.info("redstone");
+
         if(redstonePowered())  { return; }
-        LOGGER.info("run current op check");
         // increment how long current item has cooked
+        LOGGER.info("current process");
+
         if(!finishedProcessingCurrentOperation())  { return; }
-        LOGGER.info("run outputs full check");
         // check to make sure output is not full before starting another operation
+        LOGGER.info("output full check");
+
         if(areOutputsFull())  {return; }
-        LOGGER.info("run processing");
+        LOGGER.info("processing");
+
         // moves things in processingItemStacks into OutputSlots
         if(!processing())  {return; }
-        LOGGER.info("recipe check");
+        LOGGER.info("RECIPE");
         // New operation and new recipe
         IWroughtRecipe currentRecipe = this.getRecipe();
-        //LOGGER.info(currentRecipe.getItemOutputs().get(0).getDisplayName());
         if (!(recipeChecker(currentRecipe))) { return; }
-        LOGGER.info("run operation");
+        LOGGER.info("good recipe");
+
         mutliBlockOperation(currentRecipe);
 
 
@@ -601,15 +632,21 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
                 return everything.cast();
             }
             if (side == null) {
-                LOGGER.info("everything");
                 return everything.cast();
             } else {
-                LOGGER.info("automation");
-
                 return automation.cast();
             }
         }
         return super.getCapability(cap, side);
+    }
+
+
+    @SuppressWarnings("resource")
+    @OnlyIn(Dist.CLIENT)
+    public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn) {
+        ClientWorld world = Minecraft.getInstance().world;
+        return world != null ? world.getRecipeManager().getRecipes().stream()
+                .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
 
 

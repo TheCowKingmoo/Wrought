@@ -239,23 +239,17 @@ public class BlastFurnaceData implements IMultiblockData {
     public int getWidth()  {
         return posArray[0][0].length;
     }
-
-    @Override
     public int getNumberItemInputSlots() {
-        return 0;
+        return 3;
     }
-
-    @Override
     public int getNumberItemOutputSlots() {
-        return 0;
+        return 3;
     }
-
     public int getLength()  {
         return posArray[0].length;
     }
     public Block[][][] getPosArray() { return this.posArray; }
     public Block getBlockMember(int x, int y, int z)  {return this.posArray[x][y][z];}
-
     public int getControllerYIndex()  {
         return 3;
     }
@@ -378,11 +372,11 @@ direction that is fed in
     }
 
     public BlockPos getRedstoneInBlockPos(BlockPos controllerPos) {
-        return null;
+        return new BlockPos(controllerPos.getX(), controllerPos.getY()+1, controllerPos.getZ());
     }
 
     public BlockPos getRedstoneOutBlockPos(BlockPos controllerPos) {
-        return null;
+        return new BlockPos(controllerPos.getX(), controllerPos.getY()-1, controllerPos.getZ());
     }
 
     public Set<IRecipe<?>> getRecipesByType(World world) {

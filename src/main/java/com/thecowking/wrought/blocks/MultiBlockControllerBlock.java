@@ -3,6 +3,7 @@ package com.thecowking.wrought.blocks;
 
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -62,7 +64,8 @@ public class MultiBlockControllerBlock extends Block implements IMultiBlockContr
                 MultiBlockControllerTile controllerTile = (MultiBlockControllerTile) tileEntity;
                 if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem()))  {
                     MultiBlockHelper.tryToFormMultiBlock(world, player, posIn, controllerTile.getData());
-                }  else  {
+
+                } else  {
                     controllerTile.openGUI(world, player, controllerTile.isFormed());
                 }
             } else {

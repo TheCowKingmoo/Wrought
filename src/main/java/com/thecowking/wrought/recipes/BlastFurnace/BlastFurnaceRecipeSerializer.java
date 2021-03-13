@@ -57,9 +57,9 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
 
         // get inputs
         Ingredient primaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "primary_item_input"));
-        if (primaryItemInput == null || primaryItemInput.equals(Items.AIR)) {
-            throw new JsonSyntaxException("Unknown Primary Input: " + primaryItemInput);
-        }
+       // if (primaryItemInput == null || primaryItemInput.equals(Items.AIR)) {
+       //     throw new JsonSyntaxException("Unknown Primary Input: " + primaryItemInput);
+       // }
 
         Ingredient secondaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "secondary_item_input"));
         Ingredient trinaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "primary_item_input"));
@@ -105,9 +105,9 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
         FluidStack fluidStack = FluidStack.EMPTY;
         if(amount != 0)  {
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidID);
-            if (fluid == null || fluid == FluidStack.EMPTY.getFluid()) {
-                throw new JsonSyntaxException("Unknown fluid: " + fluidID);
-            }
+         //   if (fluid == null || fluid == FluidStack.EMPTY.getFluid()) {
+         //       throw new JsonSyntaxException("Unknown fluid: " + fluidID);
+         //   }
             fluidStack = new FluidStack(fluid, amount);
         }
         return fluidStack;

@@ -4,6 +4,7 @@ import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +37,9 @@ public class InputFluidHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
+        if(stack.getItem() != Items.BUCKET)  {
+            return stack;
+        }
         return super.insertItem(slot, stack, simulate);
     }
 

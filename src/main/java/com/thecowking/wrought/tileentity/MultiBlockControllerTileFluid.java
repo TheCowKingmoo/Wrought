@@ -66,14 +66,11 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     // used to stop operations if the bucket slot cannot be used
     protected ItemStack[] fluidItemBacklogs;
 
-
-
     // Output Tank
     protected int numOutputTanks;
     protected OutputFluidTank[] outputFluidTanks;
     protected FluidStack[] fluidBacklogs;
     protected int[] tankCapacities;
-
 
     public MultiBlockControllerTileFluid(TileEntityType<?> tileEntityTypeIn, int numberInputSlots, int numberOutputSlots, boolean fuelSlot, IMultiblockData data, int numOutputTanks, int defaultCapacity) {
         super(tileEntityTypeIn, numberInputSlots, numberOutputSlots, fuelSlot, data);
@@ -85,7 +82,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.processingFluidStacks = new FluidStack[this.numOutputTanks];
         init(defaultCapacity);
     }
-
 
     @Override
     public void buildAllHandlers()  {
@@ -127,7 +123,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
 
     @Override
-    protected boolean recipeChecker(IWroughtRecipe currentRecipe)  {
+    public boolean recipeChecker(IWroughtRecipe currentRecipe)  {
         if(!super.recipeChecker(currentRecipe))  {return false;}
 
         // get the fluid outputs from recipe
@@ -142,14 +138,12 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
             Fluid fluidInTank = this.outputFluidTanks[i].getFluid().getFluid();
             if (fluidInTank != Fluids.EMPTY && fluidOutputs.get(i).getFluid() != fluidInTank)  {
                 finishOperation();
-                LOGGER.info("fluid does not match tank");
                 this.status = "Output Fluid does not match fluid in tank";
                 return false;
             }
             // check if tank has space for fluid
             if(this.outputFluidTanks[i].getFluidAmount() + fluidOutputs.get(i).getAmount() > this.outputFluidTanks[i].getCapacity())  {
                 finishOperation();
-                LOGGER.info("not enough space in tank");
                 this.status = "Not enough space in tank to process current recipe";
                 return false;
             }
@@ -368,7 +362,9 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
         if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)  {
-            LOGGER.info("FLUID");
+            return LazyOptional.of(() -> getFluidTanks()).cast();
+        }
+        if(cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)  {
             return LazyOptional.of(() -> getFluidTanks()).cast();
         }
         return super.getCapability(cap, side);

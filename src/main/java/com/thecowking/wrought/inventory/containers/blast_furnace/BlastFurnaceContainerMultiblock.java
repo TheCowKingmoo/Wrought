@@ -24,6 +24,9 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
     final static int SLOT_SEP_X = 22;
 
 
+    //final static int X_WIDTH_OF_SLOT = 12;
+
+
     final static int FLUID_ITEM_X = 150;
     final static int INPUTS_Y = 21;
     final static int OUTPUTS_Y = 72;
@@ -42,35 +45,33 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
         }  else  {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                    int i = 0;
                     int slot = 0;
                     // Add Ore Input Slot
                     addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X, INPUTS_Y));
-                    // Primary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += SLOT_SEP_X), OUTPUTS_Y));
-
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
-                    // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += SLOT_SEP_X), OUTPUTS_Y));
-
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, INPUTS_Y));
                     // Add Aux Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X  + SLOT_SEP_X * 2, INPUTS_Y));
+
+                    // Primary Item Output Slot
+                     addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X, OUTPUTS_Y));
+                    // Secondary Item Output Slot
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, OUTPUTS_Y));
                     // Trinary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += 2*SLOT_SEP_X), OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X  + SLOT_SEP_X*2, OUTPUTS_Y));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
+                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X  + 3*SLOT_SEP_X, OUTPUTS_Y));
 
                     // Add Molten Metal Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
-                    // Add Molten Metal Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, slot++,INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
-
+                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X * 2 + SLOT_SEP_X * 3, INPUTS_Y));
                     // Add Molten Slag Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X + i, INPUTS_Y));
+                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X * 3 + SLOT_SEP_X * 4, INPUTS_Y));
+
+                    // Add Molten Metal Fluid Item Output Slot
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X * 2 + SLOT_SEP_X * 3, OUTPUTS_Y));
                     // Add Molten Slag Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + (i += 3*SLOT_SEP_X), OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X * 3 + SLOT_SEP_X * 4, OUTPUTS_Y));
                 });
 
         }

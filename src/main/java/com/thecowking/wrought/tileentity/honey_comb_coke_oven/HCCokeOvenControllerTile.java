@@ -62,16 +62,8 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTileFluid impl
 
     public HCCokeOvenControllerTile() {
         super(H_C_COKE_CONTROLLER_TILE.get(), 1, 2, false, new HCCokeOvenData(), 1, 16000);
-
-
         this.status = "Standing By";
-        if(allHandlers == null || allHandlers.size() < 1)  {
-            // build all slots that will be inserted/outputted via gui or world
-            buildAllHandlers();
-        }
 
-        IItemHandlerModifiable[] arr = new IItemHandlerModifiable[allHandlers.size()];
-        this.allHandlers.toArray(arr);
 
         this.everything = LazyOptional.of(() -> new CombinedInvWrapper(this.inputSlots, this.outputSlots, this.fluidItemInputSlots, this.fluidItemOutputSlots));
         this.automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(this.inputSlots, this.outputSlots, this.fluidItemInputSlots, this.fluidItemOutputSlots));
@@ -91,16 +83,6 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTileFluid impl
     public ITextComponent getDisplayName() {
         return new TranslationTextComponent("Coke Oven Controller");
     }
-
-
-    @SuppressWarnings("resource")
-    @OnlyIn(Dist.CLIENT)
-    public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn) {
-        ClientWorld world = Minecraft.getInstance().world;
-        return world != null ? world.getRecipeManager().getRecipes().stream()
-                .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
-    }
-
 
 
 

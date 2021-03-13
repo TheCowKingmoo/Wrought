@@ -58,12 +58,6 @@ public class HCCokeOvenContainerMultiblock extends MultiBlockContainerFluid {
                     // Fluid Item Output Slot
                     addSlot(new SlotOutput(h, slotIndex++, FLUID_ITEM_X, OUTPUTS_Y));
                 });
-                LOGGER.info(this.getSlot(0));
-                LOGGER.info(this.getSlot(1).toString());
-                LOGGER.info(this.getSlot(2).toString());
-                LOGGER.info(this.getSlot(3).toString());
-                LOGGER.info(this.getSlot(4).toString());
-
             }
 
         }

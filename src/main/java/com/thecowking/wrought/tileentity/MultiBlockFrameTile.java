@@ -45,13 +45,6 @@ public class MultiBlockFrameTile extends MultiBlockTile {
         setJob(null);
     }
 
-    public MultiBlockControllerTile getControllerTile(World worldIn)  {
-        if(this.controllerPos == null)  {return null;}
-        TileEntity te = MultiblockData.getTileFromPos(worldIn, this.controllerPos);
-        if(te == null || !(te instanceof MultiBlockControllerTile))  {return null;}
-        return (MultiBlockControllerTile) te;
-    }
-
     public BlockPos frameGetControllerPos()  {
         return this.controllerPos;
     }

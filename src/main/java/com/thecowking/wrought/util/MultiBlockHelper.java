@@ -3,7 +3,7 @@ package com.thecowking.wrought.util;
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
@@ -43,8 +43,8 @@ public class MultiBlockHelper {
                     frameBlock.addingToMultblock(world.getBlockState(current), current, world);
                 }
                 TileEntity currentTile = getTileFromPos(world, current);
-                if (currentTile instanceof HCCokeOvenFrameTile) {
-                    HCCokeOvenFrameTile castedCurrent = (HCCokeOvenFrameTile) currentTile;
+                if (currentTile instanceof MultiBlockFrameTile) {
+                    MultiBlockFrameTile castedCurrent = (MultiBlockFrameTile) currentTile;
                     if (destroy) {
                         castedCurrent.destroyMultiBlock();
                     } else {

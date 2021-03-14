@@ -8,13 +8,14 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public AutomationCombinedInvWrapper(IItemHandlerModifiable... itemHandler)  {
         super(itemHandler);
+
     }
 
     @Override
@@ -28,8 +29,10 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
 
         slot = getSlotFromIndex(slot, index);
 
+        LOGGER.info(index);
+
         if(handler instanceof FluidItemInputHandler)  {
-            return ((FluidItemInputHandler)handler).insertItem(slot, stack, simulate);
+            return handler.insertItem(slot, stack, simulate);
         }  else if(handler instanceof InputItemHandler)  {
         }
 
@@ -42,14 +45,13 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
     @Override
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-
-        if(slot < NUM_INPTUS)  {
-            return ItemStack.EMPTY;
-        }
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = getSlotFromIndex(slot, index);
-        return handler.extractItem(slot, amount, simulate);
+        if(handler instanceof OutputItemHandler || handler instanceof FluidItemOutputHandler)  {
+            slot = getSlotFromIndex(slot, index);
+            return handler.extractItem(slot, amount, simulate);
+        }
+        return ItemStack.EMPTY;
     }
 
 

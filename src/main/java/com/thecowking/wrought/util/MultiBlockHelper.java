@@ -1,16 +1,15 @@
 package com.thecowking.wrought.util;
 
-import com.thecowking.wrought.blocks.IMultiBlockControllerBlock;
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
-import com.thecowking.wrought.blocks.IMultiblockData;
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOvenFrameBlock;
+import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.SlabType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -23,8 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.thecowking.wrought.blocks.Multiblock.DIRECTION_FACING;
-import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
+import static com.thecowking.wrought.data.MultiblockData.getTileFromPos;
 
 public class MultiBlockHelper {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -45,8 +43,8 @@ public class MultiBlockHelper {
                     frameBlock.addingToMultblock(world.getBlockState(current), current, world);
                 }
                 TileEntity currentTile = getTileFromPos(world, current);
-                if (currentTile instanceof HCCokeOvenFrameTile) {
-                    HCCokeOvenFrameTile castedCurrent = (HCCokeOvenFrameTile) currentTile;
+                if (currentTile instanceof MultiBlockFrameTile) {
+                    MultiBlockFrameTile castedCurrent = (MultiBlockFrameTile) currentTile;
                     if (destroy) {
                         castedCurrent.destroyMultiBlock();
                     } else {
@@ -57,42 +55,14 @@ public class MultiBlockHelper {
         }
     }
 
-    /*
-        West = -x
-        East = +X
-        North = -Z
-        South = +Z
-        this function will return the North-Western corner of the multi blocks to be formed
-        this is the lowest int value of the multiblock which makes it easier to iterate over when forming
-      */
-    public static BlockPos findLowsestValueCorner(BlockPos centerPos, Direction inputDirection, int longerSide, int height, int shorterSide)  {
-        if(centerPos == null)  return null;
-
-        int xCoord = centerPos.getX();
-        int yCoord = centerPos.getY();
-        int zCoord = centerPos.getZ();
-
-        switch(inputDirection)  {
-            case NORTH:
-                return new BlockPos(xCoord - (shorterSide / 2), yCoord - (height / 2) , zCoord - (longerSide / 2));
-            case SOUTH:
-                return new BlockPos(xCoord  - (shorterSide / 2), yCoord  - (height / 2), zCoord - (longerSide / 2));
-            case WEST:
-                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
-            case EAST:
-                return new BlockPos(xCoord  - (longerSide / 2), yCoord  - (height / 2), zCoord  - (shorterSide / 2));
-            default:
-                return null;
-        }
-    }
 
     /*
         This attempts to find all the frame blocks in the multi-blocks to determine if we should form the multi-blocks or used to update frame blocks
         that the multi-blocks is being formed or destroyed.
     */
     public static List<BlockPos> getMultiBlockMembers(World world, PlayerEntity player, boolean destroy, Direction direction, BlockPos controllerPos, IMultiblockData data) {
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
-        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
+        BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
         List<BlockPos> multiblockMembers = new ArrayList();
 
@@ -137,8 +107,8 @@ public class MultiBlockHelper {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
 
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
-        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
+        BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
         HashMap<Block, Integer> missingMembers= new HashMap<>();
 
@@ -192,12 +162,12 @@ public class MultiBlockHelper {
     /*
       Driver for destroying multi-blocks
      */
-    public static void destroyMultiBlock(World world, BlockPos controllerPos, IMultiblockData data) {
+    public static void destroyMultiBlock(World world, BlockPos controllerPos) {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         if(controllerTile == null)  return;
         if(!(controllerTile.isFormed())) return;
         controllerTile.setFormed(false);
-        List<BlockPos> multiblockMembers = getMultiBlockMembers(world, null, true, controllerTile.getDirectionFacing(), controllerPos, data);
+        List<BlockPos> multiblockMembers = getMultiBlockMembers(world, null, true, controllerTile.getDirectionFacing(), controllerPos, controllerTile.getData());
         if (multiblockMembers != null) {
             updateMultiBlockMemberTiles(world, controllerPos, multiblockMembers, true);
         }
@@ -244,8 +214,8 @@ public class MultiBlockHelper {
         MultiBlockControllerTile controllerTile = getControllerTile(world, controllerPos);
         Direction direction = controllerTile.getDirectionFacing();
 
-        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos, data);
-        BlockPos lowCorner = findLowsestValueCorner(centerPos, direction, data.getLength(), data.getHeight(), data.getWidth());
+        BlockPos centerPos = data.calcCenterBlock(direction, controllerPos);
+        BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
 
         // checks the central slice part of the structure to ensure the correct blocks exist
@@ -265,23 +235,19 @@ public class MultiBlockHelper {
                         int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
                         if(index != -1)  {
                             player.inventory.mainInventory.get(index).shrink(1);
-                            LOGGER.info(correctBlock);
-
                             // TODO - new method for placing that checks players permissons and other edge cases
                             if(correctBlock instanceof StairsBlock)  {
-                                LOGGER.info("at stairs");
-                                Direction d = data.getStairsDirection(direction,z,x);
-                                LOGGER.info(d);
-                                world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, d));
-                            }  else  {
+                                Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
+                                world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
+                            }  else if(correctBlock instanceof SlabBlock)  {
+                                world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
+                            }   else  {
                                 world.setBlockState(current, correctBlock.getDefaultState());
                             }
 
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");
                         }
-
-
                     }
                 }
             }

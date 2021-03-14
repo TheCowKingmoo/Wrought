@@ -1,16 +1,13 @@
 package com.thecowking.wrought.network;
 
-import com.thecowking.wrought.blocks.honey_comb_coke_oven.HCCokeOven;
+import com.thecowking.wrought.data.HCCokeOvenData;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.util.MultiBlockHelper;
-import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PacketFormMultiblock {
@@ -32,8 +29,8 @@ public class PacketFormMultiblock {
     public void handle(Supplier<NetworkEvent.Context> ctx)  {
         ctx.get().enqueueWork(() -> {
             ServerWorld serverWorld = ctx.get().getSender().getServerWorld();
-            MultiBlockHelper.autoBuildMultiblock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
-            MultiBlockHelper.tryToFormMultiBlock(serverWorld, ctx.get().getSender(), this.controllerPos, new HCCokeOven());
+            MultiBlockHelper.autoBuildMultiblock(serverWorld, ctx.get().getSender(), this.controllerPos, ((MultiBlockControllerTile)serverWorld.getTileEntity(this.controllerPos)).getData());
+            MultiBlockHelper.tryToFormMultiBlock(serverWorld, ctx.get().getSender(), this.controllerPos, ((MultiBlockControllerTile)serverWorld.getTileEntity(this.controllerPos)).getData());
             ctx.get().getSender().closeScreen();
                 }
         );

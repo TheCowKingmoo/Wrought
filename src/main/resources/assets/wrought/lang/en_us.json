@@ -4,6 +4,12 @@
   "block.wrought.h_c_coke_frame_stair": "Coke Oven Frame Stair",
   "block.wrought.h_c_coke_frame_slab": "Coke Oven Frame Slab",
 
+  "block.wrought.blast_furnace_brick_frame": "Blast Furnace Brick Frame",
+  "block.wrought.blast_furnace_brick_controller": "Blast Furnace Brick Controller",
+  "block.wrought.refactory_brick_block": "Refactory Brick Block",
+  "block.wrought.refactory_brick_stair": "Refactory Brick Stair",
+  "block.wrought.refactory_brick_slab": "Refactory Brick Slab",
+
   "block.wrought.coke_block": "Block of Coke",
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
   "item.wrought.creosote_bucket": "Creosote Bucket",
@@ -11,5 +17,6 @@
   "item.wrought.soot": "Soot",
   "item.wrought.ash": "Ash",
   "item.wrought.coke_brick_item": "Coke Brick"
+
 
 }

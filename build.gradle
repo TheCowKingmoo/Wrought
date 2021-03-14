@@ -118,8 +118,8 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.4'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
     compile 'com.intellij:annotations:+@jar'
 
 

@@ -1,6 +1,5 @@
 package com.thecowking.wrought.inventory.containers;
 
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCStateData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -22,7 +21,6 @@ import javax.annotation.Nonnull;
     This Class is meant to layout the players inventory in a container
  */
 public class PlayerLayoutContainer extends Container {
-    private static final Logger LOGGER = LogManager.getLogger();
     protected World world;
     protected BlockPos controllerPos;
     protected PlayerEntity player;
@@ -41,7 +39,7 @@ public class PlayerLayoutContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return false;
+        return true;
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {

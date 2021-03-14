@@ -1,6 +1,6 @@
 package com.thecowking.wrought.tileentity;
 
-import com.thecowking.wrought.blocks.Multiblock;
+import com.thecowking.wrought.data.MultiblockData;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import static com.thecowking.wrought.blocks.Multiblock.*;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 
 public class MultiBlockFrameTile extends MultiBlockTile {
@@ -28,7 +28,7 @@ public class MultiBlockFrameTile extends MultiBlockTile {
     }
 
     public void setupMultiBlock(BlockPos posIn)  {
-        world.setBlockState(this.pos, this.getBlockState().with(Multiblock.FORMED, true));
+        world.setBlockState(this.pos, this.getBlockState().with(MultiblockData.FORMED, true));
         frameSetControllerPos(posIn);
     }
     public void destroyMultiBlock()  {
@@ -43,13 +43,6 @@ public class MultiBlockFrameTile extends MultiBlockTile {
     public void clearNBT()  {
         frameSetControllerPos(null);
         setJob(null);
-    }
-
-    public MultiBlockControllerTile getControllerTile(World worldIn)  {
-        if(this.controllerPos == null)  {return null;}
-        TileEntity te = Multiblock.getTileFromPos(worldIn, this.controllerPos);
-        if(te == null || !(te instanceof MultiBlockControllerTile))  {return null;}
-        return (MultiBlockControllerTile) te;
     }
 
     public BlockPos frameGetControllerPos()  {
@@ -68,10 +61,10 @@ public class MultiBlockFrameTile extends MultiBlockTile {
     public void setJob(String inputJob)  {
         this.job = inputJob;
     }
-    public void setRedstonePower(int power)  {this.world.setBlockState(this.pos, getBlockState().with(Multiblock.REDSTONE, power));}
+    public void setRedstonePower(int power)  {this.world.setBlockState(this.pos, getBlockState().with(MultiblockData.REDSTONE, power));}
     public boolean isRedstonePowered(BlockPos posIn)  {
         LOGGER.info("checking redstone");
-        if(Multiblock.getTileFromPos(this.world, posIn) instanceof MultiBlockFrameTile)  {
+        if(MultiblockData.getTileFromPos(this.world, posIn) instanceof MultiBlockFrameTile)  {
             int redstoneNum = this.world.getBlockState(posIn).get(REDSTONE);
             if(redstoneNum > 0)  {return true;  }
         }

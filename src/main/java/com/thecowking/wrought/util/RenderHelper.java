@@ -78,4 +78,18 @@ public class RenderHelper {
         GlStateManager.enableTexture();
     }
 
+
+    public static int getCenterPixelValue(TextureAtlasSprite icon)  {
+        int frameCount = icon.getFrameCount();
+        LOGGER.info("frame count = " + frameCount);
+        int height = icon.getHeight();
+        LOGGER.info("height = " + height);
+        int width = icon.getWidth();
+        LOGGER.info(width);
+        int RGBA = icon.getPixelRGBA(frameCount, width / 2, height / 2);
+        LOGGER.info("RGBA = " + RGBA);
+        return RGBA;
+
+    }
+
 }

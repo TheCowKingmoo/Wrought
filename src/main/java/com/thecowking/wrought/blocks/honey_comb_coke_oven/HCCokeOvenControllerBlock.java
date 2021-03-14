@@ -2,6 +2,7 @@ package com.thecowking.wrought.blocks.honey_comb_coke_oven;
 
 import com.thecowking.wrought.blocks.INameableTile;
 import com.thecowking.wrought.blocks.MultiBlockControllerBlock;
+import com.thecowking.wrought.data.HCCokeOvenData;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import net.minecraft.block.BlockState;
@@ -22,15 +23,10 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 
-import static com.thecowking.wrought.blocks.Multiblock.getTileFromPos;
-
-
 public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock implements INameableTile {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    String tile;
-
-
+    String tileName;
 
     public HCCokeOvenControllerBlock() {
         super();
@@ -43,53 +39,15 @@ public class HCCokeOvenControllerBlock extends MultiBlockControllerBlock impleme
         return new HCCokeOvenControllerTile();
     }
 
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction[] d = context.getNearestLookingDirections();
-        for(int i = 0; i < d.length; i++)  {
-            if(d[i] != Direction.UP && d[i] != Direction.DOWN)  {
-                return getDefaultState().with(BlockStateProperties.FACING, d[i].getOpposite());
-            }
-        }
-        return getDefaultState().with(BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite());
-    }
 
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos posIn, PlayerEntity player, Hand hand, BlockRayTraceResult trace) {
-        if (player instanceof ServerPlayerEntity) {
-            TileEntity tileEntity = worldIn.getTileEntity(posIn);
-            if (tileEntity instanceof HCCokeOvenControllerTile) {
-                HCCokeOvenControllerTile controllerTile = (HCCokeOvenControllerTile) tileEntity;
-                if(controllerTile.isFormed(controllerTile.getPos()) )  {
-                    controllerTile.openGUIMultiblock(worldIn, posIn, player, controllerTile);
-                }  else if(controllerTile.isValidMultiBlockFormer(player.getHeldItem(hand).getItem())) {
-                    LOGGER.info("no gui- attempt to form");
-                    // attempts to form the multi-blocks
-                    MultiBlockHelper.tryToFormMultiBlock(worldIn, player, posIn, new HCCokeOven());
-                }  else  {
-                    controllerTile.openGUI(worldIn, posIn, player, controllerTile);
-                }
-            } else {
-                LOGGER.info(posIn);
-                LOGGER.info(tileEntity);
-                throw new IllegalStateException("Our named container provider is missing!");
-            }
-        }
-        super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
-        return ActionResultType.SUCCESS;
-    }
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos posIn, BlockState state, PlayerEntity player) {
-        MultiBlockHelper.destroyMultiBlock(worldIn, posIn, new HCCokeOven());
+        MultiBlockHelper.destroyMultiBlock(worldIn, posIn);
     }
-
 
     @Override
     public void setTileName(String name) {
-        this.tile = name;
+        this.tileName = name;
     }
 }

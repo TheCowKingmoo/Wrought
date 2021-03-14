@@ -9,7 +9,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
-
 public interface IHoneyCombCokeOvenRecipe extends IRecipe<RecipeWrapper> {
 
     ResourceLocation RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");

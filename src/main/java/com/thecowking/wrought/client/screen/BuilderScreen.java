@@ -1,11 +1,12 @@
-package com.thecowking.wrought.client.screen.honey_comb_coke_oven;
+package com.thecowking.wrought.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.data.HCCokeOvenData;
 import com.thecowking.wrought.client.button.BuildButton;
-import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
+import com.thecowking.wrought.data.BlastFurnaceData;
+import com.thecowking.wrought.data.IMultiblockData;
+import com.thecowking.wrought.inventory.containers.BuilderContainer;
 import com.thecowking.wrought.util.InventoryUtils;
 import com.thecowking.wrought.util.MultiBlockHelper;
 import com.thecowking.wrought.util.RenderHelper;
@@ -22,8 +23,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
-    private HCCokeOvenContainer container;
+public class BuilderScreen extends ContainerScreen<BuilderContainer> {
+
+    private BuilderContainer container;
     private BuildButton buildButton;
     private final int BUILD_BUTTON_HEIGHT = 25;
     private final int BUILD_BUTTON_WIDTH = 50;
@@ -38,25 +40,23 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
 
 
 
-    public HCCokeOvenScreen(HCCokeOvenContainer container, PlayerInventory inv, ITextComponent name)  {
+    public BuilderScreen(BuilderContainer container, PlayerInventory inv, ITextComponent name)  {
         super(container, inv, name);
         this.xSize = 176;
         this.ySize = 240;
         this.container = container;
-        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOvenData());
+        this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.getControllerPos(), container.data);
         this.inInvetory = InventoryUtils.checkVsPlayerInventory(missingMembers, inv.player);
     }
 
     @Override
     protected void init()  {
         super.init();
-        this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.controllerPos, this);
+        this.buildButton = new BuildButton(this.width / 2 - BUILD_BUTTON_WIDTH / 2 , this.ySize / 2 - BUILD_BUTTON_HEIGHT, BUILD_BUTTON_WIDTH, BUILD_BUTTON_HEIGHT, this.container.getControllerPos(), this);
         addButton(this.buildButton);
-        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.controllerPos, new HCCokeOvenData());}
+        if(missingMembers == null)  {this.missingMembers = MultiBlockHelper.getMissingBlocks(Minecraft.getInstance().world, this.container.getControllerPos(), new BlastFurnaceData());}
 
     }
-
-
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -64,7 +64,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.renderBackground(stack);
         super.render(stack, x, y, partialTicks);
         this.renderHoveredTooltip(stack, x, y);
-
     }
 
     @Override
@@ -89,16 +88,9 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         FontRenderer fontrenderer =  Minecraft.getInstance().fontRenderer;
         if(missingMembers.size() == 0)  {
             drawString(stack, fontrenderer, "All Blocks Are Correct", startMessageX, startMessageY, green);
-
             buildButton.setShowButton(true);
-
             return;
         }
-
-
-
-
-
         drawString(stack, fontrenderer, "Block(s) To Build", startMessageX,
                 startMessageY, RenderHelper.convertARGBToInt(255, 0, 0, 1));
 
@@ -123,9 +115,7 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
             drawString(stack, fontrenderer, e.getKey().getTranslationKey() + " x " + e.getValue(), startMessageX + 4,
                     startMessageY, color);
         }
-
         buildButton.setShowButton(goodToGo);
-
     }
 
     @Override
@@ -133,8 +123,6 @@ public class HCCokeOvenScreen extends ContainerScreen<HCCokeOvenContainer> {
         this.font.func_243248_b(stack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         displayMissingBlocks(stack, X_BORDER, this.titleY + X_BORDER);
     }
-
-
 
 
 }

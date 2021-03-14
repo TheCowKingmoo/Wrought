@@ -15,7 +15,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURANCE_MULTIBLOCK_CONTAINER;
+import static com.thecowking.wrought.init.RegistryHandler.BLOOMERY_MULTIBLOCK_CONTAINER;
 
 
 public class BloomeryContainerMultiblock extends PlayerLayoutContainer {
@@ -34,7 +34,7 @@ public class BloomeryContainerMultiblock extends PlayerLayoutContainer {
     final static int OUTPUTS_Y = 72;
 
     public BloomeryContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
-        super(BLAST_FURANCE_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
+        super(BLOOMERY_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
 
         TileEntity tileEntity = world.getTileEntity(pos);
         this.controller = (BloomeryControllerTile)tileEntity;

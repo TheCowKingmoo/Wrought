@@ -8,9 +8,11 @@ import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickSlab;
 import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
+import com.thecowking.wrought.inventory.containers.BuilderContainer;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
+import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
@@ -121,11 +123,16 @@ public class RegistryHandler {
     public static final RegistryObject<Item> BLOOMERY_CONTROLLER_ITEM = ITEMS.register("bloomery_controller", () -> new BlockItemBase(BLOOMERY_CONTROLLER.get()));
     public static final RegistryObject<TileEntityType<BloomeryControllerTile>> BLOOMERY_CONTROLLER_TILE = TILES.register("bloomery_controller", () -> TileEntityType.Builder.create(BloomeryControllerTile::new, BLOOMERY_CONTROLLER.get()).build(null));
 
-    //Blast Furnace Container Auto Builder
     public static final RegistryObject<ContainerType<BloomeryContainerBuilder>> BLOOMERY_BUILDER_CONTAINER = CONTAINERS.register("bloomery_builder_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
         return new BloomeryContainerBuilder(windowId, world, pos, inv);
+    }));
+
+    public static final RegistryObject<ContainerType<BloomeryContainerMultiblock>> BLOOMERY_MULTIBLOCK_CONTAINER = CONTAINERS.register("bloomery_multiblock_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new BloomeryContainerMultiblock(windowId, world, pos, inv);
     }));
 
 

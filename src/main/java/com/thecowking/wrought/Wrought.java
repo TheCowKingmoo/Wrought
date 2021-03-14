@@ -1,7 +1,7 @@
 package com.thecowking.wrought;
 
 import com.thecowking.wrought.network.Networking;
-import com.thecowking.wrought.util.ClientSetup;
+import com.thecowking.wrought.init.ClientSetup;
 import com.thecowking.wrought.init.RegistryHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

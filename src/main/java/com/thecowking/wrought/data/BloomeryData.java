@@ -167,7 +167,7 @@ direction that is fed in
         return new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("Honey Comb Coke Oven");
+                return new TranslationTextComponent("Bloomery");
             }
 
             @Override

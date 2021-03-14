@@ -22,7 +22,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     protected List<Ingredient> itemInputs;
     protected List<ItemStack> itemOuputs;
     protected List<FluidStack> fluidOutputs;
-    protected Ingredient fuel;
+    protected Ingredient fuel;                  // if this is empty than any burnable thing will do
     protected int burnTime = 0;
     protected IRecipeSerializer<?>  seralizer;
     protected ResourceLocation recipeTypeID;
@@ -34,6 +34,9 @@ public class WroughtRecipe implements IWroughtRecipe {
         this.itemOuputs = itemOuputs;
         this.fluidOutputs = fluidOutputs;
         this.fuel = fuel;
+        if(fuel == null)  {
+            this.fuel = Ingredient.EMPTY;
+        }
         this.burnTime = burnTime;
         this.seralizer = seralizer;
         this.recipeTypeID = recipeTypeID;

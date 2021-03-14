@@ -41,6 +41,10 @@ public class MultiblockData {
     public static final String BURN_COMPLETE_TIME = "burn_complete_time";
 
 
+    public static final String FUEL_AMOUNT = "fuel_amount";
+
+
+
     public static final String REDSTONE_IN_X = "R_IN_X";
     public static final String REDSTONE_OUT_X = "R_OUT_X";
     public static final String REDSTONE_IN_Y = "R_IN_Y";

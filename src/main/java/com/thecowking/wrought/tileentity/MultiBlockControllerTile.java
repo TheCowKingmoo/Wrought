@@ -1,5 +1,6 @@
 package com.thecowking.wrought.tileentity;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.init.RecipeSerializerInit;
@@ -8,6 +9,7 @@ import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOv
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
+import com.thecowking.wrought.recipes.WroughtRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
@@ -40,6 +42,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
@@ -89,6 +92,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     protected boolean isRunning = false;
     protected boolean clogged = false;
+
+    protected int fuelIndicator;
 
 
     //Input Slots
@@ -401,6 +406,62 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
+    protected boolean consumeFuel(IWroughtRecipe currentRecipe)  {
+        LOGGER.info("fuel in tank = " + this.fuelIndicator);
+
+        LOGGER.info("consume fuel");
+
+        if(!this.hasFuelSlot)  return true;
+        if(this.fuelIndicator >= currentRecipe.getBurnTime())  {
+            this.fuelIndicator =  this.fuelIndicator - currentRecipe.getBurnTime();
+            return true;
+        }
+        ItemStack fuelStack = this.fuelInputSlot.getStackInSlot(0);
+        if(!validFuel(currentRecipe, fuelStack))  {
+            LOGGER.info("NOT VALID FUEL");
+            this.status = "Not a valid fuel";
+            return false;
+        }
+        int burnNeeded = currentRecipe.getBurnTime();
+        LOGGER.info("fuel amount needed = " + burnNeeded);
+
+        int amountFromOne = ForgeHooks.getBurnTime(fuelStack);
+        LOGGER.info("fuel amount from one = " + amountFromOne);
+
+        int amount = (int)Math.ceil((double)burnNeeded / (double)amountFromOne);
+        LOGGER.info("amount to eat = " + amount);
+
+
+        if(this.fuelInputSlot.getStackInSlot(0).getCount() >= amount)  {
+            this.fuelInputSlot.getStackInSlot(0).shrink(amount);
+            this.fuelIndicator = this.fuelIndicator + (amountFromOne * amount);
+            return true;
+        }  else  {
+            LOGGER.info("NOT ENOUGH FUEL");
+
+            this.status = "Not enough fuel";
+        }
+        return false;
+    }
+
+    protected boolean validFuel(IWroughtRecipe currentRecipe, ItemStack fuelStack)  {
+        LOGGER.info("valid fuel");
+
+        // Check if the recipe only wants specific fuels
+        if(currentRecipe.getFuel() != Ingredient.EMPTY)  {
+            if(currentRecipe.getFuel().test(fuelStack))  {
+                return true;
+            }
+            return false;
+        }
+        // Check if the itemstack is burnable
+        if(fuelStack.getBurnTime() != 0)  {
+            return true;
+        }
+        return false;
+    }
+
+
 
 
     /*
@@ -492,8 +553,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
-
-
     /*
     Check if a new item has a recipe that the oven can use
  */
@@ -545,6 +604,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         IWroughtRecipe currentRecipe = this.getRecipe();
         if (!(recipeChecker(currentRecipe))) { return; }
         LOGGER.info("good recipe");
+
+        if(!consumeFuel(currentRecipe))  {return; }
 
         mutliBlockOperation(currentRecipe);
 
@@ -605,6 +666,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         this.timeElapsed = nbt.getInt(BURN_TIME);
         this.timeComplete = nbt.getInt(BURN_COMPLETE_TIME);
         this.status = nbt.getString(STATUS);
+        if(this.hasFuelSlot)  {
+            this.fuelIndicator =nbt.getInt(FUEL_AMOUNT);
+        }
     }
 
     /*
@@ -616,6 +680,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         tag.putInt(BURN_TIME, this.timeElapsed);
         tag.putInt(BURN_COMPLETE_TIME, this.timeComplete);
         tag.putString(STATUS, this.status);
+        if(this.hasFuelSlot)  {
+             tag.putInt(FUEL_AMOUNT, this.fuelIndicator);
+        }
         return tag;
     }
 

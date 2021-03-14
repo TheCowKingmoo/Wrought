@@ -33,7 +33,7 @@ public class InputFuelHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        if(stack.getBurnTime() > 0)  {
+        if(stack.getBurnTime() != 0)  {
             return super.insertItem(slot, stack, simulate);
         }
         return stack;

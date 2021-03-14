@@ -44,34 +44,23 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
         ItemStack trinaryItemOutputOutput = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "trinary_item_output"), true);
 
         ArrayList<ItemStack> itemOutputs = new ArrayList<>();
-        if(primaryItemOutput != null && primaryItemOutput != ItemStack.EMPTY)  {
-            itemOutputs.add(primaryItemOutput);
-            if(secondaryItemOutput != null && secondaryItemOutput != ItemStack.EMPTY)  {
-                itemOutputs.add(secondaryItemOutput);
-                if(trinaryItemOutputOutput != null && trinaryItemOutputOutput != ItemStack.EMPTY)  {
-                    itemOutputs.add(trinaryItemOutputOutput);
-                }
-            }
-        }
-
+        itemOutputs.add(primaryItemOutput);
+        itemOutputs.add(secondaryItemOutput);
+        itemOutputs.add(trinaryItemOutputOutput);
 
         // get inputs
         Ingredient primaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "primary_item_input"));
-       // if (primaryItemInput == null || primaryItemInput.equals(Items.AIR)) {
-       //     throw new JsonSyntaxException("Unknown Primary Input: " + primaryItemInput);
-       // }
+        if (primaryItemInput == null || primaryItemInput.equals(Items.AIR)) {
+            throw new JsonSyntaxException("Unknown Primary Input: " + primaryItemInput);
+        }
 
         Ingredient secondaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "secondary_item_input"));
         Ingredient trinaryItemInput = Ingredient.deserialize(JSONUtils.getJsonObject(json, "primary_item_input"));
 
         ArrayList<Ingredient> itemInputs  = new ArrayList<>();
         itemInputs.add(primaryItemInput);
-        if (secondaryItemInput != null && !(secondaryItemInput.equals(Items.AIR))) {
-            itemInputs.add(secondaryItemInput);
-            if (trinaryItemInput != null && !(trinaryItemInput.equals(Items.AIR)))  {
-                itemInputs.add(trinaryItemInput);
-            }
-        }
+        itemInputs.add(secondaryItemInput);
+        itemInputs.add(trinaryItemInput);
 
         // Fuel
         Ingredient fuel = Ingredient.deserialize(JSONUtils.getJsonObject(json, "fuel"));
@@ -86,13 +75,8 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
         FluidStack secondaryFluidStackOutput = getFluidStackFromID(secondaryFluidOutputID, secondaryFluidOutputAmount);
 
         ArrayList<FluidStack> fluidOutputs = new ArrayList<>();
-
-        if(primaryFluidStackOutput != FluidStack.EMPTY)  {
-            fluidOutputs.add(primaryFluidStackOutput);
-            if(secondaryFluidStackOutput != FluidStack.EMPTY)  {
-                fluidOutputs.add(secondaryFluidStackOutput);
-            }
-        }
+        fluidOutputs.add(primaryFluidStackOutput);
+        fluidOutputs.add(secondaryFluidStackOutput);
 
         // get burn time
         int burnTime = JSONUtils.getInt(json, "burntime");
@@ -125,15 +109,9 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
         ItemStack trinaryItemOutput = buffer.readItemStack();
 
         List<ItemStack> itemOutputs = new ArrayList<>();
-        if(primaryItemOutput != null && primaryItemOutput != ItemStack.EMPTY)  {
-            itemOutputs.add(primaryItemOutput);
-            if(secondaryItemOutput != null && secondaryItemOutput != ItemStack.EMPTY)  {
-                itemOutputs.add(secondaryItemOutput);
-                if(trinaryItemOutput != null && trinaryItemOutput!= ItemStack.EMPTY)  {
-                    itemOutputs.add(trinaryItemOutput);
-                }
-            }
-        }
+        itemOutputs.add(primaryItemOutput);
+        itemOutputs.add(secondaryItemOutput);
+        itemOutputs.add(trinaryItemOutput);
 
         Ingredient fuel = Ingredient.read(buffer);
 
@@ -144,25 +122,14 @@ public class BlastFurnaceRecipeSerializer extends ForgeRegistryEntry<IRecipeSeri
 
         ArrayList<Ingredient> itemInputs  = new ArrayList<>();
         itemInputs.add(primaryItemInput);
-        if (secondaryItemInput != null && !(secondaryItemInput.equals(Items.AIR))) {
-            itemInputs.add(secondaryItemInput);
-            if (trinaryItemInput != null && !(trinaryItemInput.equals(Items.AIR)))  {
-                itemInputs.add(trinaryItemInput);
-            }
-        }
-
+        itemInputs.add(secondaryItemInput);
+        itemInputs.add(trinaryItemInput);
 
         ArrayList<FluidStack> fluidOutputs = new ArrayList<>();
 
         FluidStack primaryFluidStackOutput = buffer.readFluidStack();
         FluidStack secondaryFluidStackOutput = buffer.readFluidStack();
-
-        if(primaryFluidStackOutput != FluidStack.EMPTY)  {
-            fluidOutputs.add(primaryFluidStackOutput);
-            if(secondaryFluidStackOutput != FluidStack.EMPTY)  {
-                fluidOutputs.add(secondaryFluidStackOutput);
-            }
-        }
+        fluidOutputs.add(primaryFluidStackOutput);
 
         int burnTime = buffer.readInt();
         return new BlastFurnaceRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fuel, burnTime);

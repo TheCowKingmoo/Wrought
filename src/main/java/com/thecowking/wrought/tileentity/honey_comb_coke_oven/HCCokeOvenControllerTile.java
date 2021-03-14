@@ -6,7 +6,6 @@ import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOv
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.containers.OutputFluidTank;
 import com.thecowking.wrought.inventory.slots.*;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import com.thecowking.wrought.tileentity.WroughtMutliblock;
 import com.thecowking.wrought.util.*;
@@ -61,7 +60,7 @@ public class HCCokeOvenControllerTile extends MultiBlockControllerTileFluid impl
 
 
     public HCCokeOvenControllerTile() {
-        super(H_C_COKE_CONTROLLER_TILE.get(), 1, 2, false, new HCCokeOvenData(), 1, 16000);
+        super(H_C_COKE_CONTROLLER_TILE.get(), 1, 2, false, new HCCokeOvenData(), 1, 0, 16000);
         this.status = "Standing By";
 
 

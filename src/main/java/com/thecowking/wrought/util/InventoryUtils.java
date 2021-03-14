@@ -1,7 +1,7 @@
 package com.thecowking.wrought.util;
 
 import com.thecowking.wrought.init.RecipeSerializerInit;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
+import com.thecowking.wrought.recipes.WroughtRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
@@ -61,21 +61,6 @@ public class InventoryUtils {
         return ItemStack.EMPTY;
     }
 
-    @Nullable
-    public static HoneyCombCokeOvenRecipe getRecipe(ItemStack stack, ItemStackHandler inputSlot, World world) {
-        if (stack == null) {
-            return null;
-        }
-
-        Set<IRecipe<?>> recipes = findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, world);
-        for (IRecipe<?> iRecipe : recipes) {
-            HoneyCombCokeOvenRecipe recipe = (HoneyCombCokeOvenRecipe) iRecipe;
-            if (recipe.matches(new RecipeWrapper(inputSlot), world)) {
-                return recipe;
-            }
-        }
-        return null;
-    }
     public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn, World world) {
         return world != null ? world.getRecipeManager().getRecipes().stream()
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();

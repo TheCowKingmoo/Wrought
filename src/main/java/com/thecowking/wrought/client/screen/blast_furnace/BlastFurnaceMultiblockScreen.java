@@ -84,7 +84,7 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
             FluidStack fluidStack = container.getController().getFluidInTank(METAL_TANK_INDEX);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + ovenContainer.getController().getTankMaxSize(METAL_TANK_INDEX));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + ovenContainer.getController().getOutputTankMaxSize(METAL_TANK_INDEX));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug

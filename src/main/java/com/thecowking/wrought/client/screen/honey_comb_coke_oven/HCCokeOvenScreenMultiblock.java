@@ -81,7 +81,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
             FluidStack fluidStack = container.controller.getFluidInTank(0);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + container.getFluidController().getTankMaxSize(0));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + container.getFluidController().getOutputTankMaxSize(0));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug
@@ -166,9 +166,12 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     }
 
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
-        if(fluidStack == null || fluidStack.isEmpty())  {
+        if(fluidStack == null || fluidStack == FluidStack.EMPTY)  {
+            LOGGER.info("EMPTY FLUIDSTACK");
             return;
         }
+        LOGGER.info(fluidStack.getTranslationKey());
+
         matrixStack.push();
 
         GlStateManager.enableBlend();

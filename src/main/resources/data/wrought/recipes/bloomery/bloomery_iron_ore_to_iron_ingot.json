@@ -1,0 +1,19 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "item": "minecraft:iron_ingot"
+  },
+  "output_1": {
+    "item": "wrought:soot"
+  },
+  "input_0": {
+    "item": "minecraft:iron_ore"
+  },
+  "input_1": {
+    "item": "minecraft:coal"
+  },
+  "fuel": {
+    "tag": "forge:coke"
+  },
+  "burnTime": 5
+}

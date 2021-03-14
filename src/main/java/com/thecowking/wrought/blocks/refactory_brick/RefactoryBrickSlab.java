@@ -1,4 +1,4 @@
-package com.thecowking.wrought.blocks.blast_furance;
+package com.thecowking.wrought.blocks.refactory_brick;
 
 import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.blocks.MultiBlockFrameBlock;

@@ -1,26 +1,16 @@
 package com.thecowking.wrought.tileentity;
 
-import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
-import com.thecowking.wrought.init.RecipeSerializerInit;
-import com.thecowking.wrought.inventory.containers.OutputFluidTank;
-import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.slots.*;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
-import com.thecowking.wrought.recipes.WroughtRecipe;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -35,10 +25,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -366,6 +353,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             this.timeElapsed = 0;
             // go thru all processingItemStacks and move into output slots
             for(int i = 0; i < processingItemStacks.length; i++)  {
+                if(this.processingItemStacks[i] == ItemStack.EMPTY)  {
+                    LOGGER.info("attempted to process empty itemstack");
+                    continue;
+                }
                 this.itemBacklogs[i] = outputSlots.internalInsertItem(i, processingItemStacks[i].copy(), false);
                 // check if somehow something got left over
                 if(this.itemBacklogs[i] != ItemStack.EMPTY)  {
@@ -524,22 +515,26 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     @Nullable
     public IWroughtRecipe getRecipe() {
+        LOGGER.info("machine get recipe");
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
-
-
-
+        LOGGER.info("num recipes = " + recipes.size());
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
+            //LOGGER.info(recipe.getInput(0).getMatchingStacks()[0]);
+
+
             if (recipe.matches(new RecipeWrapper(this.inputSlots), this.world)) {
                 return recipe;
             }
         }
+        LOGGER.info("could not find recipe");
         return null;
     }
 
 
     public boolean itemUsedInRecipe(ItemStack input, int index) {
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
+        LOGGER.info(recipes);
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
             LOGGER.info("testing " + recipe.getInput(index).toString());

@@ -3,7 +3,6 @@ package com.thecowking.wrought.client.screen.blast_furnace;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
@@ -48,17 +47,12 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     final static int METAL_TANK_INDEX = 0;
     final static int SLAG_TANK_INDEX = 1;
 
+    protected BlastFurnaceContainerMultiblock multiBlockContainer;
 
-    private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
-    private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
-
-    private BlastFurnaceContainerMultiblock ovenContainer;
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.ovenContainer = container;
-        this.xSize = 176;
-        this.ySize = 240;
+        this.multiBlockContainer = container;
     }
 
     @Override
@@ -82,14 +76,14 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
 
             // detects when the player is hovering over the tank
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = container.getController().getFluidInTank(METAL_TANK_INDEX);
+            FluidStack fluidStack = RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + ovenContainer.getController().getOutputTankMaxSize(METAL_TANK_INDEX));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + RenderHelper.getTanksMaxSize(multiBlockContainer, METAL_TANK_INDEX));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
-            TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
+            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
         }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
@@ -103,7 +97,6 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     public int xStart() {
         return (this.width - this.xSize) / 2;
     }
-
     public int yStart() {
         return (this.height - this.ySize) / 2;
     }
@@ -118,16 +111,16 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         // progress bar exists behind the main background
         drawProgressBar(stack);
         //draw metal fluid before main background
-        drawFluid(stack, container.getController().getFluidInTank(METAL_TANK_INDEX), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
+        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
 
         //draw Slag Fluid before main background
-        drawFluid(stack, container.getController().getFluidInTank(SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
 
         //draw indicator before background
         drawStatusIndicator(stack);
 
         // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(GUI);
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
     }
@@ -141,7 +134,7 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         // draw a background for where the progress bar will not be
 
         // get texture for the progress bar
-        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.PROGRESS_BAR);
 
         // gets the value from 0 to 1 of how much progress the cooking item has
         double processTime = container.getProgress();
@@ -187,7 +180,7 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
         int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
         setGLColorFromInt(color);
-        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * ovenContainer.getController().getPercentageInTank(METAL_TANK_INDEX)), fluidStack.getAmount() / 1000);
+        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * RenderHelper.getFluidInTanksHeight(multiBlockContainer, METAL_TANK_INDEX)), fluidStack.getAmount() / 1000);
 
         matrixStack.pop();
     }
@@ -239,12 +232,8 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         Tessellator.getInstance().draw();
     }
 
-    public String getStatus() {
-        return container.getStatus();
-    }
-
     public int getStatusColor()  {
-        String status = getStatus();
+        String status = multiBlockContainer.getStatus();
         if(status == "Processing")  {
             //yellow
             return RenderHelper.convertARGBToInt(255,255,0,1);

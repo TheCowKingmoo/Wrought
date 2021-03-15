@@ -1,19 +1,13 @@
 package com.thecowking.wrought.client.screen.bloomery;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -39,27 +33,18 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     final static int INDICATOR_HEIGHT = 11;
     final static int INDICATOR_WIDTH = 11;
 
-    final static int TANK_X_OFFSET = 129;
-    final static int TANK_Y_OFFSET = 19;
-    final static int TANK_WIDTH = 17;
-    final static int TANK_HEIGHT = 74;
 
 
-    final static int METAL_TANK_INDEX = 0;
-    final static int SLAG_TANK_INDEX = 1;
 
-
-    private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
-    private BloomeryContainerMultiblock ovenContainer;
+    protected BloomeryContainerMultiblock multiBlockContainer;
 
     public BloomeryMultiblockScreen(BloomeryContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.ovenContainer = container;
-        this.xSize = 176;
-        this.ySize = 240;
+        this.multiBlockContainer = container;
     }
+
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -82,7 +67,7 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
 
             // detects when the player is hovering over the tank
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
-            TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
+            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
         }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
@@ -96,10 +81,11 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     public int xStart() {
         return (this.width - this.xSize) / 2;
     }
-
     public int yStart() {
         return (this.height - this.ySize) / 2;
     }
+
+
 
 
     /*
@@ -115,8 +101,10 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         drawStatusIndicator(stack);
 
         // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(GUI);
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
+        RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
+
 
     }
 
@@ -132,7 +120,7 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
 
         // gets the value from 0 to 1 of how much progress the cooking item has
-        double processTime = container.getProgress();
+        double processTime = multiBlockContainer.getProgress();
 
         // draw on screen
         this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
@@ -163,13 +151,8 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
     }
 
-
-    public String getStatus() {
-        return container.getStatus();
-    }
-
     public int getStatusColor()  {
-        String status = getStatus();
+        String status = multiBlockContainer.getStatus();
         if(status == "Processing")  {
             //yellow
             return RenderHelper.convertARGBToInt(255,255,0,1);

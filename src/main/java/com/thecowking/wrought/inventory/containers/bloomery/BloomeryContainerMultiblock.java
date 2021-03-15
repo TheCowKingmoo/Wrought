@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory.containers.bloomery;
 
+import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.containers.PlayerLayoutContainer;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
@@ -18,12 +19,13 @@ import org.apache.logging.log4j.Logger;
 import static com.thecowking.wrought.init.RegistryHandler.BLOOMERY_MULTIBLOCK_CONTAINER;
 
 
-public class BloomeryContainerMultiblock extends PlayerLayoutContainer {
+public class BloomeryContainerMultiblock extends MultiBlockContainer {
     private static final Logger LOGGER = LogManager.getLogger();
     private BloomeryControllerTile controller;
 
     final static int INPUT_OUTPUT_X = 15;
     final static int SLOT_SEP_X = 22;
+
 
 
     //final static int X_WIDTH_OF_SLOT = 12;
@@ -45,25 +47,30 @@ public class BloomeryContainerMultiblock extends PlayerLayoutContainer {
 
 
         }  else  {
+
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                    int slot = 0;
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X, INPUTS_Y));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X + SLOT_SEP_X, INPUTS_Y));
 
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X, OUTPUTS_Y));
+                     addSlot(new SlotOutput(h, numSlot++, INPUT_OUTPUT_X, OUTPUTS_Y));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, INPUT_OUTPUT_X + SLOT_SEP_X, OUTPUTS_Y));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X  + 3*SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X  + 3*SLOT_SEP_X, OUTPUTS_Y));
 
                 });
 
+
         }
+    }
+
+    public int getNumMachineSlots()  {
+        return this.numSlot;
     }
 
     public BloomeryControllerTile getController()  {

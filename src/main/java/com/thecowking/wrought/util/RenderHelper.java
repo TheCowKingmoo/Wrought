@@ -1,11 +1,17 @@
 package com.thecowking.wrought.util;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
@@ -23,9 +29,41 @@ public class RenderHelper {
     public static final Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER =
             location -> Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
 
+    public static final ResourceLocation TANK_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/tank_frame.png");
+    public static final ResourceLocation TANK_GAUGE = new ResourceLocation(Wrought.MODID, "textures/gui/tank_gauage.png");
+    public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
+    public static final ResourceLocation SLOT_IMAGE = new ResourceLocation(Wrought.MODID, "textures/gui/slot.png");
+    public static final ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
+    public static final int SLOT_WIDTH_HEIGHT = 18;
+
+
+    public static final int TANK_WIDTH = 18;
+    public static final int TANK_HEIGHT = 56;
+
+
+
+    public static void slotRunner(MatrixStack stack, MultiBlockContainer container, TextureManager manager, int xStart, int yStart)  {
+        for(int i = 36; i < 36 + container.getNumMachineSlots(); i++)  {
+            int x = container.getSlot(i).xPos;
+            int y = container.getSlot(i).yPos;
+            createSlot(stack, x+xStart, y+yStart, manager);
+        }
+
+    }
+
+    // TODO - this will need to be reworked if i ever get all these images into one file
+    // TODO - was told that I sohuld use a power of two as well
+    public static void createSlot(MatrixStack stack, int x, int y, TextureManager manager)  {
+        manager.bindTexture(SLOT_IMAGE);
+        AbstractGui.blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+    }
+
     public static TextureAtlasSprite getFluidTexture(FluidStack fluid)  {
         return TEXTURE_GETTER.apply(fluid.getFluid().getAttributes().getStillTexture(fluid));
     }
+
+
+
 
     /*
         Converts rgb + opacity to argb which minecraft uses a lot of
@@ -89,7 +127,29 @@ public class RenderHelper {
         int RGBA = icon.getPixelRGBA(frameCount, width / 2, height / 2);
         LOGGER.info("RGBA = " + RGBA);
         return RGBA;
-
     }
+
+
+    public void createTankBackGround(MatrixStack stack, int x, int y, TextureManager manager)  {
+        manager.bindTexture(TANK_BACKGROUND);
+        AbstractGui.blit(stack, x, y, 0, 0, TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+    }
+
+    public void createTankGauge(MatrixStack stack, int x, int y, TextureManager manager)  {
+        manager.bindTexture(TANK_GAUGE);
+        AbstractGui.blit(stack, x, y, 0, 0, TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+    }
+
+    public static FluidStack getFluidInTank(MultiBlockContainerFluid container, int index)  {
+        return container.getFluidController().getFluidInTank(index);
+    }
+    public static int getTanksMaxSize(MultiBlockContainerFluid container, int index)  {
+        return container.getFluidController().getOutputTankMaxSize(index);
+    }
+    public static int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankIndex)  {
+        return (int)(TANK_HEIGHT * container.getFluidController().getPercentageInTank(tankIndex));
+    }
+
+
 
 }

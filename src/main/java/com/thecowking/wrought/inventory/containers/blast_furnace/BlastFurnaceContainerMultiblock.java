@@ -81,15 +81,4 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
         return this.controller;
     }
 
-    public double getProgress()  {
-        if (controller.timeComplete == 0)  {return 0;}
-        return (double)controller.timeElapsed / (controller.timeComplete);
-    }
-
-
-    public String getStatus()  {
-        return controller.getStatus();
-
-    }
-
 }

@@ -9,6 +9,7 @@ import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.inventory.containers.BuilderContainer;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;

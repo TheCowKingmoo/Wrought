@@ -30,8 +30,8 @@ public class RenderHelper {
             location -> Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
 
     public static final ResourceLocation TANK_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/tank_frame.png");
-    public static final ResourceLocation TANK_GAUGE = new ResourceLocation(Wrought.MODID, "textures/gui/tank_gauage.png");
-    public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
+    public static final ResourceLocation TANK_GAUGE = new ResourceLocation(Wrought.MODID, "textures/gui/tank_gauge.png");
+    public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/background_and_inventory.png");
     public static final ResourceLocation SLOT_IMAGE = new ResourceLocation(Wrought.MODID, "textures/gui/slot.png");
     public static final ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
     public static final int SLOT_WIDTH_HEIGHT = 18;
@@ -41,12 +41,20 @@ public class RenderHelper {
     public static final int TANK_HEIGHT = 56;
 
 
+    public static int GUI_X_MARGIN = 10;
+    public static int SLOT_SIZE = 18;
+    public static int SLOT_SEP = 2;
+    public static int GUI_Y_MARGIN = 20;
+    public static int X_SIZE = 176;
+    public static int Y_SIZE = 240;
+
+
 
     public static void slotRunner(MatrixStack stack, MultiBlockContainer container, TextureManager manager, int xStart, int yStart)  {
         for(int i = 36; i < 36 + container.getNumMachineSlots(); i++)  {
             int x = container.getSlot(i).xPos;
             int y = container.getSlot(i).yPos;
-            createSlot(stack, x+xStart, y+yStart, manager);
+            createSlot(stack, x+xStart-1, y+yStart-1, manager);
         }
 
     }
@@ -61,9 +69,6 @@ public class RenderHelper {
     public static TextureAtlasSprite getFluidTexture(FluidStack fluid)  {
         return TEXTURE_GETTER.apply(fluid.getFluid().getAttributes().getStillTexture(fluid));
     }
-
-
-
 
     /*
         Converts rgb + opacity to argb which minecraft uses a lot of
@@ -130,14 +135,14 @@ public class RenderHelper {
     }
 
 
-    public void createTankBackGround(MatrixStack stack, int x, int y, TextureManager manager)  {
+    public static void createTankBackGround(MatrixStack stack, int x, int y, TextureManager manager, int width, int height)  {
         manager.bindTexture(TANK_BACKGROUND);
-        AbstractGui.blit(stack, x, y, 0, 0, TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+        AbstractGui.blit(stack, x, y, 0, 0, width, height, TANK_WIDTH, TANK_HEIGHT);
     }
 
-    public void createTankGauge(MatrixStack stack, int x, int y, TextureManager manager)  {
+    public static void createTankGauge(MatrixStack stack, int x, int y, TextureManager manager, int width, int height)  {
         manager.bindTexture(TANK_GAUGE);
-        AbstractGui.blit(stack, x, y, 0, 0, TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+        AbstractGui.blit(stack, x, y, 0, 0, width, height, TANK_WIDTH, TANK_HEIGHT);
     }
 
     public static FluidStack getFluidInTank(MultiBlockContainerFluid container, int index)  {

@@ -43,6 +43,8 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     public BloomeryMultiblockScreen(BloomeryContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.multiBlockContainer = container;
+        this.xSize = 176;
+        this.ySize = 240;
     }
 
 

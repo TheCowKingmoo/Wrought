@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory.containers.blast_furnace;
 
+import com.thecowking.wrought.data.BlastFurnaceData;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
@@ -12,6 +13,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static com.thecowking.wrought.data.BlastFurnaceData.*;
 
 import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURANCE_MULTIBLOCK_CONTAINER;
 
@@ -20,15 +22,14 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
     private static final Logger LOGGER = LogManager.getLogger();
     private BlastFurnaceBrickControllerTile controller;
 
-    final static int INPUT_OUTPUT_X = 15;
-    final static int SLOT_SEP_X = 22;
+    final static int INPUT_OUTPUT_X = 10;
+
+    final static int SIZE_SLOT = 18;
+
+   // final static int X_WIDTH_OF_SLOT = 18;
 
 
-    //final static int X_WIDTH_OF_SLOT = 12;
 
-
-    final static int FLUID_ITEM_X = 150;
-    final static int INPUTS_Y = 21;
     final static int OUTPUTS_Y = 72;
 
     public BlastFurnaceContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
@@ -45,33 +46,35 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
         }  else  {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                    int slot = 0;
+
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN, GUI_Y_MARGIN));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP, GUI_Y_MARGIN));
                     // Add Aux Input Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X  + SLOT_SEP_X * 2, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN  + 2 *(SLOT_SIZE + SLOT_SEP), GUI_Y_MARGIN));
 
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X, OUTPUTS_Y));
+                     addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN, OUTPUTS_Y));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X + SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP, OUTPUTS_Y));
                     // Trinary Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X  + SLOT_SEP_X*2, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN  + 2 *(SLOT_SIZE + SLOT_SEP), OUTPUTS_Y));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, slot++, INPUT_OUTPUT_X  + 3*SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN  + 3 * (SLOT_SIZE + SLOT_SEP), 45));
+
+
 
                     // Add Molten Metal Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X * 2 + SLOT_SEP_X * 3, INPUTS_Y));
+                    addSlot(new SlotInputFluidContainer(h, numSlot++, X_SIZE - SLOT_SIZE - GUI_X_MARGIN + 1, GUI_Y_MARGIN));
                     // Add Molten Slag Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, slot++, INPUT_OUTPUT_X * 3 + SLOT_SEP_X * 4, INPUTS_Y));
+                    addSlot(new SlotInputFluidContainer(h, numSlot++, X_SIZE - 3 * SLOT_SIZE - 2*SLOT_SEP - GUI_X_MARGIN + 1, GUI_Y_MARGIN));
 
                     // Add Molten Metal Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X * 2 + SLOT_SEP_X * 3, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, X_SIZE - SLOT_SIZE  - GUI_X_MARGIN + 1, OUTPUTS_Y));
                     // Add Molten Slag Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, slot++, INPUT_OUTPUT_X * 3 + SLOT_SEP_X * 4, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, X_SIZE - 3 * SLOT_SIZE - 2*SLOT_SEP - GUI_X_MARGIN + 1, OUTPUTS_Y));
                 });
 
         }

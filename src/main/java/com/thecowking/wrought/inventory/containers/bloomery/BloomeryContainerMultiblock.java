@@ -7,6 +7,7 @@ import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
+import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.thecowking.wrought.util.RenderHelper.*;
 
 import static com.thecowking.wrought.init.RegistryHandler.BLOOMERY_MULTIBLOCK_CONTAINER;
 
@@ -23,23 +25,18 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
     private static final Logger LOGGER = LogManager.getLogger();
     private BloomeryControllerTile controller;
 
-    final static int INPUT_OUTPUT_X = 15;
-    final static int SLOT_SEP_X = 22;
+    public int MIDDLE_X = RenderHelper.X_SIZE / 2;
+    public int MIDDLE_Y = 72;
 
 
-
-    //final static int X_WIDTH_OF_SLOT = 12;
-
-
-    final static int FLUID_ITEM_X = 150;
-    final static int INPUTS_Y = 21;
-    final static int OUTPUTS_Y = 72;
 
     public BloomeryContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
         super(BLOOMERY_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
 
         TileEntity tileEntity = world.getTileEntity(pos);
         this.controller = (BloomeryControllerTile)tileEntity;
+
+
 
         if(this.controller != null && !(controller.isFormed()))  {
             // basic auto building screen
@@ -51,17 +48,17 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.GUI_X_MARGIN - 2 * (RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP), MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X + SLOT_SEP_X, INPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.GUI_X_MARGIN - (RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP),  MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
 
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, numSlot++, INPUT_OUTPUT_X, OUTPUTS_Y));
+                     addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + RenderHelper.GUI_X_MARGIN  + RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, INPUT_OUTPUT_X + SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, INPUT_OUTPUT_X  + 3*SLOT_SEP_X, OUTPUTS_Y));
+                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.SLOT_SIZE / 2, MIDDLE_Y + RenderHelper.GUI_X_MARGIN));
 
                 });
 

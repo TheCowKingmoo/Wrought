@@ -21,6 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
+import static com.thecowking.wrought.data.BlastFurnaceData.*;
 
 
 public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceContainerMultiblock> {
@@ -30,18 +31,16 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     final static  int COOK_BAR_ICON_V = 207;
     final static  int COOK_BAR_WIDTH = 17;
     final static  int COOK_BAR_HEIGHT = 30;
-    private static final Logger LOGGER = LogManager.getLogger();
-
 
     final static int INDICATOR_X_OFFSET = 39;
     final static int INDICATOR_Y_OFFSET = 48;
     final static int INDICATOR_HEIGHT = 11;
     final static int INDICATOR_WIDTH = 11;
 
-    final static int TANK_X_OFFSET = 129;
+    final static int TANK_X_OFFSET = 176 - 18 - 4 - 10;
     final static int TANK_Y_OFFSET = 19;
-    final static int TANK_WIDTH = 17;
-    final static int TANK_HEIGHT = 74;
+    final static int TANK_WIDTH = 18;
+    final static int TANK_HEIGHT = 70;
 
 
     final static int METAL_TANK_INDEX = 0;
@@ -53,6 +52,8 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.multiBlockContainer = container;
+        this.xSize = 176;
+        this.ySize = 240;
     }
 
     @Override
@@ -107,21 +108,38 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
+        // Draws the main background
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
+        this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
+
+        RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
         // progress bar exists behind the main background
         drawProgressBar(stack);
         //draw metal fluid before main background
-        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
 
         //draw Slag Fluid before main background
-        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+       // drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+
+
+
+
+        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET);
+        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+
+
+
+        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET);
+        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+
 
         //draw indicator before background
         drawStatusIndicator(stack);
 
-        // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
-        this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
+
+
 
     }
 
@@ -149,7 +167,7 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
 
     protected void drawStatusIndicator(MatrixStack stack)  {
         int color = getStatusColor();
-        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
+        RenderHelper.fillGradient(xStart() + X_SIZE - SLOT_SEP, yStart() + SLOT_SEP, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
     }
 
 

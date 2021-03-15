@@ -40,6 +40,15 @@ public class BlastFurnaceData implements IMultiblockData {
     private static Block airBlock = Blocks.AIR;
 
 
+    public static int GUI_X_MARGIN = 10;
+    public static int SLOT_SIZE = 18;
+    public static int SLOT_SEP = 2;
+    public static int GUI_Y_MARGIN = 20;
+    public final static int X_SIZE = 176;
+    public final static int Y_SIZE = 240;
+
+
+
 
 
     private final Block[][][] posArray =  {

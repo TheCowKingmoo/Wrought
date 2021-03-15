@@ -81,13 +81,15 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
             fuel = Ingredient.deserialize(JSONUtils.getJsonObject(json, "fuel"));
         }
 
+        int heat = 0;
         int burnTime = 0;
         if(this.needBurnTime)  {
+            heat = JSONUtils.getInt(json, "heat");
             burnTime = JSONUtils.getInt(json, "burnTime");
         }
 
 
-        return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, recipeTypeID);
+        return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, heat, recipeTypeID);
     }
 
     @Nullable
@@ -120,10 +122,12 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
         }
 
         int burnTime = 0;
+        int heat  = 0;
         if(needBurnTime)  {
+            heat = buffer.readInt();
             burnTime = buffer.readInt();
         }
-        return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, recipeTypeID);
+        return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, heat, recipeTypeID);
     }
 
     @Override
@@ -148,6 +152,7 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
             buffer.writeFluidStack(fluidOutputs.get(i));
         }
         recipe.getFuel().write(buffer);
+        buffer.writeInt(recipe.getHeat());
         buffer.writeInt(recipe.getBurnTime());
     }
 

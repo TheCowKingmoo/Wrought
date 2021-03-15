@@ -24,6 +24,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     protected List<ItemStack> itemOuputs;
     protected List<FluidStack> fluidOutputs;
     protected List<FluidStack> fluidInputs;
+    protected int heat;
 
     protected Ingredient fuel;                  // if this is empty than any burnable thing will do
     protected int burnTime = 0;
@@ -31,7 +32,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     protected ResourceLocation recipeTypeID;
 
     public WroughtRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<ItemStack> itemOuputs, List<FluidStack> fluidOutputs,
-                              List<FluidStack> fluidInputs, Ingredient fuel, int burnTime, ResourceLocation recipeTypeID) {
+                              List<FluidStack> fluidInputs, Ingredient fuel, int burnTime, int heat, ResourceLocation recipeTypeID) {
         this.id = id;
         this.itemInputs = itemInputs;
         this.itemOuputs = itemOuputs;
@@ -41,6 +42,7 @@ public class WroughtRecipe implements IWroughtRecipe {
         if(fuel == null)  {
             this.fuel = Ingredient.EMPTY;
         }
+        this.heat = heat;
         this.burnTime = burnTime;
         this.recipeTypeID = recipeTypeID;
     }
@@ -56,6 +58,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     public int getNumFluidInputs() {
         return this.fluidInputs.size();
     }
+    public int getHeat()  {return this.heat;}
 
     public List<ItemStack> getItemOuputs()  {return  this.itemOuputs;}
     public List<FluidStack> getFluidOutputs()  {return this.fluidOutputs;}

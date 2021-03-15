@@ -26,5 +26,6 @@
   "amount_fluid_output_0": 1000,
   "amount_fluid_output_1": 1000,
 
+  "heat": 1000,
   "burnTime": 5
 }

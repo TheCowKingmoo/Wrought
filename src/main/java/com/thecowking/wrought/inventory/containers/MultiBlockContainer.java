@@ -35,5 +35,11 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
         if (controller.timeComplete == 0)  {return 0;}
         return (double)controller.timeElapsed / (controller.timeComplete);
     }
+    public int getCurrentHeatLevel()  {return this.controller.currentHeatLevel; }
+    public int getMaxHeatLevel()  {return this.controller.maxHeatLevel; }
+    public double getHeatPercentage()  {
+        if(getMaxHeatLevel() == 0)  return 0;
+        return (double)getCurrentHeatLevel() / (double)getMaxHeatLevel();
+    }
 
 }

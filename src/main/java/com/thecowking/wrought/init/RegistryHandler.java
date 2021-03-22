@@ -18,10 +18,7 @@ import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOv
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
-import com.thecowking.wrought.items.items.AshItem;
-import com.thecowking.wrought.items.items.CokeBrickItem;
-import com.thecowking.wrought.items.items.CokeItem;
-import com.thecowking.wrought.items.items.SootItem;
+import com.thecowking.wrought.items.items.*;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTile;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
@@ -96,6 +93,9 @@ public class RegistryHandler {
 
     //CokeBrick Item
     public static final RegistryObject<Item> COKE_BRICK_ITEM = ITEMS.register("coke_brick_item", CokeBrickItem::new);
+
+    //Slag Item
+    public static final RegistryObject<Item> SLAG = ITEMS.register("slag", SlagItem::new);
 
     //Soot Item
     public static final RegistryObject<Item> SOOT = ITEMS.register("soot", SootItem::new);

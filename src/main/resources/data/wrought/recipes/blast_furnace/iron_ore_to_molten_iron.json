@@ -18,9 +18,6 @@
   "input_2": {
     "item": "minecraft:coal"
   },
-  "fuel": {
-    "tag": "forge:coke"
-  },
   "fluid_output_0": "wrought:molten_iron",
   "fluid_output_1": "minecraft:water",
   "amount_fluid_output_0": 1000,

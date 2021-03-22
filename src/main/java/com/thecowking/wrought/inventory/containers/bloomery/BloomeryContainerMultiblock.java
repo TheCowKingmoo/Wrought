@@ -43,14 +43,14 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.GUI_X_MARGIN - 2 * (RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP), MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X / 2 -  2 * RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.GUI_X_MARGIN - (RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP),  MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X / 2  - RenderHelper.SLOT_SIZE,  MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
 
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + RenderHelper.GUI_X_MARGIN  + RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                     addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + MIDDLE_X / 2, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + MIDDLE_X / 2 + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
 
                     // Add Fuel Slot
                     addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.SLOT_SIZE / 2, MIDDLE_Y + RenderHelper.GUI_X_MARGIN));
@@ -70,8 +70,7 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
     }
 
     public double getProgress()  {
-        if (controller.timeComplete == 0)  {return 0;}
-        return (double)controller.timeElapsed / (controller.timeComplete);
+        return controller.getCurrentCookingPercentge();
     }
 
 

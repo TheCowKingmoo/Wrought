@@ -18,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.function.Function;
@@ -34,6 +35,8 @@ public class RenderHelper {
     public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/background_and_inventory.png");
     public static final ResourceLocation SLOT_IMAGE = new ResourceLocation(Wrought.MODID, "textures/gui/slot.png");
     public static final ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
+    public static final ResourceLocation ARROW_CUTOUT = new ResourceLocation(Wrought.MODID, "textures/gui/arrowcutout.png");
+
     public static final int SLOT_WIDTH_HEIGHT = 18;
 
 
@@ -45,8 +48,31 @@ public class RenderHelper {
     public static int SLOT_SIZE = 18;
     public static int SLOT_SEP = 2;
     public static int GUI_Y_MARGIN = 20;
-    public static int X_SIZE = 176;
+    public static int X_SIZE = 184;
     public static int Y_SIZE = 240;
+
+
+
+        /*
+        1. Draws a black background
+        2. Draws a box that expands downwards the larger the processTime is.
+            The main gui has an arrow cutout that will go over thi process box and give the appearnce of an arrow.
+     */
+
+    public static void createProgressBar(MatrixStack stack, TextureManager manager, int x, int y, int width, int height, double percent)  {
+        int adjX = x - width / 2;
+        int adjY = y - height / 2;
+
+        int color = RenderHelper.convertARGBToInt(255, 255, 0, 1);
+        LOGGER.info(percent);
+        RenderHelper.fillGradient(adjX, adjY, (int)(adjX + width * percent), adjY + height, color, color, 0F);
+
+        manager.bindTexture(ARROW_CUTOUT);
+        AbstractGui.blit(stack, adjX, adjY, 0, 0, width, height, width, height);
+    }
+
+
+
 
 
 
@@ -153,6 +179,98 @@ public class RenderHelper {
     }
     public static int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankIndex)  {
         return (int)(TANK_HEIGHT * container.getFluidController().getPercentageInTank(tankIndex));
+    }
+
+    public static void drawHeatBar()  {
+
+    }
+
+    public static int getStatusColor(String status)  {
+        if(status == "Processing")  {
+            //yellow
+            return RenderHelper.convertARGBToInt(255,255,0,1);
+        } else if( status == "Standing By")  {
+            //green
+            return  RenderHelper.convertARGBToInt(0,255,0,1);
+        }
+        // red
+        return RenderHelper.convertARGBToInt(255,0,0,1);
+    }
+
+
+
+    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, MultiBlockContainerFluid container, int tankIndex)  {
+        if(fluidStack == null || fluidStack.isEmpty())  {
+            return;
+        }
+        matrixStack.push();
+
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
+        int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
+        setGLColorFromInt(color);
+        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * RenderHelper.getFluidInTanksHeight(container, tankIndex)), fluidStack.getAmount() / 1000);
+
+        matrixStack.pop();
+    }
+
+    public static void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height, int numBuckets) {
+        int i;
+        int j;
+
+        int drawHeight;
+        int drawWidth;
+
+        for (i = 0; i < width; i += 16) {
+            for (j = 0; j < height; j += 16) {
+                drawWidth = Math.min(width - i, 16);
+                drawHeight = Math.min(height - j, 16);
+                drawScaledTexturedModelRectFromIcon(x + i, y - j, icon, drawWidth, drawHeight);
+            }
+        }
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public static TextureAtlasSprite getTexture(ResourceLocation location) {
+        return Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
+    }
+
+    public static void drawScaledTexturedModelRectFromIcon(int x, int y, TextureAtlasSprite icon, int width, int height) {
+        if ( icon == null ) {
+            return;
+        }
+        float minU = icon.getMinU();
+        float maxU = icon.getMaxU();
+        float minV = icon.getMinV();
+        float maxV = icon.getMaxV();
+
+        float zLevel = 0f;
+
+        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+        // Bottom Left
+        buffer.pos(x, y, zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
+        // Bottom Right
+        buffer.pos(x + width, y, zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
+        // Top Right
+        buffer.pos(x + width, y - height, zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
+        // Top Left
+        buffer.pos(x, y - height, zLevel).tex(minU, minV).endVertex();
+        // Draw
+        Tessellator.getInstance().draw();
+    }
+
+
+
+
+    public static void setGLColorFromInt(int color) {
+        float red = (float) (color >> 16 & 255) / 255.0F;
+        float green = (float) (color >> 8 & 255) / 255.0F;
+        float blue = (float) (color & 255) / 255.0F;
+        GlStateManager.color4f(red, green, blue, 1.0F);
     }
 
 

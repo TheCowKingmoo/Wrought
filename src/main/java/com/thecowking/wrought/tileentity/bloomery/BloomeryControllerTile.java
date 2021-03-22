@@ -20,6 +20,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nullable;
 
 import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURNACE_BRICK_CONTROLLER_TILE;
+import static com.thecowking.wrought.init.RegistryHandler.BLOOMERY_CONTROLLER_TILE;
 
 
 public class BloomeryControllerTile extends MultiBlockControllerTile implements INamedContainerProvider, WroughtMutliblock {
@@ -31,7 +32,7 @@ public class BloomeryControllerTile extends MultiBlockControllerTile implements 
 
     public BloomeryControllerTile() {
 
-        super(BLAST_FURNACE_BRICK_CONTROLLER_TILE.get(), NUMBER_ITEM_INPUT_SLOTS, NUMBER_ITEM_OUTPUT_SLOTS, NEEDS_FUEL, new BloomeryData());
+        super(BLOOMERY_CONTROLLER_TILE.get(), NUMBER_ITEM_INPUT_SLOTS, NUMBER_ITEM_OUTPUT_SLOTS, NEEDS_FUEL, new BloomeryData());
         this.status = "Standing By";
 
         this.everything = LazyOptional.of(() -> new CombinedInvWrapper(this.inputSlots, this.outputSlots, this.fuelInputSlot));

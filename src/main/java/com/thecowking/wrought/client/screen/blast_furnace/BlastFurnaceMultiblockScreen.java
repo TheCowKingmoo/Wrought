@@ -125,20 +125,16 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
 
 
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, METAL_TANK_INDEX);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
-
-
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, SLAG_TANK_INDEX);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
 
         //draw indicator before background
         drawStatusIndicator(stack);
-
-
 
 
     }
@@ -163,18 +159,14 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     }
 
 
-
-
     protected void drawStatusIndicator(MatrixStack stack)  {
-        int color = getStatusColor();
+        int color = RenderHelper.getStatusColor(this.container.getStatus());
         RenderHelper.fillGradient(xStart() + X_SIZE - SLOT_SEP, yStart() + SLOT_SEP, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
     }
-
 
     protected ITextComponent getName() {
         return new TranslationTextComponent("Honey Comb Coke Oven");
     }
-
 
     /*
         This draws both title for the screen and the player inventory
@@ -186,90 +178,6 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
     }
 
-    public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
-        if(fluidStack == null || fluidStack.isEmpty())  {
-            return;
-        }
-        matrixStack.push();
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
-        int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
-        setGLColorFromInt(color);
-        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * RenderHelper.getFluidInTanksHeight(multiBlockContainer, METAL_TANK_INDEX)), fluidStack.getAmount() / 1000);
-
-        matrixStack.pop();
-    }
-
-    public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height, int numBuckets) {
-        int i;
-        int j;
-
-        int drawHeight;
-        int drawWidth;
-
-        for (i = 0; i < width; i += 16) {
-            for (j = 0; j < height; j += 16) {
-                drawWidth = Math.min(width - i, 16);
-                drawHeight = Math.min(height - j, 16);
-                drawScaledTexturedModelRectFromIcon(x + i, y - j, icon, drawWidth, drawHeight);
-            }
-        }
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    public static TextureAtlasSprite getTexture(ResourceLocation location) {
-        return Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
-    }
-
-    public void drawScaledTexturedModelRectFromIcon(int x, int y, TextureAtlasSprite icon, int width, int height) {
-        if ( icon == null ) {
-            return;
-        }
-        float minU = icon.getMinU();
-        float maxU = icon.getMaxU();
-        float minV = icon.getMinV();
-        float maxV = icon.getMaxV();
-
-        float zLevel = 0f;
-
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        // Bottom Left
-        buffer.pos(x, y, zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
-        // Bottom Right
-        buffer.pos(x + width, y, zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
-        // Top Right
-        buffer.pos(x + width, y - height, zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
-        // Top Left
-        buffer.pos(x, y - height, zLevel).tex(minU, minV).endVertex();
-        // Draw
-        Tessellator.getInstance().draw();
-    }
-
-    public int getStatusColor()  {
-        String status = multiBlockContainer.getStatus();
-        if(status == "Processing")  {
-            //yellow
-            return RenderHelper.convertARGBToInt(255,255,0,1);
-        } else if( status == "Standing By")  {
-            //green
-            return  RenderHelper.convertARGBToInt(0,255,0,1);
-        }
-        // red
-        return RenderHelper.convertARGBToInt(255,0,0,1);
-    }
-
-
-    public static void setGLColorFromInt(int color) {
-        float red = (float) (color >> 16 & 255) / 255.0F;
-        float green = (float) (color >> 8 & 255) / 255.0F;
-        float blue = (float) (color & 255) / 255.0F;
-        GlStateManager.color4f(red, green, blue, 1.0F);
-    }
 
 
 }

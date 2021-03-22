@@ -4,16 +4,13 @@
     "item": "minecraft:iron_ingot"
   },
   "output_1": {
-    "item": "wrought:soot"
+    "item": "wrought:slag"
   },
   "input_0": {
     "item": "minecraft:iron_ore"
   },
   "input_1": {
-    "item": "minecraft:coal"
-  },
-  "fuel": {
-    "tag": "forge:coke"
+    "item": "minecraft:stone"
   },
   "heat": 1000,
   "burnTime": 5

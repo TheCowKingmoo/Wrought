@@ -23,8 +23,8 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     final static  int COOK_BAR_Y_OFFSET = 40;
     final static  int COOK_BAR_ICON_U = 0;   // texture position of white arrow icon [u,v]
     final static  int COOK_BAR_ICON_V = 207;
-    final static  int COOK_BAR_WIDTH = 17;
-    final static  int COOK_BAR_HEIGHT = 30;
+    final static  int COOK_BAR_WIDTH = 18;
+    final static  int COOK_BAR_HEIGHT = 18;
     private static final Logger LOGGER = LogManager.getLogger();
 
 
@@ -32,6 +32,23 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     final static int INDICATOR_Y_OFFSET = 48;
     final static int INDICATOR_HEIGHT = 11;
     final static int INDICATOR_WIDTH = 11;
+
+
+    private int HEAT_HEIGHT = 18;
+    private int HEAT_WIDTH = HEAT_HEIGHT*3;
+
+
+    private int statusIndicatorStartX;
+    private int statusIndicatorStartY;
+
+    private int heatBarStartX;
+    private int heatBarStartY;
+
+    private int progressBarStartX;
+    private int progressBarStartY;
+
+    private int SIZE_MACHINE_GUI_Y = 114;
+
 
 
 
@@ -43,10 +60,26 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     public BloomeryMultiblockScreen(BloomeryContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.multiBlockContainer = container;
-        this.xSize = 176;
+        this.xSize = 184;
         this.ySize = 240;
+
+        this.progressBarStartX = xStart() + this.xSize / 2 - COOK_BAR_WIDTH / 2;
+        this.progressBarStartY = container.MIDDLE_Y - COOK_BAR_HEIGHT;
+
+        this.statusIndicatorStartX = xStart() + RenderHelper.GUI_X_MARGIN;
+        this.statusIndicatorStartY = 0;
+
+        this.heatBarStartX = xStart() + RenderHelper.GUI_X_MARGIN;
+        this.heatBarStartY = yStart() + this.ySize / 2 - RenderHelper.GUI_Y_MARGIN - HEAT_HEIGHT;;
     }
 
+
+    public int getCenterX()  {
+        return  xStart() + this.xSize / 2;
+    }
+    public int getCenterY()  {
+        return  yStart() + this.SIZE_MACHINE_GUI_Y / 2;
+    }
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -67,7 +100,6 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
             this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
 
-            // detects when the player is hovering over the tank
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
             TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
@@ -87,59 +119,50 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         return (this.height - this.ySize) / 2;
     }
 
-
-
-
     /*
         Does as the name suggests -> draws the main background to the gui
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
 
-        // progress bar exists behind the main background
-        drawProgressBar(stack);
-
-        //draw indicator before background
-        drawStatusIndicator(stack);
-
         // Draws the main background
         this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
+
+
+
         RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
 
-    }
+        double percent = multiBlockContainer.getProgress();
+        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), getCenterX(), getCenterY(), 64, 16, percent);
+        // progress bar
+        //drawProgressBar();
 
-    /*
-        1. Draws a black background
-        2. Draws a box that expands downwards the larger the processTime is.
-            The main gui has an arrow cutout that will go over thi process box and give the appearnce of an arrow.
-     */
-    protected void drawProgressBar(MatrixStack stack)  {
-        // draw a background for where the progress bar will not be
+        //draw indicator
+        drawStatusIndicator();
 
-        // get texture for the progress bar
-        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
+        // draw heat bar
+        drawHeatBar();
 
-        // gets the value from 0 to 1 of how much progress the cooking item has
-        double processTime = multiBlockContainer.getProgress();
 
-        // draw on screen
-        this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
-                COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
     }
 
 
+    protected void drawHeatBar()  {
+        double percent = multiBlockContainer.getHeatPercentage();
+        int color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
+        RenderHelper.fillGradient(heatBarStartX, heatBarStartY, (int)(heatBarStartX + HEAT_WIDTH * percent), heatBarStartY + HEAT_HEIGHT, color, color, 0F);
+    }
 
-
-    protected void drawStatusIndicator(MatrixStack stack)  {
+    protected void drawStatusIndicator()  {
         int color = getStatusColor();
-        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
+        RenderHelper.fillGradient(statusIndicatorStartX, statusIndicatorStartY, statusIndicatorStartX + INDICATOR_WIDTH, statusIndicatorStartY + INDICATOR_HEIGHT, color, color, 0F);
     }
 
 
     protected ITextComponent getName() {
-        return new TranslationTextComponent("Honey Comb Coke Oven");
+        return new TranslationTextComponent("Bloomery");
     }
 
 

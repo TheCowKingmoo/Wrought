@@ -24,18 +24,18 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
     protected int numFluidInputs;
     protected int numFluidOutputs;
     protected boolean needFuel;
-    protected boolean needBurnTime;
+    protected boolean needHeat;
     protected ResourceLocation recipeTypeID;
 
 
 
-    public WroughtSerializer(int numInputs, int numOutputs, int numFluidInputs, int numFluidOutputs, boolean needFuel,  boolean needBurnTime, ResourceLocation recipeTypeID)  {
+    public WroughtSerializer(int numInputs, int numOutputs, int numFluidInputs, int numFluidOutputs, boolean needFuel,  boolean needHeat, ResourceLocation recipeTypeID)  {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
         this.numFluidInputs = numFluidInputs;
         this.numFluidOutputs = numFluidOutputs;
         this.needFuel = needFuel;
-        this.needBurnTime = needBurnTime;
+        this.needHeat = needHeat;
         this.recipeTypeID = recipeTypeID;
 
     }
@@ -78,11 +78,11 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
 
         Ingredient fuel = Ingredient.EMPTY;
         int heat = 0;
-        int burnTime = 0;
-        if(this.needBurnTime)  {
+        if(this.needHeat)  {
             heat = JSONUtils.getInt(json, "heat");
-            burnTime = JSONUtils.getInt(json, "burnTime");
         }
+        int burnTime = JSONUtils.getInt(json, "burnTime");
+
 
 
         return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, heat, recipeTypeID);
@@ -114,11 +114,10 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
 
         Ingredient fuel = Ingredient.EMPTY;
 
-        int burnTime = 0;
+        int burnTime = buffer.readInt();
         int heat  = 0;
-        if(needBurnTime)  {
+        if(this.needHeat)  {
             heat = buffer.readInt();
-            burnTime = buffer.readInt();
         }
         return new WroughtRecipe(recipeId, itemInputs, itemOutputs, fluidOutputs, fluidInputs, fuel, burnTime, heat, recipeTypeID);
     }

@@ -55,7 +55,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
-        LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
+        //LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
 
     }
 
@@ -170,10 +170,10 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
 
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
         if(fluidStack == null || fluidStack == FluidStack.EMPTY)  {
-            LOGGER.info("EMPTY FLUIDSTACK");
+         //   LOGGER.info("EMPTY FLUIDSTACK");
             return;
         }
-        LOGGER.info(fluidStack.getTranslationKey());
+       // LOGGER.info(fluidStack.getTranslationKey());
 
         matrixStack.push();
 

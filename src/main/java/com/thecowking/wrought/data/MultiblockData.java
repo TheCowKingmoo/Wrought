@@ -14,6 +14,16 @@ public class MultiblockData {
     public static final BooleanProperty JOB = BooleanProperty.create("job");
 
 
+    public static final String INPUT_SLOTS = "input_slots";
+    public static final String OUTPUT_SLOTS = "output_slots";
+    public static final String FLUID_ITEM_INPUT_SLOTS = "fluid_item_input_slots";
+    public static final String FLUID_ITEM_OUTPUT_SLOTS = "fluid_item_output_slots";
+    public static final String FUEL_INPUT_SLOTS = "fuel_input_slots";
+
+
+
+
+
 
     public static final String JOB_ENERGY_IN = "E_IN";
     public static final String JOB_REDSTONE_IN = "R_IN";

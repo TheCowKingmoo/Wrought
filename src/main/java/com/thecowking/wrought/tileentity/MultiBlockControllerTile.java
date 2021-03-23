@@ -699,10 +699,13 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
+        this.inputSlots.deserializeNBT(nbt.getCompound(INPUT_SLOTS));
+        this.outputSlots.deserializeNBT(nbt.getCompound(OUTPUT_SLOTS));
         this.timeElapsed = nbt.getInt(BURN_TIME);
         this.timeComplete = nbt.getInt(BURN_COMPLETE_TIME);
         this.status = nbt.getString(STATUS);
         if(this.hasFuelSlot)  {
+            this.fuelInputSlot.deserializeNBT(nbt.getCompound(FUEL_INPUT_SLOTS));
             this.currentHeatLevel = nbt.getInt(HEAT_LEVEL);
         }
     }
@@ -713,10 +716,13 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
+        tag.put(INPUT_SLOTS, this.inputSlots.serializeNBT());
+        tag.put(OUTPUT_SLOTS, this.outputSlots.serializeNBT());
         tag.putInt(BURN_TIME, this.timeElapsed);
         tag.putInt(BURN_COMPLETE_TIME, this.timeComplete);
         tag.putString(STATUS, this.status);
         if(this.hasFuelSlot)  {
+            tag.put(FUEL_INPUT_SLOTS, this.fuelInputSlot.serializeNBT());
             tag.putInt(HEAT_LEVEL, this.currentHeatLevel);
         }
         return tag;

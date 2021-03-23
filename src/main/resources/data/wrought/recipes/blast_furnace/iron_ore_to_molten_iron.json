@@ -1,30 +1,28 @@
 {
   "type": "wrought:blast_furnace",
-  "primary_item_output": {
-    "item": "wrought:coke"
-  },
-  "secondary_item_output": {
+  "output_0": {
     "item": "wrought:soot"
   },
-  "trinary_item_output": {
+  "output_1": {
     "item": "wrought:soot"
   },
-  "primary_item_input": {
+  "output_2": {
+    "item": "wrought:ash"
+  },
+  "input_0": {
+    "item": "minecraft:iron_ore"
+  },
+  "input_1": {
     "item": "minecraft:coal"
   },
-  "secondary_item_input": {
+  "input_2": {
     "item": "minecraft:coal"
   },
-  "trinary_item_input": {
-    "item": "minecraft:coal"
-  },
-  "fuel": {
-    "item": "wrought:coke"
-  },
-  "primaryFluidOutput": "wrought:molten_iron",
-  "secondaryFluidOutput": "wrought:creosote",
-  "primaryFluidOutputAmount": 1000,
-  "secondaryFluidOutputAmount": 1000,
+  "fluid_output_0": "wrought:molten_iron",
+  "fluid_output_1": "minecraft:water",
+  "amount_fluid_output_0": 1000,
+  "amount_fluid_output_1": 1000,
 
-  "burntime": 5
+  "heat": 1000,
+  "burnTime": 5
 }

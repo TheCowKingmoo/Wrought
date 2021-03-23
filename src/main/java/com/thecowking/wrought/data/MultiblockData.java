@@ -18,21 +18,6 @@ public class MultiblockData {
     public static final String JOB_ENERGY_IN = "E_IN";
     public static final String JOB_REDSTONE_IN = "R_IN";
     public static final String JOB_REDSTONE_OUT = "R_OUT";
-    public static final String JOB_ITEM_IN = "I_IN";
-    public static final String JOB_ITEM_OUT = "I_OUT";
-    public static final String JOB_FLUID_IN = "F_IN";
-    public static final String JOB_FLUID_OUT = "F_OUT";
-    public static final String DIRECTION_FACING = "D_F";
-    public static final String NUM_TICKS = "N_TICKS";
-
-    public static final String PRIMARY_INVENTORY_IN = "p_inv_in";
-    public static final String SECONDARY_INVENTORY_IN = "s_inv_in";
-
-    public static final String PRIMARY_INVENTORY_OUT = "p_inv_out";
-    public static final String SECONDARY_INVENTORY_OUT = "s_inv_out";
-
-    public static final String FLUID_INVENTORY_IN = "fluid_inv_in";
-    public static final String FLUID_INVENTORY_OUT = "fluid_inv_out";
     public static final String FLUID_TANK = "fluid_tank_";
 
     public static final String STATUS = "status";
@@ -40,29 +25,8 @@ public class MultiblockData {
     public static final String BURN_TIME = "burn_time";
     public static final String BURN_COMPLETE_TIME = "burn_complete_time";
 
+    public static final String HEAT_LEVEL = "heat_level";
 
-    public static final String FUEL_AMOUNT = "fuel_amount";
-
-
-
-    public static final String REDSTONE_IN_X = "R_IN_X";
-    public static final String REDSTONE_OUT_X = "R_OUT_X";
-    public static final String REDSTONE_IN_Y = "R_IN_Y";
-    public static final String REDSTONE_OUT_Y = "R_OUT_Y";
-    public static final String REDSTONE_IN_Z = "R_IN_Z";
-    public static final String REDSTONE_OUT_Z = "R_OUT_Z";
-
-
-
-    // Inputs
-    public final static int PRIMARY_INPUT_ITEM_IDX = 0;
-    public final static int FLUID_INPUT_ITEM_SLOT_IDX = 1;
-    // Outputs
-    public final static int PRIMARY_OUTPUT_ITEM_SLOT_IDX = 2;
-    public final static int SECONDARY_OUTPUT_ITEM_SLOT_IDX = 3;
-    public final static int FLUID_OUTPUT_ITEM_SLOT_IDX = 4;
-
-    public final static int NUM_INPTUS = 2;
 
 
 

@@ -1,8 +1,5 @@
 package com.thecowking.wrought.recipes;
 
-import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.init.RecipeSerializerInit;
-import com.thecowking.wrought.recipes.BlastFurnace.BlastFurnaceRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -12,33 +9,41 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class WroughtRecipe implements IWroughtRecipe {
+    private static final Logger LOGGER = LogManager.getLogger();
+
 
     protected ResourceLocation id;
     protected List<Ingredient> itemInputs;
     protected List<ItemStack> itemOuputs;
     protected List<FluidStack> fluidOutputs;
+    protected List<FluidStack> fluidInputs;
+    protected int heat;
+
     protected Ingredient fuel;                  // if this is empty than any burnable thing will do
     protected int burnTime = 0;
     protected IRecipeSerializer<?>  seralizer;
     protected ResourceLocation recipeTypeID;
 
     public WroughtRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<ItemStack> itemOuputs, List<FluidStack> fluidOutputs,
-                              Ingredient fuel, int burnTime, IRecipeSerializer<?>  seralizer, ResourceLocation recipeTypeID) {
+                              List<FluidStack> fluidInputs, Ingredient fuel, int burnTime, int heat, ResourceLocation recipeTypeID) {
         this.id = id;
         this.itemInputs = itemInputs;
         this.itemOuputs = itemOuputs;
         this.fluidOutputs = fluidOutputs;
+        this.fluidInputs = fluidInputs;
         this.fuel = fuel;
         if(fuel == null)  {
             this.fuel = Ingredient.EMPTY;
         }
+        this.heat = heat;
         this.burnTime = burnTime;
-        this.seralizer = seralizer;
         this.recipeTypeID = recipeTypeID;
     }
 
@@ -49,8 +54,16 @@ public class WroughtRecipe implements IWroughtRecipe {
     public int getNumFluidOutputs() {
         return fluidOutputs.size();
     }
+
+    public int getNumFluidInputs() {
+        return this.fluidInputs.size();
+    }
+    public int getHeat()  {return this.heat;}
+
     public List<ItemStack> getItemOuputs()  {return  this.itemOuputs;}
     public List<FluidStack> getFluidOutputs()  {return this.fluidOutputs;}
+    public List<FluidStack> getFluidInputs()  {return this.fluidInputs;}
+
     public Ingredient getInput(int index) {
         return this.itemInputs.get(index);
     }
@@ -83,10 +96,29 @@ public class WroughtRecipe implements IWroughtRecipe {
     }
 
     public boolean matches(RecipeWrapper inv, World worldIn) {
-        for(int i = 0; i < getNumInputs(); i++)  {
-            if(i > this.itemInputs.size())  return false;
-            if(!this.itemInputs.get(i).test(inv.getStackInSlot(i)))  return false;
+        if(inv.getSizeInventory() < 1)  {
+            LOGGER.info("INPUT SIZE FAIL");
+            return false;
         }
+        if(inv.getStackInSlot(0) == ItemStack.EMPTY) {
+            LOGGER.info("INPUT EMPTY");
+            return false;
+        }
+
+        for(int i = 0; i < getNumInputs(); i++)  {
+            if(i > this.itemInputs.size())  {
+                LOGGER.info("SIZE FAILED");
+                return false;
+            }
+            LOGGER.info(itemInputs.get(i).getMatchingStacks()[0].getDisplayName() + " and " + inv.getStackInSlot(i));
+
+
+            if(!this.itemInputs.get(i).test(inv.getStackInSlot(i)))  {
+                LOGGER.info("MATCH FAILED");
+                return false;
+            }
+        }
+        LOGGER.info("MATCH RETURN TRUE");
         return true;
     }
 

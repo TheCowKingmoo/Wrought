@@ -27,6 +27,7 @@ public class PlayerLayoutContainer extends Container {
     protected IItemHandler playerInventory;
     private final int TOP_ROW = 115;
     private final int LEFT_COL = 10;
+    protected int numberMachineSlots = 0;
 
 
     protected PlayerLayoutContainer(@Nullable ContainerType<?> type, int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {

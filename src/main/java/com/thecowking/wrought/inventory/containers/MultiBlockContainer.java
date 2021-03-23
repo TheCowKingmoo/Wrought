@@ -12,6 +12,7 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
 
 
     protected MultiBlockControllerTile controller;
+    protected int numSlot = 0;
 
     protected MultiBlockContainer(@Nullable ContainerType<?> type, int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
         super(type, id, world, controllerPos, playerInventory);
@@ -29,5 +30,21 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
     }
     public String getStatus()  { return controller.getStatus(); }
     public BlockPos getControllerPos()  {return this.controller.getPos();}
+    public int getNumMachineSlots()  {return this.numSlot; }
+    public double getProgress()  {
+        if (controller.timeComplete == 0)  {return 0;}
+        return (double)controller.timeElapsed / (controller.timeComplete);
+    }
+    public int getCurrentHeatLevel()  {return this.controller.currentHeatLevel; }
+    public int getMaxHeatLevel()  {return this.controller.maxHeatLevel; }
+    public double getHeatPercentage()  {
+        if(getMaxHeatLevel() == 0)  return 0;
+        return (double)getCurrentHeatLevel() / (double)getMaxHeatLevel();
+    }
+
+    public boolean enoughHeatToCraft()  {
+        return controller.currentHeatLevel >= controller.recipeHeatLevel;
+    }
+
 
 }

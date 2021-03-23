@@ -32,13 +32,18 @@ public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
     public int getNumInputs();
     public int getNumOutputs();
     public int getNumFluidOutputs();
+    public int getNumFluidInputs();
+
     public List<FluidStack> getFluidOutputs();
+    public List<FluidStack> getFluidInputs();
+
     public Ingredient getInput(int index);
     public ItemStack getOutput(int index);
     public ItemStack getInputItemStack(int index);
     public FluidStack getFluidOutput(int index);
     public int getBurnTime();
     public Ingredient getFuel();
+    public int getHeat();
 
 
     Ingredient getInput();

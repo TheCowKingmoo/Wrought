@@ -47,15 +47,16 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
 
 
     private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
-    private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
-    private HCCokeOvenContainerMultiblock ovenContainer;
+    private HCCokeOvenContainerMultiblock multiBlockContainer;
 
     public HCCokeOvenScreenMultiblock(HCCokeOvenContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.ovenContainer = container;
+        this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
+        LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
+
     }
 
     @Override
@@ -79,20 +80,19 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
 
             // detects when the player is hovering over the tank
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = container.controller.getFluidInTank(0);
+            FluidStack fluidStack = RenderHelper.getFluidInTank(multiBlockContainer, 0);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + container.getFluidController().getTankMaxSize(0));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + RenderHelper.getTanksMaxSize(multiBlockContainer,0));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
-            TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
+            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
         }  else  {
             renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
         }
     }
-
 
     public int xStart() {
         return (this.width - this.xSize) / 2;
@@ -101,6 +101,9 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     public int yStart() {
         return (this.height - this.ySize) / 2;
     }
+
+
+
 
 
     /*
@@ -112,7 +115,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         // progress bar exists behind the main background
         drawProgressBar(stack);
         //draw fluid before main background
-        drawFluid(stack, container.getFluidController().getFluidInTank(0), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
+        drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, 0), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
         //draw indicator before background
         drawStatusIndicator(stack);
 
@@ -131,7 +134,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         // draw a background for where the progress bar will not be
 
         // get texture for the progress bar
-        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.PROGRESS_BAR);
 
         // gets the value from 0 to 1 of how much progress the cooking item has
         double processTime = container.getProgress();
@@ -166,9 +169,12 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
     }
 
     public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
-        if(fluidStack == null || fluidStack.isEmpty())  {
+        if(fluidStack == null || fluidStack == FluidStack.EMPTY)  {
+            LOGGER.info("EMPTY FLUIDSTACK");
             return;
         }
+        LOGGER.info(fluidStack.getTranslationKey());
+
         matrixStack.push();
 
         GlStateManager.enableBlend();
@@ -178,7 +184,7 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
         setGLColorFromInt(color);
 
-        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, getFluidInTanksHeight(TANK_INDEX), fluidStack.getAmount() / 1000);
+        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, RenderHelper.getFluidInTanksHeight(multiBlockContainer, TANK_INDEX), fluidStack.getAmount() / 1000);
 
         matrixStack.pop();
     }
@@ -232,16 +238,8 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         Tessellator.getInstance().draw();
     }
 
-    public String getStatus() {
-        return container.controller.getStatus();
-    }
-
-    public int getFluidInTanksHeight(int tankIndex)  {
-        return (int)(TANK_HEIGHT * container.getFluidController().getPercentageInTank(tankIndex));
-    }
-
     public int getStatusColor()  {
-        String status = getStatus();
+        String status = multiBlockContainer.getStatus();
         if(status == "Processing")  {
             //yellow
             return RenderHelper.convertARGBToInt(255,255,0,1);

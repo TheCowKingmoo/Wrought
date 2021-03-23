@@ -1,12 +1,9 @@
 package com.thecowking.wrought.init;
 
 import com.thecowking.wrought.Wrought;
-import com.thecowking.wrought.recipes.BlastFurnace.BlastFurnaceRecipe;
-import com.thecowking.wrought.recipes.BlastFurnace.BlastFurnaceRecipeSerializer;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipe;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.HoneyCombCokeOvenRecipeSerializer;
-import com.thecowking.wrought.recipes.HoneyCombCokeOven.IHoneyCombCokeOvenRecipe;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
+import com.thecowking.wrought.recipes.WroughtRecipe;
+import com.thecowking.wrought.recipes.WroughtSerializer;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -22,17 +19,29 @@ public class RecipeSerializerInit {
 
 
 
-    public static final IRecipeSerializer<HoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new HoneyCombCokeOvenRecipeSerializer();
-    public static final IRecipeType<IHoneyCombCokeOvenRecipe> HONEY_COMB_OVEN_TYPE = registerType(IHoneyCombCokeOvenRecipe.RECIPE_TYPE_ID);
-     public static final RegistryObject<IRecipeSerializer<?>> HONEY_COMB_SERIALIZER = RECIPE_SERIALIZERS.register("honey_comb_coke_oven",
+    // Coke Oven
+    public static final ResourceLocation HONEY_COMB_OVEN_RECIPE_TYPE_ID  = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");
+    public static IRecipeSerializer<WroughtRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new WroughtSerializer(1, 2, 0, 1, false, true, HONEY_COMB_OVEN_RECIPE_TYPE_ID);;
+    public static final IRecipeType<IWroughtRecipe> HONEY_COMB_OVEN_TYPE = registerType(HONEY_COMB_OVEN_RECIPE_TYPE_ID);
+    public static RegistryObject<IRecipeSerializer<?>> HONEY_COMB_SERIALIZER = RECIPE_SERIALIZERS.register("honey_comb_coke_oven",
             () -> HONEY_COMB_OVEN_RECIPE_SERIALIZER);
 
     // Blast Furnace
     public static final ResourceLocation BLAST_FURNACE_RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "blast_furnace");
-    public static final IRecipeSerializer<BlastFurnaceRecipe> BLAST_FURNACE_RECIPE_SERIALIZER = new BlastFurnaceRecipeSerializer();
+    public static IRecipeSerializer<WroughtRecipe> BLAST_FURNACE_RECIPE_SERIALIZER = new WroughtSerializer(3, 3, 0, 2, true, true, BLAST_FURNACE_RECIPE_TYPE_ID);
     public static final IRecipeType<IWroughtRecipe> BLAST_FURNACE_TYPE = registerType(BLAST_FURNACE_RECIPE_TYPE_ID);
-    public static final RegistryObject<IRecipeSerializer<?>> BLAST_FURNACE_SERIALIZER = RECIPE_SERIALIZERS.register("blast_furnace",
+    public static RegistryObject<IRecipeSerializer<?>> BLAST_FURNACE_SERIALIZER = RECIPE_SERIALIZERS.register("blast_furnace",
             () -> BLAST_FURNACE_RECIPE_SERIALIZER);
+
+
+    public static final ResourceLocation BLOOMERY_RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "bloomery");
+    public static IRecipeSerializer<WroughtRecipe> BLOOMERY_RECIPE_SERIALIZER = new WroughtSerializer(2, 2, 0, 0, true, true, BLOOMERY_RECIPE_TYPE_ID);
+    public static final IRecipeType<IWroughtRecipe> BLOOMERY_TYPE = registerType(BLOOMERY_RECIPE_TYPE_ID);
+    public static RegistryObject<IRecipeSerializer<?>> BLOOMERY_SERIALIZER = RECIPE_SERIALIZERS.register("bloomery",
+            () -> BLOOMERY_RECIPE_SERIALIZER);
+
+
+
 
     private static class RecipeType<T extends IRecipe<?>> implements IRecipeType<T> {
         @Override
@@ -44,5 +53,4 @@ public class RecipeSerializerInit {
     private static <T extends IRecipeType> T registerType(ResourceLocation recipeTypeId) {
         return (T) Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<>());
     }
-
 }

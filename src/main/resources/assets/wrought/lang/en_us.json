@@ -9,9 +9,12 @@
   "block.wrought.refactory_brick_block": "Refactory Brick Block",
   "block.wrought.refactory_brick_stair": "Refactory Brick Stair",
   "block.wrought.refactory_brick_slab": "Refactory Brick Slab",
-
+  
+  "block.wrought.bloomery_controller_block": "Bloomery",
   "block.wrought.coke_block": "Block of Coke",
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
+
+  "item.wrought.slag": "Slag",
   "item.wrought.creosote_bucket": "Creosote Bucket",
   "item.wrought.coke": "Coke",
   "item.wrought.soot": "Soot",

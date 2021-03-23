@@ -1,0 +1,17 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "item": "minecraft:iron_ingot"
+  },
+  "output_1": {
+    "item": "wrought:slag"
+  },
+  "input_0": {
+    "item": "minecraft:iron_ore"
+  },
+  "input_1": {
+    "item": "minecraft:stone"
+  },
+  "heat": 2795,
+  "burnTime": 15
+}

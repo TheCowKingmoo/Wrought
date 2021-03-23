@@ -3,7 +3,6 @@ package com.thecowking.wrought.client.screen.blast_furnace;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
@@ -22,6 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
+import static com.thecowking.wrought.data.BlastFurnaceData.*;
 
 
 public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceContainerMultiblock> {
@@ -31,32 +31,27 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     final static  int COOK_BAR_ICON_V = 207;
     final static  int COOK_BAR_WIDTH = 17;
     final static  int COOK_BAR_HEIGHT = 30;
-    private static final Logger LOGGER = LogManager.getLogger();
-
 
     final static int INDICATOR_X_OFFSET = 39;
     final static int INDICATOR_Y_OFFSET = 48;
     final static int INDICATOR_HEIGHT = 11;
     final static int INDICATOR_WIDTH = 11;
 
-    final static int TANK_X_OFFSET = 129;
+    final static int TANK_X_OFFSET = 176 - 18 - 4 - 10;
     final static int TANK_Y_OFFSET = 19;
-    final static int TANK_WIDTH = 17;
-    final static int TANK_HEIGHT = 74;
+    final static int TANK_WIDTH = 18;
+    final static int TANK_HEIGHT = 70;
 
 
     final static int METAL_TANK_INDEX = 0;
     final static int SLAG_TANK_INDEX = 1;
 
+    protected BlastFurnaceContainerMultiblock multiBlockContainer;
 
-    private ResourceLocation GUI = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_gui.png");
-    private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
-
-    private BlastFurnaceContainerMultiblock ovenContainer;
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.ovenContainer = container;
+        this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
     }
@@ -82,14 +77,14 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
 
             // detects when the player is hovering over the tank
         }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = container.getController().getFluidInTank(METAL_TANK_INDEX);
+            FluidStack fluidStack = RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + ovenContainer.getController().getTankMaxSize(METAL_TANK_INDEX));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + RenderHelper.getTanksMaxSize(multiBlockContainer, METAL_TANK_INDEX));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
-            TranslationTextComponent displayName = new TranslationTextComponent(getStatus());
+            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
         }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
@@ -103,7 +98,6 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     public int xStart() {
         return (this.width - this.xSize) / 2;
     }
-
     public int yStart() {
         return (this.height - this.ySize) / 2;
     }
@@ -114,21 +108,34 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
+        // Draws the main background
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
+        this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
+
+        RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
         // progress bar exists behind the main background
         drawProgressBar(stack);
         //draw metal fluid before main background
-        drawFluid(stack, container.getController().getFluidInTank(METAL_TANK_INDEX), xStart() + TANK_X_OFFSET, yStart() + TANK_Y_OFFSET);
 
         //draw Slag Fluid before main background
-        drawFluid(stack, container.getController().getFluidInTank(SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+       // drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+
+
+
+
+        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, METAL_TANK_INDEX);
+        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+
+        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, SLAG_TANK_INDEX);
+        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+
 
         //draw indicator before background
         drawStatusIndicator(stack);
 
-        // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(GUI);
-        this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
     }
 
@@ -141,7 +148,7 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         // draw a background for where the progress bar will not be
 
         // get texture for the progress bar
-        this.minecraft.getTextureManager().bindTexture(PROGRESS_BAR);
+        this.minecraft.getTextureManager().bindTexture(RenderHelper.PROGRESS_BAR);
 
         // gets the value from 0 to 1 of how much progress the cooking item has
         double processTime = container.getProgress();
@@ -152,18 +159,14 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
     }
 
 
-
-
     protected void drawStatusIndicator(MatrixStack stack)  {
-        int color = getStatusColor();
-        RenderHelper.fillGradient(xStart() + INDICATOR_X_OFFSET, yStart() + INDICATOR_Y_OFFSET, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
+        int color = RenderHelper.getStatusColor(this.container.getStatus());
+        RenderHelper.fillGradient(xStart() + X_SIZE - SLOT_SEP, yStart() + SLOT_SEP, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
     }
-
 
     protected ITextComponent getName() {
         return new TranslationTextComponent("Honey Comb Coke Oven");
     }
-
 
     /*
         This draws both title for the screen and the player inventory
@@ -175,94 +178,6 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
     }
 
-    public void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y)  {
-        if(fluidStack == null || fluidStack.isEmpty())  {
-            return;
-        }
-        matrixStack.push();
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
-        int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
-        setGLColorFromInt(color);
-        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * ovenContainer.getController().getPercentageInTank(METAL_TANK_INDEX)), fluidStack.getAmount() / 1000);
-
-        matrixStack.pop();
-    }
-
-    public void drawTiledTexture(int x, int y, TextureAtlasSprite icon, int width, int height, int numBuckets) {
-        int i;
-        int j;
-
-        int drawHeight;
-        int drawWidth;
-
-        for (i = 0; i < width; i += 16) {
-            for (j = 0; j < height; j += 16) {
-                drawWidth = Math.min(width - i, 16);
-                drawHeight = Math.min(height - j, 16);
-                drawScaledTexturedModelRectFromIcon(x + i, y - j, icon, drawWidth, drawHeight);
-            }
-        }
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    public static TextureAtlasSprite getTexture(ResourceLocation location) {
-        return Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
-    }
-
-    public void drawScaledTexturedModelRectFromIcon(int x, int y, TextureAtlasSprite icon, int width, int height) {
-        if ( icon == null ) {
-            return;
-        }
-        float minU = icon.getMinU();
-        float maxU = icon.getMaxU();
-        float minV = icon.getMinV();
-        float maxV = icon.getMaxV();
-
-        float zLevel = 0f;
-
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        // Bottom Left
-        buffer.pos(x, y, zLevel).tex(minU, minV + (maxV - minV) * height / 16F).endVertex();
-        // Bottom Right
-        buffer.pos(x + width, y, zLevel).tex(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).endVertex();
-        // Top Right
-        buffer.pos(x + width, y - height, zLevel).tex(minU + (maxU - minU) * width / 16F, minV).endVertex();
-        // Top Left
-        buffer.pos(x, y - height, zLevel).tex(minU, minV).endVertex();
-        // Draw
-        Tessellator.getInstance().draw();
-    }
-
-    public String getStatus() {
-        return container.getStatus();
-    }
-
-    public int getStatusColor()  {
-        String status = getStatus();
-        if(status == "Processing")  {
-            //yellow
-            return RenderHelper.convertARGBToInt(255,255,0,1);
-        } else if( status == "Standing By")  {
-            //green
-            return  RenderHelper.convertARGBToInt(0,255,0,1);
-        }
-        // red
-        return RenderHelper.convertARGBToInt(255,0,0,1);
-    }
-
-
-    public static void setGLColorFromInt(int color) {
-        float red = (float) (color >> 16 & 255) / 255.0F;
-        float green = (float) (color >> 8 & 255) / 255.0F;
-        float blue = (float) (color & 255) / 255.0F;
-        GlStateManager.color4f(red, green, blue, 1.0F);
-    }
 
 
 }

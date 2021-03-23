@@ -1,15 +1,15 @@
 {
   "type": "wrought:honey_comb_coke_oven",
-  "primary_output": {
+  "output_0": {
     "item": "minecraft:charcoal"
   },
-  "secondary_output": {
+  "output_1": {
     "item": "wrought:ash"
   },
-  "primary_input": {
+  "input_0": {
     "tag": "minecraft:logs"
   },
-  "fluid": "wrought:creosote",
-  "fluidamount": 100,
-  "burntime": 10
+  "fluid_output_0": "wrought:creosote",
+  "amount_fluid_output_0": 100,
+  "burnTime": 10
 }

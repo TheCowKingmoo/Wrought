@@ -2,22 +2,29 @@ package com.thecowking.wrought.init;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.blast_furance.*;
+import com.thecowking.wrought.blocks.bloomery.BloomeryControllerBlock;
+import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickBlock;
+import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickSlab;
+import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
+import com.thecowking.wrought.inventory.containers.BuilderContainer;
+import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
+import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
+import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
-import com.thecowking.wrought.items.items.AshItem;
-import com.thecowking.wrought.items.items.CokeBrickItem;
-import com.thecowking.wrought.items.items.CokeItem;
-import com.thecowking.wrought.items.items.SootItem;
+import com.thecowking.wrought.items.items.*;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTile;
+import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.refactory_brick.RefactoryBrickFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
@@ -87,6 +94,9 @@ public class RegistryHandler {
     //CokeBrick Item
     public static final RegistryObject<Item> COKE_BRICK_ITEM = ITEMS.register("coke_brick_item", CokeBrickItem::new);
 
+    //Slag Item
+    public static final RegistryObject<Item> SLAG = ITEMS.register("slag", SlagItem::new);
+
     //Soot Item
     public static final RegistryObject<Item> SOOT = ITEMS.register("soot", SootItem::new);
 
@@ -109,9 +119,29 @@ public class RegistryHandler {
     public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURNACE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
 
 
+    //Bloomery Controller
+    public static final RegistryObject<Block> BLOOMERY_CONTROLLER = BLOCKS.register("bloomery_controller", BloomeryControllerBlock::new);
+    public static final RegistryObject<Item> BLOOMERY_CONTROLLER_ITEM = ITEMS.register("bloomery_controller", () -> new BlockItemBase(BLOOMERY_CONTROLLER.get()));
+    public static final RegistryObject<TileEntityType<BloomeryControllerTile>> BLOOMERY_CONTROLLER_TILE = TILES.register("bloomery_controller", () -> TileEntityType.Builder.create(BloomeryControllerTile::new, BLOOMERY_CONTROLLER.get()).build(null));
+
+    public static final RegistryObject<ContainerType<BloomeryContainerBuilder>> BLOOMERY_BUILDER_CONTAINER = CONTAINERS.register("bloomery_builder_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new BloomeryContainerBuilder(windowId, world, pos, inv);
+    }));
+
+    public static final RegistryObject<ContainerType<BloomeryContainerMultiblock>> BLOOMERY_MULTIBLOCK_CONTAINER = CONTAINERS.register("bloomery_multiblock_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new BloomeryContainerMultiblock(windowId, world, pos, inv);
+    }));
+
+
     //Refactory Brick
     public static final RegistryObject<Block> REFACTORY_BRICK = BLOCKS.register("refactory_brick_block", RefactoryBrickBlock::new);
     public static final RegistryObject<Item> REFACTORY_BRICK_ITEM = ITEMS.register("refactory_brick_block", () -> new BlockItemBase(REFACTORY_BRICK.get()));
+    public static final RegistryObject<TileEntityType<RefactoryBrickFrameTile>> REFACTORY_BRICK_FRAME_TILE = TILES.register("refactory_brick_block", () -> TileEntityType.Builder.create(RefactoryBrickFrameTile::new, REFACTORY_BRICK.get()).build(null));
+
 
     //Refactory Brick Stairs
     public static final RegistryObject<Block> REFACTORY_BRICK_STAIR = BLOCKS.register("refactory_brick_stair", RefactoryBrickStairs::new);

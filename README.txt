@@ -38,8 +38,7 @@ Machines Implemented So Far
 Machines Planned
 - Casting Machine
   - What is it: A way to turn molten fluids into ingots/blocks/gears
-  - Size: Unknown.
-  
+  - Size: Unknown.  
 - Sinter Plant || Pellet Press
   - What is it: A way to pre process ores before the blast furnace in order to increase its yield
   - Size: Unknown

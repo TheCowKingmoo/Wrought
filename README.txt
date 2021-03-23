@@ -90,8 +90,9 @@ Blocks
 Current Development is being tracked through Github Issues.
 
 Source Reading Material
-https://www.steel.org/steel-technology/steel-production/
-https://acoup.blog/2020/09/18/collections-iron-how-did-they-make-it-part-i-mining/
+Steel - https://www.steel.org/steel-technology/steel-production/
+Iron - https://acoup.blog/2020/09/18/collections-iron-how-did-they-make-it-part-i-mining/
+Lead - http://www.madehow.com/Volume-2/Lead.html
 
 Forge Modding Guides
 Unoffical Docs - https://forge.gemwire.uk

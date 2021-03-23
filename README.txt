@@ -1,47 +1,71 @@
 -------------------------------------------
 Wrought
 -------------------------------------------
-Inspiration
-I wanted to make a more realistic ingot production line in a modpack so my goal was to force all ore production into Immersive Engineerings Blast/Arc Furnace. While this worked out ok, the blast furnace only has one input slot for processing, while many ores actually require many other inputs to process and modifiying things like taking charcoal out of the processing equation was not exatcly easy. 
 
 This is a Minecraft mod that is centered around the following
-   1. All Machines are Multiblocks
+   1. Most Machines are Multiblocks
    2. Tech related to heavy industry(Coal Coke Production, Steel, Etc)
-   3. All machines have easy to modify recipes. 
-
-While there are several mods out there already doing this, they tend to be huge mods that add many other things that may not be wanted in a pack. I wanted to create a simple mod for modpack devs that may want infrastructure, but none of the other frills. 
-
-
-Another important aspect for me is to try and make the multiblocks somewhat detailed, but to not look out of place in a Minecraft world.
-
-
-Machines in Progress
-- Honeycomb Coke Oven
-   A simple to make coke oven that is supposed to be the first machine to be made in this mod
-   Used to cook off impurities off of something like coal or refine logs into charcoal
-- Future Planned Machines
-  "Pre-Modern" Blast Furnace
-     A simple blast furnace used to make ores into ingots. This will only be able to run off of solid fuel and depending on the ore, require a catalyst recipe added as well. The output is a molten version of the ore.
-- "Modern" Coke Oven
-     A faster version of the previous coke oven
-- "Modern" Blast Furnace
-     A faster version of the previous blast furance. THis will be able to run off of another mods Forge Energy generation. The output is a molten version of the ore.
-- Some sort of way to compress air and apply it to machines
-- A casting machine to convert fluid into ingots/plate/gears
+   3. All machines have easy to modify recipes and potentially extra input/output slots for modpack makers. 
 
 
 
-Blocks/Items
+Other Notes
+- An important aspect for me is to try and make the multiblocks somewhat detailed, but to not look out of place in a Minecraft world. To acheive this I want to make the multiblock only only out blocks,slabs, stairs and not render some complex object on top of it. 
+- A huge barrier from other multiblock mods is actually making the multiblock. Instead of placing each block the user can click on the controller which lets the, know all the block it still needs. If the user has all those blocks in inventory the controller will place them all for you.
+
+
+
+Machines Implemented So Far
+- Honey Comb Coke Oven
+  - What is it: a furnace that requires no fuel which cooks off impurities in some items. Very similiar to Railcrafts coke oven
+  - Size: 7x7x7
+  - Recipes:
+    - Coke + Creosote. Requires Coal
+    - Charcoal + Creosote. Requires Wood Logs
+- Bloomery (Very WIP)
+  - What is it: Early game smelting of ores. Lets you smelt ores into thier respective ingots assuming you can get it hot enough.
+  - Size: Not finalized. Currently copies Coke Oven
+  - Recipes
+    - Iron Ingot + Slag. Requires Iron Ore + Stone at 2947 degrees.
+- Blast Furnace
+  - What is it: A more efficent way of smelting ores. 
+  - Size: Varies hugely. It has a 7x7 base but goes up nearly 20 blocks.
+  - Recipes
+    - Molten Iron. Requires Iron Ore + Limestone at 2947 degrees.
+    - Currently trying to figure out a more robust way of creating all the recipes for all the different metals.
+  
+
+Machines Planned
+- Casting Machine
+  - What is it: A way to turn molten fluids into ingots/blocks/gears
+  - Size: Unknown.
+  
+- Sinter || Pellet Press
+  - What is it: A way to pre process ores before the blast furnace in order to increase its yield
+  - Size: Unknown
+- Oxygen Furance
+  - What is it: A furnace that blasts hot air over molten metals and is used to refine iron into steel
+  - Size: Unknown
+
+
+Blocks
    - Honeycomb Coke Oven Controller
       - the main TE for the Coke Oven Multiblock
-   - Honeycomb Coke Oven Frame
+   - Honeycomb Coke Oven Frame Block, Stair, Slab
       - main construction block of the Coke Oven Multiblock
       - only thing this TE knows is how to get to the controller
-   - Honeycomb Coke Oven Slab
-      - Not a TE
-      - For GUI use it looks at the block below it for a frame
-   - Honeycomb Coke Oven Stairs
-      - Same as slab
+   - Blast Furnace Controller
+      - the main TE for the Blast Furnace Multiblock
+   - Blast Furnace Frame Block, Stair, Slab
+      - main construction block of the Blast Furnace Multiblock
+      - only thing this TE knows is how to get to the controller
+   - Bloomery Controller
+      - the main TE for the Bloomery
+   - Refactory Brick Block, Stair, Slab
+      - main construction block of the Bloomery and a secondary frame block on other multiblocks
+      - only thing this TE knows is how to get to the controller   
+      
+ Items
    - Ash 
       - byproduct of making charcoal
    - Soot
@@ -49,7 +73,11 @@ Blocks/Items
    - Coke
       - A more refined version of coal
 
-
+  Fluids
+    - Creosote
+      - A byproduct from the coke oven
+    - Molten Iron
+      - The molten form of iron
 
 
 Current Development is being tracked through Github Issues.
@@ -57,8 +85,6 @@ Current Development is being tracked through Github Issues.
 Source Reading Material
 https://www.steel.org/steel-technology/steel-production/
 https://acoup.blog/2020/09/18/collections-iron-how-did-they-make-it-part-i-mining/
-
-
 
 Forge Modding Guides
 Unoffical Docs - https://forge.gemwire.uk

@@ -70,6 +70,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public int timeElapsed = 0;
     public int timeComplete = 0;
+
     public int currentHeatLevel = 0;
     public int maxHeatLevel = 3200; // iron melts at  2800
     public int recipeHeatLevel = 0;
@@ -169,16 +170,13 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public double getCurrentCookingPercentge()  {
         if(this.timeComplete == 0)  return 0;
-        LOGGER.info("te = " + timeElapsed + " tc = " + timeComplete);
         return (double)this.timeElapsed / (double)timeComplete;
     }
 
-
-
-
-
-
-
+    public double getHeatPercentage()  {
+        if(this.maxHeatLevel == 0)  return 0;
+        return (double)this.currentHeatLevel / (double)maxHeatLevel;
+    }
 
     /*
     Does the needed checks and casting to see if current BlockPos holds a correct member of multi-blocks
@@ -422,6 +420,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             return false;
         }
         int burnTime = ForgeHooks.getBurnTime(fuelStack);
+
         if(raiseHeatLevel(burnTime))  {
             this.fuelInputSlot.getStackInSlot(0).shrink(1);
         }
@@ -448,17 +447,24 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     // I know this isnt right. Ill try to brush off my physics skills someday
     protected void heatDisspation()  {
-        LOGGER.info("heat at " + this.currentHeatLevel);
         if(this.currentHeatLevel < 0)  {
             this.currentHeatLevel = 0;
-        }  else  {
+
+        // when heat is at 100 or lower then dividing by 100 will make the minus value 0
+        }  else if(this.currentHeatLevel <= 200) {
+            this.needUpdate = true;
+            this.currentHeatLevel -= 1;
+        } else  {
+            this.needUpdate = true;
             this.currentHeatLevel -= this.currentHeatLevel / 100;
         }
     }
 
 
     protected boolean raiseHeatLevel(int burnTime)  {
-        if(this.currentHeatLevel + burnTime > this.maxHeatLevel)  return false;
+        //LOGGER.info("raise heat attempt -> " + burnTime);
+
+        //if(this.currentHeatLevel + burnTime > this.maxHeatLevel)  return false;
         LOGGER.info("raise heat by " + burnTime + " / 10");
         this.currentHeatLevel += burnTime / 10;
         return true;
@@ -613,6 +619,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         // increment how long current item has cooked
         LOGGER.info("current process");
 
+        // needs to run before timeElapsed gets incremented
+        if(this.hasFuelSlot && !heatHighEnough())  return;
+        LOGGER.info("enough heat at " + this.currentHeatLevel + " for recipe " + this.recipeHeatLevel);
+
         if(!finishedProcessingCurrentOperation())  { return; }
         // check to make sure output is not full before starting another operation
         LOGGER.info("output full check");
@@ -620,8 +630,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if(areOutputsFull())  {return; }
         LOGGER.info("processing");
 
-        if(this.hasFuelSlot && !heatHighEnough())  return;
-        LOGGER.info("enough heat at " + this.currentHeatLevel + " for recipe " + this.recipeHeatLevel);
 
         // moves things in processingItemStacks into OutputSlots
         if(!processing())  {return; }

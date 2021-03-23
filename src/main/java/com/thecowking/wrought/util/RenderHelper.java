@@ -35,7 +35,7 @@ public class RenderHelper {
     public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/background_and_inventory.png");
     public static final ResourceLocation SLOT_IMAGE = new ResourceLocation(Wrought.MODID, "textures/gui/slot.png");
     public static final ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
-    public static final ResourceLocation ARROW_CUTOUT = new ResourceLocation(Wrought.MODID, "textures/gui/arrowcutout.png");
+    public static final ResourceLocation DOWN_ARROW_CUTOUT = new ResourceLocation(Wrought.MODID, "textures/gui/downarrowcutout.png");
 
     public static final int SLOT_WIDTH_HEIGHT = 18;
 
@@ -48,8 +48,14 @@ public class RenderHelper {
     public static int SLOT_SIZE = 18;
     public static int SLOT_SEP = 2;
     public static int GUI_Y_MARGIN = 20;
-    public static int X_SIZE = 184;
-    public static int Y_SIZE = 240;
+
+    public static int BLANK_X_SIZE = 176;
+    public static int BLANK_Y_SIZE = 240;
+    public static int BLANK_TITLE_HEIGHT = 12;
+    public static int BLANK_ACTUAL_HEIGHT = 118;
+    public static int BLANK_USABLE_HEIGHT = BLANK_ACTUAL_HEIGHT - BLANK_TITLE_HEIGHT;
+
+
 
 
 
@@ -63,12 +69,23 @@ public class RenderHelper {
         int adjX = x - width / 2;
         int adjY = y - height / 2;
 
-        int color = RenderHelper.convertARGBToInt(255, 255, 0, 1);
-        LOGGER.info(percent);
-        RenderHelper.fillGradient(adjX, adjY, (int)(adjX + width * percent), adjY + height, color, color, 0F);
+        int backgroundColor = RenderHelper.convertARGBToInt(0, 0, 0, 1);
+        fillGradient(adjX, adjY, adjX + width, adjY + height, backgroundColor, backgroundColor, 0F);
 
-        manager.bindTexture(ARROW_CUTOUT);
+        int color = RenderHelper.convertARGBToInt(255, 255, 0, 1);
+        fillGradient(adjX, adjY, (int)(adjX + width * percent), adjY + height, color, color, 0F);
+
+        manager.bindTexture(DOWN_ARROW_CUTOUT);
         AbstractGui.blit(stack, adjX, adjY, 0, 0, width, height, width, height);
+    }
+
+
+    public static void drawHeatBar(MatrixStack stack, TextureManager manager, int x, int y, int width, int height, double percent, int color)  {
+        int backgroundColor = RenderHelper.convertARGBToInt(0, 0, 0, 1);
+        fillGradient(x, y, x + width, y + height, backgroundColor, backgroundColor, 0F);
+
+        fillGradient(x + 1, y  + height - (int)(percent *  height + 1), x + width - 1, y + height - 1, color, color, 0F);
+
     }
 
 
@@ -125,8 +142,6 @@ public class RenderHelper {
         float f5 = (float)(endColor >> 16 & 255) / 255.0F;
         float f6 = (float)(endColor >> 8 & 255) / 255.0F;
         float f7 = (float)(endColor & 255) / 255.0F;
-
-        //LOGGER.info("alpha = " + (startColor >> 24 & 255) + " r = " + (startColor >> 16 & 255) + " g =  " + (startColor >> 8 & 255) + " b = " + (startColor & 255));
 
         GlStateManager.disableTexture();
         GlStateManager.enableBlend();
@@ -196,6 +211,21 @@ public class RenderHelper {
         // red
         return RenderHelper.convertARGBToInt(255,0,0,1);
     }
+
+
+    public static void drawStatusIndicator(int x, int y, int radius, int color)  {
+        int black = convertARGBToInt(0,0,0,1);
+        RenderHelper.fillGradient(x, y, x+ radius, y + radius, black, black, 0F);
+        RenderHelper.fillGradient(x+1, y+1, x + radius - 1, y + radius - 1, color, color, 0F);
+        int halfX = x + radius/2 - 1;
+        int halfY = y + radius/2 - 1;
+        RenderHelper.fillGradient(halfX, y, halfX + 2, y + radius, black, black, 0F);
+        RenderHelper.fillGradient(x, halfY, x + radius, halfY + 2, black, black, 0F);
+
+
+
+    }
+
 
 
 

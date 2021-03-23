@@ -20,9 +20,14 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
     private static final Logger LOGGER = LogManager.getLogger();
     private BloomeryControllerTile controller;
 
-    public int MIDDLE_X = RenderHelper.X_SIZE / 2;
-    public int MIDDLE_Y = 72;
 
+    private int SLOTS_0_X =  RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - 2*RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
+    private int SLOTS_1_X = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE;
+    private int INPUTS_Y = RenderHelper.GUI_Y_MARGIN;
+    private int OUTPUTS_Y = RenderHelper.BLANK_ACTUAL_HEIGHT - RenderHelper.GUI_Y_MARGIN - RenderHelper.SLOT_SIZE;
+
+    // Margin + Tank Width + Sep
+    private int FUEL_X = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
 
 
     public BloomeryContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
@@ -43,17 +48,17 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X / 2 -  2 * RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotItemHandler(h, numSlot++, SLOTS_0_X, INPUTS_Y));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X / 2  - RenderHelper.SLOT_SIZE,  MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotItemHandler(h, numSlot++, SLOTS_1_X,  INPUTS_Y));
 
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + MIDDLE_X / 2, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                     addSlot(new SlotOutput(h, numSlot++, SLOTS_0_X, OUTPUTS_Y));
                     // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, MIDDLE_X + MIDDLE_X / 2 + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP, MIDDLE_Y - RenderHelper.GUI_Y_MARGIN));
+                    addSlot(new SlotOutput(h, numSlot++, SLOTS_1_X, OUTPUTS_Y));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, MIDDLE_X - RenderHelper.SLOT_SIZE / 2, MIDDLE_Y + RenderHelper.GUI_X_MARGIN));
+                    addSlot(new SlotItemHandler(h, numSlot++, FUEL_X, OUTPUTS_Y));
 
                 });
 

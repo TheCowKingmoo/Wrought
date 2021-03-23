@@ -8,6 +8,7 @@ public class CokeItem extends Item {
     public CokeItem() {
         super(new Item.Properties().group(ItemGroup.MATERIALS));
     }
+
     @Override
     public int getBurnTime(ItemStack itemStack)  {
         return 3200;

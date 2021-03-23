@@ -55,6 +55,8 @@ public class HCCokeOvenScreenMultiblock extends ContainerScreen<HCCokeOvenContai
         this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
+        LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
+
     }
 
     @Override

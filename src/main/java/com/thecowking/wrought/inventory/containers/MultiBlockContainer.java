@@ -42,4 +42,9 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
         return (double)getCurrentHeatLevel() / (double)getMaxHeatLevel();
     }
 
+    public boolean enoughHeatToCraft()  {
+        return controller.currentHeatLevel >= controller.recipeHeatLevel;
+    }
+
+
 }

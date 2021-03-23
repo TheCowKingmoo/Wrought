@@ -19,39 +19,26 @@ import org.lwjgl.opengl.GL11;
 
 
 public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerMultiblock> {
-    final static int COOK_BAR_X_OFFSET = 14;
-    final static  int COOK_BAR_Y_OFFSET = 40;
-    final static  int COOK_BAR_ICON_U = 0;   // texture position of white arrow icon [u,v]
-    final static  int COOK_BAR_ICON_V = 207;
-    final static  int COOK_BAR_WIDTH = 18;
-    final static  int COOK_BAR_HEIGHT = 18;
     private static final Logger LOGGER = LogManager.getLogger();
-
-
     final static int INDICATOR_X_OFFSET = 39;
     final static int INDICATOR_Y_OFFSET = 48;
-    final static int INDICATOR_HEIGHT = 11;
-    final static int INDICATOR_WIDTH = 11;
-
-
-    private int HEAT_HEIGHT = 18;
-    private int HEAT_WIDTH = HEAT_HEIGHT*3;
-
-
-    private int statusIndicatorStartX;
-    private int statusIndicatorStartY;
-
-    private int heatBarStartX;
-    private int heatBarStartY;
+    final static int INDICATOR_HEIGHT = 100;
+    final static int INDICATOR_WIDTH = 100;
 
     private int progressBarStartX;
     private int progressBarStartY;
+    private int progressBarWidth = RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
+    private int progressBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN - 2*RenderHelper.SLOT_SIZE - 4 * RenderHelper.SLOT_SEP;
 
-    private int SIZE_MACHINE_GUI_Y = 114;
+    private int statusButtonX;
+    private int statusButtonY;
+    private int statusButtonRadius = RenderHelper.SLOT_SIZE;
 
 
-
-
+    private int heatBarStartX;
+    private int heatBarStartY;
+    private int heatBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN ;
+    private int heatBarWidth = RenderHelper.SLOT_SIZE / 2;
 
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
@@ -60,26 +47,24 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     public BloomeryMultiblockScreen(BloomeryContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.multiBlockContainer = container;
-        this.xSize = 184;
-        this.ySize = 240;
+        this.xSize = RenderHelper.BLANK_X_SIZE;
+        this.ySize = RenderHelper.BLANK_Y_SIZE;
 
-        this.progressBarStartX = xStart() + this.xSize / 2 - COOK_BAR_WIDTH / 2;
-        this.progressBarStartY = container.MIDDLE_Y - COOK_BAR_HEIGHT;
 
-        this.statusIndicatorStartX = xStart() + RenderHelper.GUI_X_MARGIN;
-        this.statusIndicatorStartY = 0;
+        LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
 
-        this.heatBarStartX = xStart() + RenderHelper.GUI_X_MARGIN;
-        this.heatBarStartY = yStart() + this.ySize / 2 - RenderHelper.GUI_Y_MARGIN - HEAT_HEIGHT;;
+
+        this.statusButtonX = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
+        this.statusButtonY = RenderHelper.GUI_Y_MARGIN;
+
+
+        this.progressBarStartX = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
+        this.progressBarStartY = RenderHelper.GUI_Y_MARGIN + 2*RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP;
+
+        this.heatBarStartX = RenderHelper.GUI_X_MARGIN;
+        this.heatBarStartY = RenderHelper.GUI_Y_MARGIN;
     }
 
-
-    public int getCenterX()  {
-        return  xStart() + this.xSize / 2;
-    }
-    public int getCenterY()  {
-        return  yStart() + this.SIZE_MACHINE_GUI_Y / 2;
-    }
 
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
@@ -99,17 +84,21 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         // highlights the item the player is hovering over
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
             this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
-
+            // tells user what the status is
         }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
             TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
+            // tell user what the item is called
+        }  else if(x > heatBarStartX && x < heatBarStartX + heatBarWidth && y > heatBarStartY && y < heatBarStartY + heatBarHeight)  {
+            TranslationTextComponent displayName = new TranslationTextComponent("heat is = " + multiBlockContainer.getCurrentHeatLevel());
+            renderTooltip(stack, displayName, x, y);
         }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
-
         }  else  {
             renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
         }
     }
+
 
 
     public int xStart() {
@@ -133,33 +122,27 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
 
         RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
-
-        double percent = multiBlockContainer.getProgress();
-        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), getCenterX(), getCenterY(), 64, 16, percent);
         // progress bar
-        //drawProgressBar();
+        double cookingPercent = multiBlockContainer.getProgress();
+        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
+
+
+        double heatPercent = multiBlockContainer.getHeatPercentage();
+
+        int color = 0;
+        if(this.multiBlockContainer.enoughHeatToCraft())  {
+            color = RenderHelper.convertARGBToInt(255, 128, 0, 1);
+        }  else  {
+            color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
+        }
+
+        RenderHelper.drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
         //draw indicator
-        drawStatusIndicator();
-
-        // draw heat bar
-        drawHeatBar();
+        RenderHelper.drawStatusIndicator(xStart() + statusButtonX, yStart() + statusButtonY, statusButtonRadius, getStatusColor());
 
 
     }
-
-
-    protected void drawHeatBar()  {
-        double percent = multiBlockContainer.getHeatPercentage();
-        int color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
-        RenderHelper.fillGradient(heatBarStartX, heatBarStartY, (int)(heatBarStartX + HEAT_WIDTH * percent), heatBarStartY + HEAT_HEIGHT, color, color, 0F);
-    }
-
-    protected void drawStatusIndicator()  {
-        int color = getStatusColor();
-        RenderHelper.fillGradient(statusIndicatorStartX, statusIndicatorStartY, statusIndicatorStartX + INDICATOR_WIDTH, statusIndicatorStartY + INDICATOR_HEIGHT, color, color, 0F);
-    }
-
 
     protected ITextComponent getName() {
         return new TranslationTextComponent("Bloomery");

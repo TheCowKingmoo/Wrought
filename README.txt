@@ -40,13 +40,20 @@ Machines Planned
   - What is it: A way to turn molten fluids into ingots/blocks/gears
   - Size: Unknown.
   
-- Sinter || Pellet Press
+- Sinter Plant || Pellet Press
   - What is it: A way to pre process ores before the blast furnace in order to increase its yield
   - Size: Unknown
 - Oxygen Furance
   - What is it: A furnace that blasts hot air over molten metals and is used to refine iron into steel
   - Size: Unknown
-
+- Concentrating Mill (Crusher) -
+  - What is it: Turns the Ore into Fine Dust.
+- Flotation Cell -
+  - Crushed Ore is diluted with water and pored into a Flotation Cell. A small amount of pine oil is added and the slurry is shaken. This makes all the waste rock drop to the bottom along with other metals not wanted.      
+- Filter
+  - What is it: Slurry is forced through a filter
+- Drossing Kettle
+  - What is it: heats up metal
 
 Blocks
    - Honeycomb Coke Oven Controller

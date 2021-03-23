@@ -85,11 +85,11 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
             this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
             // tells user what the status is
-        }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
+        }  else if(x > xStart() + statusButtonX && x < xStart() + statusButtonX + statusButtonRadius && y > yStart() + statusButtonY && y < yStart() + statusButtonY + statusButtonRadius) {
             TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
             renderTooltip(stack, displayName, x, y);
             // tell user what the item is called
-        }  else if(x > heatBarStartX && x < heatBarStartX + heatBarWidth && y > heatBarStartY && y < heatBarStartY + heatBarHeight)  {
+        }  else if(x > xStart() + heatBarStartX && x < xStart() + heatBarStartX + heatBarWidth && y > yStart() + heatBarStartY && y < yStart() + heatBarStartY + heatBarHeight)  {
             TranslationTextComponent displayName = new TranslationTextComponent("heat is = " + multiBlockContainer.getCurrentHeatLevel());
             renderTooltip(stack, displayName, x, y);
         }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {

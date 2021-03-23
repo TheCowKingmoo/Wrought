@@ -393,6 +393,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if (this.isRunning && this.timeElapsed < this.timeComplete) {
             this.needUpdate = true;
             this.timeElapsed++;
+            this.status = "Processing";
             return false;
         }
         // item has cooked long enough -> insert outputs and move onto next operation

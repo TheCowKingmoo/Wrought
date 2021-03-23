@@ -73,7 +73,7 @@ public class RenderHelper {
         fillGradient(adjX, adjY, adjX + width, adjY + height, backgroundColor, backgroundColor, 0F);
 
         int color = RenderHelper.convertARGBToInt(255, 255, 0, 1);
-        fillGradient(adjX, adjY, (int)(adjX + width * percent), adjY + height, color, color, 0F);
+        fillGradient(adjX, adjY, adjX + width, (int)(adjY + height * percent), color, color, 0F);
 
         manager.bindTexture(DOWN_ARROW_CUTOUT);
         AbstractGui.blit(stack, adjX, adjY, 0, 0, width, height, width, height);

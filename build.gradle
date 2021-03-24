@@ -93,46 +93,35 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
-        // JEI
-        name = "Progwml6 maven"
+        name = "Progwml6 maven (JEI)"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-   // maven { // Hwyla
-   //     url = "https://maven.tehnut.info"
-   // }
+
+    maven {
+        name = "Jared's Maven (CRT)"
+        url "https://maven.blamejared.com"
+    }
+
+    maven {
+        name = "TehNut's Maven (HWYLA)"
+        url "https://maven.tehnut.info"
+    }
     maven {
         url 'https://modmaven.dev/'
     }
-    // crafttweaker
-    maven { url 'https://maven.blamejared.com' }
-
 }
 
 
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.16'
-    implementation 'org.projectlombok:lombok:1.18.16'
 
-
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.4'
 
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
+    compile fg.deobf("mezz.jei:jei-1.16.4:${jei_version}")
+    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:${crafttweaker_version}")
+    compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+
     compile 'com.intellij:annotations:+@jar'
-
-
-    compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
-
-
-    runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
-
-    //compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
-    //runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")
 
     //Mekanism - testing cross mod interactions
     //compileOnly "mekanism:Mekanism:${mekanism_version}:api"
@@ -142,21 +131,6 @@ dependencies {
     //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
     //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
     //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
-
-
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 }
 

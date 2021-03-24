@@ -16,10 +16,9 @@ public class RecipeUtil {
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }
 
-    // TODO - hook into some sort of ore unifier here
     public static ItemStack getPreferredITemStackFromTag(Ingredient input)  {
         if(input.getMatchingStacks().length == 0)  return ItemStack.EMPTY;
+        // TODO - if else check for some hook into another mod unifer like JAOPOCA
         return input.getMatchingStacks()[0];
     }
-
 }

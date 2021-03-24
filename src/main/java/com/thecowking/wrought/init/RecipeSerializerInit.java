@@ -21,7 +21,7 @@ public class RecipeSerializerInit {
 
     // Coke Oven
     public static final ResourceLocation HONEY_COMB_OVEN_RECIPE_TYPE_ID  = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");
-    public static IRecipeSerializer<WroughtRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new WroughtSerializer(1, 2, 0, 1, false, true, HONEY_COMB_OVEN_RECIPE_TYPE_ID);;
+    public static IRecipeSerializer<WroughtRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new WroughtSerializer(1, 2, 0, 1, false, false, HONEY_COMB_OVEN_RECIPE_TYPE_ID);;
     public static final IRecipeType<IWroughtRecipe> HONEY_COMB_OVEN_TYPE = registerType(HONEY_COMB_OVEN_RECIPE_TYPE_ID);
     public static RegistryObject<IRecipeSerializer<?>> HONEY_COMB_SERIALIZER = RECIPE_SERIALIZERS.register("honey_comb_coke_oven",
             () -> HONEY_COMB_OVEN_RECIPE_SERIALIZER);

@@ -38,8 +38,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.thecowking.wrought.data.MultiblockData.BURN_TIME;
-import static com.thecowking.wrought.data.MultiblockData.FLUID_TANK;
+import static com.thecowking.wrought.data.MultiblockData.*;
 
 /*
     USed if the Multi-block has internal fluid tanks
@@ -339,7 +338,8 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
         this.numOutputTanks = nbt.getInt(NUM_OUTPUT_TANKS);
-
+        fluidItemInputSlots.deserializeNBT(nbt.getCompound(FLUID_ITEM_INPUT_SLOTS));
+        fluidItemOutputSlots.deserializeNBT(nbt.getCompound(FLUID_ITEM_OUTPUT_SLOTS));
         for(int i = 0; i < this.numOutputTanks; i++)  {
             outputTankCapacities[i] = nbt.getInt(TANK_CAP + i);
             OutputFluidTank tank = new OutputFluidTank(outputTankCapacities[i]);
@@ -353,6 +353,9 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     public CompoundNBT write(CompoundNBT tag) {
         tag = super.write(tag);
         tag.putInt(NUM_OUTPUT_TANKS, this.numOutputTanks);
+        tag.put(FLUID_ITEM_INPUT_SLOTS, fluidItemInputSlots.serializeNBT());
+        tag.put(FLUID_ITEM_OUTPUT_SLOTS, fluidItemOutputSlots.serializeNBT());
+
         for(int i = 0; i < numOutputTanks; i++)  {
             tag.put(MultiblockData.FLUID_TANK + i, outputFluidTanks[i].writeToNBT(new CompoundNBT()));
             tag.put(FLUID_BACKLOG + i, fluidBacklogs[i].writeToNBT(new CompoundNBT()));

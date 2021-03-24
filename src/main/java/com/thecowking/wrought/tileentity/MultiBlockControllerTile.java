@@ -1,5 +1,6 @@
 package com.thecowking.wrought.tileentity;
 
+import com.thecowking.wrought.config.HeatConfig;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.slots.*;
@@ -457,7 +458,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             this.currentHeatLevel -= 1;
         } else  {
             this.needUpdate = true;
-            this.currentHeatLevel -= this.currentHeatLevel / 100;
+            this.currentHeatLevel -= this.currentHeatLevel / HeatConfig.heatDissipation.get();
         }
     }
 
@@ -466,7 +467,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         //LOGGER.info("raise heat attempt -> " + burnTime);
 
         //if(this.currentHeatLevel + burnTime > this.maxHeatLevel)  return false;
-        LOGGER.info("raise heat by " + burnTime + " / 10");
         this.currentHeatLevel += burnTime / 10;
         return true;
     }

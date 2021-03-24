@@ -103,6 +103,8 @@ repositories {
     maven {
         url 'https://modmaven.dev/'
     }
+    // crafttweaker
+    maven { url 'https://maven.blamejared.com' }
 
 }
 
@@ -125,6 +127,9 @@ dependencies {
 
     compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.3.2.25")
+
+
+    runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
 
     //compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}:api")
     //runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${project.hwylaVersion}")

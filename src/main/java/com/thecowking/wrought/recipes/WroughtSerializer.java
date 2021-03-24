@@ -44,12 +44,24 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
     @Override
     public WroughtRecipe read(ResourceLocation recipeId, JsonObject json) {
 
+        /*
         ArrayList<ItemStack> itemOutputs = new ArrayList<>();
         for(int i = 0; i < this.numOutputs; i++)  {
             String searchString = "output_" + i;
             ItemStack current = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, searchString), true);
             itemOutputs.add(current);
         }
+
+         */
+
+
+        ArrayList<Ingredient> itemOutputs = new ArrayList<>();
+        for(int i = 0; i < this.numOutputs; i++)  {
+            String searchString = "output_" + i;
+            Ingredient current = Ingredient.deserialize(JSONUtils.getJsonObject(json, searchString));
+            itemOutputs.add(current);
+        }
+
 
         ArrayList<Ingredient> itemInputs  = new ArrayList<>();
         for(int i = 0; i < this.numInputs; i++)  {
@@ -92,10 +104,11 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
     @Override
     public WroughtRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
 
-        ArrayList<ItemStack> itemOutputs = new ArrayList<>();
+        ArrayList<Ingredient> itemOutputs  = new ArrayList<>();
         for(int i = 0; i < this.numOutputs; i++)  {
-            itemOutputs.add(buffer.readItemStack());
+            itemOutputs.add(Ingredient.read(buffer));
         }
+
 
         ArrayList<Ingredient> itemInputs  = new ArrayList<>();
         for(int i = 0; i < this.numInputs; i++)  {
@@ -124,9 +137,10 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
 
     @Override
     public void write(PacketBuffer buffer, WroughtRecipe recipe) {
-        List<ItemStack> itemOutputs = recipe.getItemOuputs();
+
+        List<Ingredient> itemOutputs = recipe.getItemInputs();
         for(int i = 0; i < itemOutputs.size(); i++)  {
-            buffer.writeItemStack(itemOutputs.get(i));
+            itemOutputs.get(i).write(buffer);
         }
 
         List<Ingredient> itemInputs = recipe.getItemInputs();

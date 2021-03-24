@@ -10,10 +10,8 @@ This is a Minecraft mod that is centered around the following
 
 
 Other Notes
-- An important aspect for me is to try and make the multiblocks somewhat detailed, but to not look out of place in a Minecraft world. To acheive this I want to make the multiblock only only out blocks,slabs, stairs and not render some complex object on top of it. 
-- A huge barrier from other multiblock mods is actually making the multiblock. Instead of placing each block the user can click on the controller which lets the, know all the block it still needs. If the user has all those blocks in inventory the controller will place them all for you.
-
-
+- An important aspect for me is to try and make the multiblocks somewhat detailed, but to not look out of place in a Minecraft world. To acheive this I want to make the multiblock only only out of blocks,slabs, stairs and not render some complex object on top of it. 
+- A huge barrier from other multiblock mods is actually making the multiblock. Instead of placing each block the user can click on the controller which lets the, user know all the block it still needs. If the user has all those blocks in their inventory the controller will place them all for you.
 
 Machines Implemented So Far
 - Honey Comb Coke Oven

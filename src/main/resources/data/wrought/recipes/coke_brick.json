@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:furnace",
+  "ingredients": [
+    {
+      "item": "wrought:unfired_coke_brick"
+    }
+  ],
+  "result": {
+    "item": "wrought:coke_brick"
+  },
+  "experience": 0,
+  "cookingtime": 100
+}

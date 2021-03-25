@@ -8,8 +8,6 @@ import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickSlab;
 import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
-import com.thecowking.wrought.inventory.containers.BuilderContainer;
-import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
@@ -91,8 +89,23 @@ public class RegistryHandler {
     //Coke Item
     public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
 
+
+
+    // Unfired Carbon Brick
+    public static final RegistryObject<Item> UNFIRED_CARBON_BRICK_ITEM = ITEMS.register("unfired_carbon_brick_item", UnfiredCarbonBrickItem::new);
+    // Carbon Brick Item
+    public static final RegistryObject<Item> CARBON_BRICK_ITEM = ITEMS.register("carbon_brick_item", CarbonBrickItem::new);
+
+    // Unfired Refractory Brick
+    public static final RegistryObject<Item> UNFIRED_REFRACTORY_BRICK_ITEM = ITEMS.register("unfired_refractory_brick_item", UnfiredRefractoryBrickItem::new);
+    // Refractory Brick Item
+    public static final RegistryObject<Item> REFRACTORY_BRICK_ITEM = ITEMS.register("refractory_brick_item", RefractoryBrickItem::new);
+
+    // Unfired Refractory Brick
+    public static final RegistryObject<Item> UNFIRED_COKE_BRICK_ITEM = ITEMS.register("unfired_coke_brick_item", UnfiredCokeBrickItem::new);
     //CokeBrick Item
     public static final RegistryObject<Item> COKE_BRICK_ITEM = ITEMS.register("coke_brick_item", CokeBrickItem::new);
+
 
     //Slag Item
     public static final RegistryObject<Item> SLAG = ITEMS.register("slag", SlagItem::new);

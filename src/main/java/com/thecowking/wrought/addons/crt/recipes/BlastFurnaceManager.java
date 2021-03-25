@@ -23,7 +23,7 @@ import java.util.List;
 public class BlastFurnaceManager implements IRecipeManager {
     @Override
     public IRecipeType getRecipeType() {
-        return RecipeSerializerInit.BLOOMERY_TYPE;
+        return RecipeSerializerInit.BLAST_FURNACE_TYPE;
     }
 
     @ZenCodeType.Method
@@ -48,7 +48,7 @@ public class BlastFurnaceManager implements IRecipeManager {
         fluidOutputs.add(fluidOutput_0.getInternal());
         fluidOutputs.add(fluidOutput_1.getInternal());
 
-        WroughtRecipe r = new WroughtRecipe(new ResourceLocation("crafttweaker", name), itemInputs, itemOutputs, fluidOutputs, null, null, burnTime, 0, RecipeSerializerInit.BLAST_FURNACE_RECIPE_TYPE_ID);
+        WroughtRecipe r = new WroughtRecipe(new ResourceLocation("crafttweaker", name), itemInputs, itemOutputs, fluidOutputs, null, null, burnTime, heat, RecipeSerializerInit.BLAST_FURNACE_RECIPE_TYPE_ID);
         CraftTweakerAPI.apply(new ActionAddRecipe(this, r, ""));
     }
 

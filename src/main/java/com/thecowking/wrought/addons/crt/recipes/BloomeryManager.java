@@ -26,9 +26,6 @@ public class BloomeryManager implements IRecipeManager {
         return RecipeSerializerInit.BLOOMERY_TYPE;
     }
 
-    //    public WroughtRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<Ingredient> itemOuputsIngredient, List<FluidStack> fluidOutputs,
-    //                              List<FluidStack> fluidInputs, Ingredient fuel, int burnTime, int heat, ResourceLocation recipeTypeID) {
-
     @ZenCodeType.Method
     public void addRecipe(String name, IIngredient input_0, IIngredient input_1, IIngredient output_0, IIngredient output_1, int burnTime, int heat)  {
         name = fixRecipeName(name);

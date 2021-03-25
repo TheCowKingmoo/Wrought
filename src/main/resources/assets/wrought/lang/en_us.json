@@ -14,12 +14,15 @@
   "block.wrought.coke_block": "Block of Coke",
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
 
+
   "item.wrought.slag": "Slag",
   "item.wrought.creosote_bucket": "Creosote Bucket",
   "item.wrought.coke": "Coke",
   "item.wrought.soot": "Soot",
   "item.wrought.ash": "Ash",
-  "item.wrought.coke_brick_item": "Coke Brick"
-
-
+  "item.wrought.coke_brick_item": "Coke Brick",
+  "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
+  "item.wrought.refractory_brick_item": "Refractory Brick",
+  "item.wrought.unfired_refractory_brick_item": "Coke Brick",
+  "item.wrought.coke_brick_item": "Unfired Coke Brick"
 }

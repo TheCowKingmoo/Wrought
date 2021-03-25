@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab",
-  "textures": {
-    "bottom": "wrought:blocks/h_c_coke_frame_block",
-    "top": "wrought:blocks/h_c_coke_frame_block",
-    "side": "wrought:blocks/h_c_coke_frame_block"
-  }
-}

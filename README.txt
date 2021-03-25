@@ -65,7 +65,7 @@ Blocks
       - only thing this TE knows is how to get to the controller
    - Bloomery Controller
       - the main TE for the Bloomery
-   - Refactory Brick Block, Stair, Slab
+   - Refractory Brick Block, Stair, Slab
       - main construction block of the Bloomery and a secondary frame block on other multiblocks
       - only thing this TE knows is how to get to the controller   
       

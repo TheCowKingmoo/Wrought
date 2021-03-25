@@ -17,8 +17,6 @@ public class RecipeSerializerInit {
 
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Wrought.MODID);
 
-
-
     // Coke Oven
     public static final ResourceLocation HONEY_COMB_OVEN_RECIPE_TYPE_ID  = new ResourceLocation(Wrought.MODID, "honey_comb_coke_oven");
     public static IRecipeSerializer<WroughtRecipe> HONEY_COMB_OVEN_RECIPE_SERIALIZER = new WroughtSerializer(1, 2, 0, 1, false, false, HONEY_COMB_OVEN_RECIPE_TYPE_ID);;
@@ -32,7 +30,6 @@ public class RecipeSerializerInit {
     public static final IRecipeType<IWroughtRecipe> BLAST_FURNACE_TYPE = registerType(BLAST_FURNACE_RECIPE_TYPE_ID);
     public static RegistryObject<IRecipeSerializer<?>> BLAST_FURNACE_SERIALIZER = RECIPE_SERIALIZERS.register("blast_furnace",
             () -> BLAST_FURNACE_RECIPE_SERIALIZER);
-
 
     public static final ResourceLocation BLOOMERY_RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "bloomery");
     public static IRecipeSerializer<WroughtRecipe> BLOOMERY_RECIPE_SERIALIZER = new WroughtSerializer(2, 2, 0, 0, true, true, BLOOMERY_RECIPE_TYPE_ID);

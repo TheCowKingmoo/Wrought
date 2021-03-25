@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "wrought:blocks/refractory_brick_block",
+    "top": "wrought:blocks/refractory_brick_block",
+    "side": "wrought:blocks/refractory_brick_block"
+  }
+}

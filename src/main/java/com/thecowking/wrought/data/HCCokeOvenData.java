@@ -22,16 +22,15 @@ import net.minecraft.world.World;
 import java.util.Set;
 
 import static com.thecowking.wrought.init.RegistryHandler.*;
-import static com.thecowking.wrought.init.RegistryHandler.H_C_COKE_FRAME_SLAB;
 import static com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile.findRecipesByType;
 
 public class HCCokeOvenData implements IMultiblockData {
     // Members that make up the multi-block
-    protected static Block frameBlock = H_C_COKE_FRAME_BLOCK.get();
+    protected static Block frameBlock = COKE_BRICK_BLOCK.get();
     private static Block controllerBlock = H_C_COKE_CONTROLLER_BLOCK.get();
-    private static Block hatchBlock = H_C_COKE_FRAME_BLOCK.get();
-    private static Block frameStairs = H_C_COKE_FRAME_STAIR.get();
-    private static Block frameSlab = H_C_COKE_FRAME_SLAB.get();
+    private static Block hatchBlock = COKE_BRICK_BLOCK.get();
+    private static Block frameStairs = COKE_BRICK_STAIR.get();
+    private static Block frameSlab = COKE_BRICK_SLAB.get();
 
 
 

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    " x ",
+    "x x",
+    " x "
+  ],
+  "key":
+  {
+    "x":
+    {
+      "item": "wrought:coke_brick_item"
+    }
+  },
+  "result":
+  {
+    "item": "wrought:coke_brick_block",
+    "count": 1
+  }
+}

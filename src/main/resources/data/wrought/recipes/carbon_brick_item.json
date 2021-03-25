@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "wrought:unfired_carbon_brick_item"
+  },
+  "result": "wrought:carbon_brick_item",
+  "experience": 0.0,
+  "cookingtime": 200
+}

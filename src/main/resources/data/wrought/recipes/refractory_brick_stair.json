@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    "x  ",
+    "xx ",
+    "xxx"
+  ],
+  "key":
+  {
+    "x":
+    {
+      "item": "wrought:refractory_brick_block"
+    }
+  },
+  "result":
+  {
+    "item": "wrought:refractory_brick_stair",
+    "count": 4
+  }
+}

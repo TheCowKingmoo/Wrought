@@ -1,5 +1,6 @@
 package com.thecowking.wrought.recipes;
 
+import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -7,12 +8,14 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WroughtRecipe implements IWroughtRecipe {
@@ -31,11 +34,15 @@ public class WroughtRecipe implements IWroughtRecipe {
     protected IRecipeSerializer<?>  seralizer;
     protected ResourceLocation recipeTypeID;
 
-    public WroughtRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<ItemStack> itemOuputs, List<FluidStack> fluidOutputs,
+    public WroughtRecipe(ResourceLocation id, List<Ingredient> itemInputs,  List<Ingredient> itemOuputsIngredient, List<FluidStack> fluidOutputs,
                               List<FluidStack> fluidInputs, Ingredient fuel, int burnTime, int heat, ResourceLocation recipeTypeID) {
         this.id = id;
         this.itemInputs = itemInputs;
-        this.itemOuputs = itemOuputs;
+
+        this.itemOuputs = new ArrayList<>();
+        for(int i = 0; i < itemOuputsIngredient.size(); i++)  {
+            itemOuputs.add(RecipeUtil.getPreferredITemStackFromTag(itemOuputsIngredient.get(i)));
+        }
         this.fluidOutputs = fluidOutputs;
         this.fluidInputs = fluidInputs;
         this.fuel = fuel;
@@ -125,8 +132,9 @@ public class WroughtRecipe implements IWroughtRecipe {
     public ItemStack getCraftingResult(RecipeWrapper inv) {
         return null;
     }
+
     public ItemStack getRecipeOutput() {
-        return null;
+        return this.itemOuputs.get(0);
     }
 
 }

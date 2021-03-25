@@ -30,10 +30,10 @@ public class BlastFurnaceData implements IMultiblockData {
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-    protected static Block frameBlock = BLAST_FURANCE_BRICK_FRAME.get();
-    protected static Block secondaryFrameBlock = REFACTORY_BRICK.get();
-    protected static Block secondaryStairBlock = REFACTORY_BRICK_STAIR.get();
-    protected static Block secondarySlabBlock = REFACTORY_BRICK_SLAB.get();
+    protected static Block frameBlock = BLAST_BRICK_BLOCK.get();
+    protected static Block secondaryFrameBlock = REFRACTORY_BRICK.get();
+    protected static Block secondaryStairBlock = REFRACTORY_BRICK_STAIR.get();
+    protected static Block secondarySlabBlock = REFRACTORY_BRICK_SLAB.get();
 
 
     private static Block controllerBlock = BLAST_FURANCE_BRICK_CONTROLLER.get();

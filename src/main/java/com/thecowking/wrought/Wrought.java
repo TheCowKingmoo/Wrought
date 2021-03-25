@@ -1,5 +1,6 @@
 package com.thecowking.wrought;
 
+import com.thecowking.wrought.config.Config;
 import com.thecowking.wrought.network.Networking;
 import com.thecowking.wrought.init.ClientSetup;
 import com.thecowking.wrought.init.RegistryHandler;
@@ -9,13 +10,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,10 +30,14 @@ import java.util.stream.Collectors;
 public class Wrought
 {
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "wrought";
 
     public Wrought() {
+        // laod the config
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.server_config);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.client_config);
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
@@ -48,6 +56,11 @@ public class Wrought
 
 
         Networking.registerMessages();
+
+
+        Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve("wrought-client.toml").toString());
+        Config.loadConfig(Config.server_config, FMLPaths.CONFIGDIR.get().resolve("wrought-server.toml").toString());
+
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

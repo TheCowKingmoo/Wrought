@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "wrought:blocks/coke_brick_block",
+    "up": "wrought:blocks/coke_brick_block",
+    "north": "wrought:blocks/coke_brick_block",
+    "south": "wrought:blocks/coke_brick_block",
+    "east": "wrought:blocks/coke_brick_block",
+    "west": "wrought:blocks/coke_brick_block"
+  }
+}

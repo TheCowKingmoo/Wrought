@@ -83,9 +83,7 @@ public class RenderHelper {
     public static void drawHeatBar(MatrixStack stack, TextureManager manager, int x, int y, int width, int height, double percent, int color)  {
         int backgroundColor = RenderHelper.convertARGBToInt(0, 0, 0, 1);
         fillGradient(x, y, x + width, y + height, backgroundColor, backgroundColor, 0F);
-
         fillGradient(x + 1, y  + height - (int)(percent *  height + 1), x + width - 1, y + height - 1, color, color, 0F);
-
     }
 
 
@@ -229,7 +227,7 @@ public class RenderHelper {
 
 
 
-    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, MultiBlockContainerFluid container, int tankIndex)  {
+    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
         if(fluidStack == null || fluidStack.isEmpty())  {
             return;
         }
@@ -241,7 +239,12 @@ public class RenderHelper {
         Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
         int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
         setGLColorFromInt(color);
-        drawTiledTexture(x, y+TANK_HEIGHT, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), TANK_WIDTH, (int)(TANK_HEIGHT * RenderHelper.getFluidInTanksHeight(container, tankIndex)), fluidStack.getAmount() / 1000);
+
+
+        fillGradient(x + 1, y  + height - (int)(percent *  height + 1), x + width - 1, y + height - 1, color, color, 0F);
+
+
+        drawTiledTexture(x, y + height, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), width, (int)(height * percent), fluidStack.getAmount() / 1000);
 
         matrixStack.pop();
     }

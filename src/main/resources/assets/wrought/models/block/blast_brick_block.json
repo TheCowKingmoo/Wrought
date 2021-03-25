@@ -1,11 +1,11 @@
 {
   "parent": "block/cube",
   "textures": {
-    "down": "wrought:blocks/blast_furnace_brick_frame",
-    "up": "wrought:blocks/blast_furnace_brick_frame",
-    "north": "wrought:blocks/blast_furnace_brick_frame",
-    "south": "wrought:blocks/blast_furnace_brick_frame",
-    "east": "wrought:blocks/blast_furnace_brick_frame",
-    "west": "wrought:blocks/blast_furnace_brick_frame"
+    "down": "wrought:blocks/blast_brick_block",
+    "up": "wrought:blocks/blast_brick_block",
+    "north": "wrought:blocks/blast_brick_block",
+    "south": "wrought:blocks/blast_brick_block",
+    "east": "wrought:blocks/blast_brick_block",
+    "west": "wrought:blocks/blast_brick_block"
   }
 }

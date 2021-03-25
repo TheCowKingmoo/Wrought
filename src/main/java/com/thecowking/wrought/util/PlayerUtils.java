@@ -25,7 +25,7 @@ public class PlayerUtils {
 
 
     // Source - https://github.com/McJtyMods/McJtyLib/blob/1.16/src/main/java/mcjty/lib/varia/BlockTools.java
-    public static boolean placeBlockAsIfPlayer(PlayerEntity player, BlockPos pos, BlockState blockState)  {
+    public static boolean placeBlockUsingPlayer(PlayerEntity player, BlockPos pos, BlockState blockState)  {
 
         if(!(blockState.getBlock().asItem() instanceof BlockItem))  return false;
         BlockItem itemBlock = (BlockItem) blockState.getBlock().asItem();

@@ -13,7 +13,12 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashMap;
+
 public class RecipeSerializerInit {
+
+
+
 
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Wrought.MODID);
 
@@ -49,5 +54,11 @@ public class RecipeSerializerInit {
 
     private static <T extends IRecipeType> T registerType(ResourceLocation recipeTypeId) {
         return (T) Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<>());
+    }
+
+
+    public static void metalIngotInit()  {
+
+
     }
 }

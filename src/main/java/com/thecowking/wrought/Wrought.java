@@ -52,6 +52,9 @@ public class Wrought
         // register blocks
         RegistryHandler.init();
 
+        // register modded items that may or may not be used
+        //RegistryHandler.registerModdedMaterials();
+
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
 
 

@@ -1,17 +1,17 @@
 {
   "type": "wrought:bloomery",
   "output_0": {
-    "tag": "forge:ingots/iron"
+    "tag": "forge:ingots/nickel"
   },
   "output_1": {
     "tag": "forge:slag"
   },
   "input_0": {
-    "tag": "forge:ores/iron"
+    "tag": "forge:ores/nickel"
   },
   "input_1": {
     "tag": "forge:carbonate"
   },
-  "heat": 2795,
+  "heat": 671,
   "burnTime": 15
 }

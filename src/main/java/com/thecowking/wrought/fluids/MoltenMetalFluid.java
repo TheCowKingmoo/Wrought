@@ -7,8 +7,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Map;
+
 public class MoltenMetalFluid  {
-    private String id;
+    public String id;
     private int colour;
     private Material material;
 
@@ -32,11 +34,5 @@ public class MoltenMetalFluid  {
     private void createFluid()  {
         WroughtFluidUtil.createFluidBlock(this.id, this.material, this.colour, 1200, 1200, new ResourceLocation(Wrought.MODID, "blocks/molten_still"), new ResourceLocation(Wrought.MODID,"blocks/molten_flow"), new ResourceLocation(Wrought.MODID,"blocks/molten_overlay"));
     }
-
-    private void addToTag()  {
-
-    }
-
-
 
 }

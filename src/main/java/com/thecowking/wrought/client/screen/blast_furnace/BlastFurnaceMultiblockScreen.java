@@ -39,14 +39,29 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
 
     final static int TANK_X_OFFSET = 176 - 18 - 4 - 10;
     final static int TANK_Y_OFFSET = 19;
-    final static int TANK_WIDTH = 18;
-    final static int TANK_HEIGHT = 70;
 
 
     final static int METAL_TANK_INDEX = 0;
     final static int SLAG_TANK_INDEX = 1;
 
+    public static final int TANK_WIDTH = 18;
+    public static final int TANK_HEIGHT = 56;
+
     protected BlastFurnaceContainerMultiblock multiBlockContainer;
+    private int heatBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN ;
+    private int heatBarWidth = RenderHelper.SLOT_SIZE / 2;
+    private int heatBarStartX;
+    private int heatBarStartY;
+
+
+    private int progressBarStartX;
+    private int progressBarStartY;
+    private int progressBarWidth = RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
+    private int progressBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN - 2*RenderHelper.SLOT_SIZE - 4 * RenderHelper.SLOT_SEP;
+
+    private int statusButtonX;
+    private int statusButtonY;
+    private int statusButtonRadius = RenderHelper.SLOT_SIZE;
 
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
@@ -54,6 +69,16 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
+        this.heatBarStartX = RenderHelper.GUI_X_MARGIN;
+        this.heatBarStartY = RenderHelper.GUI_Y_MARGIN;
+
+
+        this.statusButtonX = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
+        this.statusButtonY = RenderHelper.GUI_Y_MARGIN;
+
+
+        this.progressBarStartX = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
+        this.progressBarStartY = RenderHelper.GUI_Y_MARGIN + 2*RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP;
     }
 
     @Override
@@ -112,50 +137,37 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
+
         RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
-        // progress bar exists behind the main background
-        drawProgressBar(stack);
-        //draw metal fluid before main background
-
-        //draw Slag Fluid before main background
-       // drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() + TANK_X_OFFSET + 20, yStart() + TANK_Y_OFFSET);
+        // progress bar
+        double cookingPercent = multiBlockContainer.getProgress();
+        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
 
 
 
+        int color = 0;
+        if(this.multiBlockContainer.enoughHeatToCraft())  {
+            color = RenderHelper.convertARGBToInt(255, 128, 0, 1);
+        }  else  {
+            color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
+        }
+        double heatPercent = multiBlockContainer.getHeatPercentage();
+        RenderHelper.drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
+        //draw first tank
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, METAL_TANK_INDEX);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, METAL_TANK_INDEX);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
+        //draw second tank
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, multiBlockContainer, SLAG_TANK_INDEX);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, SLAG_TANK_INDEX);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
 
-        //draw indicator before background
         drawStatusIndicator(stack);
 
-
-    }
-
-    /*
-        1. Draws a black background
-        2. Draws a box that expands downwards the larger the processTime is.
-            The main gui has an arrow cutout that will go over thi process box and give the appearnce of an arrow.
-     */
-    protected void drawProgressBar(MatrixStack stack)  {
-        // draw a background for where the progress bar will not be
-
-        // get texture for the progress bar
-        this.minecraft.getTextureManager().bindTexture(RenderHelper.PROGRESS_BAR);
-
-        // gets the value from 0 to 1 of how much progress the cooking item has
-        double processTime = container.getProgress();
-
-        // draw on screen
-        this.blit(stack, xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_ICON_U, COOK_BAR_ICON_V,
-                COOK_BAR_WIDTH, (int) (processTime * COOK_BAR_HEIGHT));
     }
 
 

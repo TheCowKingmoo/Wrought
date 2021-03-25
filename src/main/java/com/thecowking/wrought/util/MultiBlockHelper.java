@@ -4,10 +4,7 @@ import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tileentity.TileEntity;
@@ -239,21 +236,21 @@ public class MultiBlockHelper {
                         // find the index of the item in inventory
                         int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
                         if(index != -1)  {
-                            player.inventory.mainInventory.get(index).shrink(1);
-                            // TODO - new method for placing that checks players permissons and other edge cases
+
+                            // yank correct blockstate if slab/stairs
+                            BlockState blockState = correctBlock.getDefaultState();
                             if(correctBlock instanceof StairsBlock)  {
                                 Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
-                                //world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
-                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
+                                blockState = correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection);
                             }  else if(correctBlock instanceof SlabBlock)  {
-                                //world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
-                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
-                            }   else  {
-                                //world.setBlockState(current, correctBlock.getDefaultState());
-                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState());
-
+                                blockState = correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y));
                             }
 
+                            // attempt to place using fake player
+                            if(!PlayerUtils.placeBlockUsingPlayer(fakePlayer, current, blockState)) return;
+
+                            // shrink inv if success
+                            player.inventory.mainInventory.get(index).shrink(1);
 
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");

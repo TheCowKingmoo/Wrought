@@ -132,8 +132,9 @@ public class WroughtRecipe implements IWroughtRecipe {
     public ItemStack getCraftingResult(RecipeWrapper inv) {
         return null;
     }
+
     public ItemStack getRecipeOutput() {
-        return null;
+        return this.itemOuputs.get(0);
     }
 
 }

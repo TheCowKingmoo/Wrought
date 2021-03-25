@@ -5,7 +5,7 @@ import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -528,12 +527,12 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         BlockPos inputPos = data.getRedstoneInBlockPos(this.pos);
         BlockPos outputPos = data.getRedstoneOutBlockPos(this.pos);
         TileEntity te = MultiblockData.getTileFromPos(this.world, inputPos);
-        if (te instanceof HCCokeOvenFrameTile) {
-            ((HCCokeOvenFrameTile) te).setJob(JOB_REDSTONE_IN);
+        if (te instanceof CokeBrickTile) {
+            ((CokeBrickTile) te).setJob(JOB_REDSTONE_IN);
         }
         te = MultiblockData.getTileFromPos(this.world, outputPos);
-        if (te instanceof HCCokeOvenFrameTile) {
-            ((HCCokeOvenFrameTile) te).setJob(JOB_REDSTONE_OUT);
+        if (te instanceof CokeBrickTile) {
+            ((CokeBrickTile) te).setJob(JOB_REDSTONE_OUT);
         }
     }
 

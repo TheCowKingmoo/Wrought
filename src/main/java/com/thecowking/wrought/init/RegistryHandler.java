@@ -3,9 +3,9 @@ package com.thecowking.wrought.init;
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.blast_furance.*;
 import com.thecowking.wrought.blocks.bloomery.BloomeryControllerBlock;
-import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickBlock;
-import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickSlab;
-import com.thecowking.wrought.blocks.refactory_brick.RefactoryBrickStairs;
+import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickBlock;
+import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickSlab;
+import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
@@ -18,11 +18,11 @@ import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
 import com.thecowking.wrought.items.items.*;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
-import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickFrameTile;
+import com.thecowking.wrought.tileentity.blast_furance.BlastBrickTile;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenFrameTile;
-import com.thecowking.wrought.tileentity.refactory_brick.RefactoryBrickFrameTile;
+import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
+import com.thecowking.wrought.tileentity.refractory_brick.RefractoryBrickFrameTile;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
@@ -60,18 +60,18 @@ public class RegistryHandler {
     public static final RegistryObject<TileEntityType<HCCokeOvenControllerTile>> H_C_COKE_CONTROLLER_TILE = TILES.register("h_c_coke_controller_block", () -> TileEntityType.Builder.create(HCCokeOvenControllerTile::new, H_C_COKE_CONTROLLER_BLOCK.get()).build(null));
 
     //Honey Comb Coke Frame
-    public static final RegistryObject<Block> H_C_COKE_FRAME_BLOCK = BLOCKS.register("h_c_coke_frame_block", HCCokeOvenFrameBlock::new);
-    public static final RegistryObject<Item> H_C_COKE_FRAME_BLOCK_ITEM = ITEMS.register("h_c_coke_frame_block", () -> new BlockItemBase(H_C_COKE_FRAME_BLOCK.get()));
-    public static final RegistryObject<TileEntityType<HCCokeOvenFrameTile>> H_C_COKE_FRAME_TILE = TILES.register("h_c_coke_frame_block", () -> TileEntityType.Builder.create(HCCokeOvenFrameTile::new, H_C_COKE_FRAME_BLOCK.get()).build(null));
+    public static final RegistryObject<Block> COKE_BRICK_BLOCK = BLOCKS.register("coke_brick_block", CokeBrickBlock::new);
+    public static final RegistryObject<Item> COKE_BRICK_BLOCK_ITEM = ITEMS.register("coke_brick_block", () -> new BlockItemBase(COKE_BRICK_BLOCK.get()));
+    public static final RegistryObject<TileEntityType<CokeBrickTile>> COKE_BRICK_TILE = TILES.register("coke_brick_block", () -> TileEntityType.Builder.create(CokeBrickTile::new, COKE_BRICK_BLOCK.get()).build(null));
 
 
     //Honey Comb Coke Frame Slab
-    public static final RegistryObject<Block> H_C_COKE_FRAME_SLAB = BLOCKS.register("h_c_coke_frame_slab", HCCokeOvenFrameSlab::new);
-    public static final RegistryObject<Item> H_C_COKE_FRAME_SLAB_ITEM = ITEMS.register("h_c_coke_frame_slab", () -> new BlockItemBase(H_C_COKE_FRAME_SLAB.get()));
+    public static final RegistryObject<Block> COKE_BRICK_SLAB = BLOCKS.register("coke_brick_slab", CokeBrickSlab::new);
+    public static final RegistryObject<Item> COKE_BRICK_SLAB_ITEM = ITEMS.register("coke_brick_slab", () -> new BlockItemBase(COKE_BRICK_SLAB.get()));
 
     //Honey Comb Coke Frame Stairs
-    public static final RegistryObject<Block> H_C_COKE_FRAME_STAIR = BLOCKS.register("h_c_coke_frame_stair", HCCokeOvenFrameStairs::new);
-    public static final RegistryObject<Item> H_C_COKE_FRAME_STAIR_ITEM = ITEMS.register("h_c_coke_frame_stair", () -> new BlockItemBase(H_C_COKE_FRAME_STAIR.get()));
+    public static final RegistryObject<Block> COKE_BRICK_STAIR = BLOCKS.register("coke_brick_stair", CokeBrickStairs::new);
+    public static final RegistryObject<Item> COKE_BRICK_STAIR_ITEM = ITEMS.register("coke_brick_stair", () -> new BlockItemBase(COKE_BRICK_STAIR.get()));
 
     //Honey Comb Coke Multi-Block
     public static final RegistryObject<ContainerType<HCCokeOvenContainerMultiblock>> H_C_CONTAINER = CONTAINERS.register("h_c_coke_controller_block", () -> IForgeContainerType.create((windowId, inv, data) -> {
@@ -86,10 +86,11 @@ public class RegistryHandler {
         World world = inv.player.getEntityWorld();
         return new HCCokeOvenContainer(windowId, world, pos, inv);
     }));
+
+
+
     //Coke Item
-    public static final RegistryObject<Item> COKE = ITEMS.register("coke", CokeItem::new);
-
-
+    public static final RegistryObject<Item> COKE = ITEMS.register("coke_item", CokeItem::new);
 
     // Unfired Carbon Brick
     public static final RegistryObject<Item> UNFIRED_CARBON_BRICK_ITEM = ITEMS.register("unfired_carbon_brick_item", UnfiredCarbonBrickItem::new);
@@ -101,25 +102,23 @@ public class RegistryHandler {
     // Refractory Brick Item
     public static final RegistryObject<Item> REFRACTORY_BRICK_ITEM = ITEMS.register("refractory_brick_item", RefractoryBrickItem::new);
 
-    // Unfired Refractory Brick
+    // Unfired Coke Brick
     public static final RegistryObject<Item> UNFIRED_COKE_BRICK_ITEM = ITEMS.register("unfired_coke_brick_item", UnfiredCokeBrickItem::new);
     //CokeBrick Item
     public static final RegistryObject<Item> COKE_BRICK_ITEM = ITEMS.register("coke_brick_item", CokeBrickItem::new);
 
-
     //Slag Item
-    public static final RegistryObject<Item> SLAG = ITEMS.register("slag", SlagItem::new);
+    public static final RegistryObject<Item> SLAG = ITEMS.register("slag_item", SlagItem::new);
 
     //Soot Item
-    public static final RegistryObject<Item> SOOT = ITEMS.register("soot", SootItem::new);
+    public static final RegistryObject<Item> SOOT = ITEMS.register("soot_item", SootItem::new);
 
     //Ash Item
-    public static final RegistryObject<Item> ASH = ITEMS.register("ash", AshItem::new);
+    public static final RegistryObject<Item> ASH = ITEMS.register("ash_item", AshItem::new);
 
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
     public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
-
 
     //Blast Furnace Controller
     public static final RegistryObject<Block> BLAST_FURANCE_BRICK_CONTROLLER = BLOCKS.register("blast_furnace_brick_controller", BlastFurnaceBrickControllerBlock::new);
@@ -127,9 +126,9 @@ public class RegistryHandler {
     public static final RegistryObject<TileEntityType<BlastFurnaceBrickControllerTile>> BLAST_FURNACE_BRICK_CONTROLLER_TILE = TILES.register("blast_furnace_brick_controller", () -> TileEntityType.Builder.create(BlastFurnaceBrickControllerTile::new, BLAST_FURANCE_BRICK_CONTROLLER.get()).build(null));
 
     //Blast Furnace Frame
-    public static final RegistryObject<Block> BLAST_FURANCE_BRICK_FRAME = BLOCKS.register("blast_furnace_brick_frame", BlastFurnaceBrickFrameBlock::new);
-    public static final RegistryObject<Item> BLAST_FURANCE_BRICK_FRAME_ITEM = ITEMS.register("blast_furnace_brick_frame", () -> new BlockItemBase(BLAST_FURANCE_BRICK_FRAME.get()));
-    public static final RegistryObject<TileEntityType<BlastFurnaceBrickFrameTile>> BLAST_FURNACE_BRICK_FRAME_TILE = TILES.register("blast_furnace_brick_frame", () -> TileEntityType.Builder.create(BlastFurnaceBrickFrameTile::new, BLAST_FURANCE_BRICK_FRAME.get()).build(null));
+    public static final RegistryObject<Block> BLAST_BRICK_BLOCK = BLOCKS.register("blast_brick_block", BlastBrickBlock::new);
+    public static final RegistryObject<Item> BLAST_BRICK_BLOCK_ITEM = ITEMS.register("blast_brick_block", () -> new BlockItemBase(BLAST_BRICK_BLOCK.get()));
+    public static final RegistryObject<TileEntityType<BlastBrickTile>> BLAST_BRICK_BLOCK_TILE = TILES.register("blast_brick_block", () -> TileEntityType.Builder.create(BlastBrickTile::new, BLAST_BRICK_BLOCK.get()).build(null));
 
 
     //Bloomery Controller
@@ -150,19 +149,19 @@ public class RegistryHandler {
     }));
 
 
-    //Refactory Brick
-    public static final RegistryObject<Block> REFACTORY_BRICK = BLOCKS.register("refactory_brick_block", RefactoryBrickBlock::new);
-    public static final RegistryObject<Item> REFACTORY_BRICK_ITEM = ITEMS.register("refactory_brick_block", () -> new BlockItemBase(REFACTORY_BRICK.get()));
-    public static final RegistryObject<TileEntityType<RefactoryBrickFrameTile>> REFACTORY_BRICK_FRAME_TILE = TILES.register("refactory_brick_block", () -> TileEntityType.Builder.create(RefactoryBrickFrameTile::new, REFACTORY_BRICK.get()).build(null));
+    //Refractory Brick
+    public static final RegistryObject<Block> REFRACTORY_BRICK = BLOCKS.register("refractory_brick_block", RefractoryBrickBlock::new);
+    public static final RegistryObject<Item> REFRACTORY_BRICK_BLOCK_ITEM = ITEMS.register("refractory_brick_block", () -> new BlockItemBase(REFRACTORY_BRICK.get()));
+    public static final RegistryObject<TileEntityType<RefractoryBrickFrameTile>> REFRACTORY_BRICK_FRAME_TILE = TILES.register("refractory_brick_block", () -> TileEntityType.Builder.create(RefractoryBrickFrameTile::new, REFRACTORY_BRICK.get()).build(null));
 
 
-    //Refactory Brick Stairs
-    public static final RegistryObject<Block> REFACTORY_BRICK_STAIR = BLOCKS.register("refactory_brick_stair", RefactoryBrickStairs::new);
-    public static final RegistryObject<Item> REFACTORY_BRICK_STAIR_ITEM = ITEMS.register("refactory_brick_stair", () -> new BlockItemBase(REFACTORY_BRICK_STAIR.get()));
+    //Refractory Brick Stairs
+    public static final RegistryObject<Block> REFRACTORY_BRICK_STAIR = BLOCKS.register("refractory_brick_stair", RefractoryBrickStairs::new);
+    public static final RegistryObject<Item> REFRACTORY_BRICK_STAIR_ITEM = ITEMS.register("refractory_brick_stair", () -> new BlockItemBase(REFRACTORY_BRICK_STAIR.get()));
 
-    //Refactory Brick Slab
-    public static final RegistryObject<Block> REFACTORY_BRICK_SLAB = BLOCKS.register("refactory_brick_slab", RefactoryBrickSlab::new);
-    public static final RegistryObject<Item> REFACTORY_BRICK_SLAB_ITEM = ITEMS.register("refactory_brick_slab", () -> new BlockItemBase(REFACTORY_BRICK_SLAB.get()));
+    //Refractory Brick Slab
+    public static final RegistryObject<Block> REFRACTORY_BRICK_SLAB = BLOCKS.register("refractory_brick_slab", RefractoryBrickSlab::new);
+    public static final RegistryObject<Item> REFRACTORY_BRICK_SLAB_ITEM = ITEMS.register("refractory_brick_slab", () -> new BlockItemBase(REFRACTORY_BRICK_SLAB.get()));
 
 
     //Blast Furnace Container Auto Builder

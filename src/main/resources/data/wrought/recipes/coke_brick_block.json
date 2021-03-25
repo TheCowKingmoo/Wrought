@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "pattern":
   [
-    "xxx",
-    "xxx",
-    "xxx"
+    " x ",
+    "x x",
+    " x "
   ],
   "key":
   {
     "x":
     {
-      "item": "wrought:coke_item"
+      "item": "wrought:coke_brick_item"
     }
   },
   "result":
   {
-    "item": "wrought:coke_block",
+    "item": "wrought:coke_brick_block",
     "count": 1
   }
 }

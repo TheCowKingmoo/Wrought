@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "wrought:unfired_refractory_brick"
+      "item": "wrought:unfired_refractory_brick_item"
     },
     {
       "item": "minecraft:dirt"
     }
   ],
   "result": {
-    "item": "wrought:unfired_coke_brick"
+    "item": "wrought:unfired_coke_brick_item"
   }
 }

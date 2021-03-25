@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wrought:items/unfired_refractory_brick_item"
+  }
+}

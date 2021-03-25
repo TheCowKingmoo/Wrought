@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:clay"
+      "item": "minecraft:clay_ball"
     },
     {
       "item": "minecraft:sand"
@@ -12,6 +12,6 @@
     }
   ],
   "result": {
-    "item": "wrought:unfired_refractory_brick"
+    "item": "wrought:unfired_refractory_brick_item"
   }
 }

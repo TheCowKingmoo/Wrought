@@ -1,28 +1,30 @@
 {
   "block.wrought.h_c_coke_controller_block": "Coke Oven Controller Block",
-  "block.wrought.h_c_coke_frame_block": "Coke Oven Frame Block",
-  "block.wrought.h_c_coke_frame_stair": "Coke Oven Frame Stair",
-  "block.wrought.h_c_coke_frame_slab": "Coke Oven Frame Slab",
+  "block.wrought.coke_brick_block": "Coke Brick Block",
+  "block.wrought.coke_brick_stair": "Coke Brick Stair",
+  "block.wrought.coke_brick_slab": "Coke Brick Slab",
 
-  "block.wrought.blast_furnace_brick_frame": "Blast Furnace Brick Frame",
+  "block.wrought.blast_brick_block": "Blast Brick Block",
   "block.wrought.blast_furnace_brick_controller": "Blast Furnace Brick Controller",
-  "block.wrought.refactory_brick_block": "Refactory Brick Block",
-  "block.wrought.refactory_brick_stair": "Refactory Brick Stair",
-  "block.wrought.refactory_brick_slab": "Refactory Brick Slab",
+
+  "block.wrought.refractory_brick_block": "Refractory Brick Block",
+  "block.wrought.refractory_brick_stair": "Refractory Brick Stair",
+  "block.wrought.refractory_brick_slab": "Refractory Brick Slab",
   
-  "block.wrought.bloomery_controller_block": "Bloomery",
+  "block.wrought.bloomery_controller_block": "Bloomery Controller Block",
   "block.wrought.coke_block": "Block of Coke",
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
 
-
-  "item.wrought.slag": "Slag",
+  "item.wrought.slag_item": "Slag",
   "item.wrought.creosote_bucket": "Creosote Bucket",
-  "item.wrought.coke": "Coke",
-  "item.wrought.soot": "Soot",
-  "item.wrought.ash": "Ash",
+  "item.wrought.coke_item": "Coke",
+  "item.wrought.soot_item": "Soot",
+  "item.wrought.ash_item": "Ash",
   "item.wrought.coke_brick_item": "Coke Brick",
-  "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
   "item.wrought.refractory_brick_item": "Refractory Brick",
-  "item.wrought.unfired_refractory_brick_item": "Coke Brick",
-  "item.wrought.coke_brick_item": "Unfired Coke Brick"
+  "item.wrought.unfired_refractory_brick_item": "Unfired Refractory Brick",
+  "item.wrought.unfired_carbon_brick_item": "Unfired Carbon Brick",
+  "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
+  "item.wrought.carbon_brick_item": "Carbon Brick"
+
 }

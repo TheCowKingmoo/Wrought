@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wrought:block/coke_brick_slab"
+    },
+    "type=double": {
+      "model": "wrought:block/coke_brick_block"
+    },
+    "type=top": {
+      "model": "wrought:block/coke_brick_slab_top"
+    }
+  }
+}

@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "wrought:unfired_refractory_brick"
+      "item": "wrought:unfired_refractory_brick_item"
     },
     {
       "item": "wrought:slag"
     }
   ],
   "result": {
-    "item": "wrought:unfired_carbon_brick"
+    "item": "wrought:unfired_carbon_brick_item"
   }
 }

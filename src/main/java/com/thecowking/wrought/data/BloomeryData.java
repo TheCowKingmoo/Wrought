@@ -24,11 +24,11 @@ import static com.thecowking.wrought.init.RegistryHandler.*;
 
 public class BloomeryData implements IMultiblockData {
     // Members that make up the multi-block
-    protected static Block frameBlock = REFACTORY_BRICK.get();
+    protected static Block frameBlock = REFRACTORY_BRICK.get();
     private static Block controllerBlock = BLOOMERY_CONTROLLER.get();
-    private static Block hatchBlock = REFACTORY_BRICK.get();
-    private static Block frameStairs = REFACTORY_BRICK_STAIR.get();
-    private static Block frameSlab = REFACTORY_BRICK_SLAB.get();
+    private static Block hatchBlock = REFRACTORY_BRICK.get();
+    private static Block frameStairs = REFRACTORY_BRICK_STAIR.get();
+    private static Block frameSlab = REFRACTORY_BRICK_SLAB.get();
 
     /*
 array holding the blocks location of all members in the multi-blocks

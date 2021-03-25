@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "wrought:blocks/refractory_brick_block",
+    "up": "wrought:blocks/refractory_brick_block",
+    "north": "wrought:blocks/refractory_brick_block",
+    "south": "wrought:blocks/refractory_brick_block",
+    "east": "wrought:blocks/refractory_brick_block",
+    "west": "wrought:blocks/refractory_brick_block"
+  }
+}

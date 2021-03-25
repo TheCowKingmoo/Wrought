@@ -2,20 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "pattern":
   [
-    "xxx",
-    "xxx",
     "xxx"
   ],
   "key":
   {
     "x":
     {
-      "item": "wrought:coke_item"
+      "item": "wrought:refractory_brick_block"
     }
   },
   "result":
   {
-    "item": "wrought:coke_block",
-    "count": 1
+    "item": "wrought:refractory_brick_slab",
+    "count": 6
   }
 }

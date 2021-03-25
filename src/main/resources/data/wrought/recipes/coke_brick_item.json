@@ -1,0 +1,10 @@
+
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "wrought:unfired_coke_brick_item"
+  },
+  "result": "wrought:coke_brick_item",
+  "experience": 0.0,
+  "cookingtime": 200
+}

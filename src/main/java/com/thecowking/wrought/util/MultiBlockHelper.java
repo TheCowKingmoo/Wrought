@@ -15,6 +15,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.FakePlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -218,6 +220,9 @@ public class MultiBlockHelper {
         BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
 
+
+        FakePlayer fakePlayer = PlayerUtils.createFakePlayer((ServerWorld) world);
+
         // checks the central slice part of the structure to ensure the correct blocks exist
         for (int y = 0; y < data.getHeight(); y++) {
             for (int z = 0; z < data.getLength(); z++) {
@@ -238,12 +243,17 @@ public class MultiBlockHelper {
                             // TODO - new method for placing that checks players permissons and other edge cases
                             if(correctBlock instanceof StairsBlock)  {
                                 Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
-                                world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
+                                //world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
+                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
                             }  else if(correctBlock instanceof SlabBlock)  {
-                                world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
+                                //world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
+                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
                             }   else  {
-                                world.setBlockState(current, correctBlock.getDefaultState());
+                                //world.setBlockState(current, correctBlock.getDefaultState());
+                                PlayerUtils.placeBlockAsIfPlayer(fakePlayer, current, correctBlock.getDefaultState());
+
                             }
+
 
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");

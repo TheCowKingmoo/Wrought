@@ -1,13 +1,13 @@
 {
   "type": "wrought:blast_furnace",
   "output_0": {
-    "item": "wrought:soot"
+    "item": "wrought:soot_item"
   },
   "output_1": {
-    "item": "wrought:soot"
+    "item": "wrought:soot_item"
   },
   "output_2": {
-    "item": "wrought:ash"
+    "item": "wrought:ash_item"
   },
   "input_0": {
     "item": "minecraft:iron_ore"

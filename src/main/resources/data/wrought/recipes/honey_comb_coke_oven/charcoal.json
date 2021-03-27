@@ -4,7 +4,7 @@
     "item": "minecraft:charcoal"
   },
   "output_1": {
-    "item": "wrought:ash"
+    "tag": "forge:ash"
   },
   "input_0": {
     "tag": "minecraft:logs"

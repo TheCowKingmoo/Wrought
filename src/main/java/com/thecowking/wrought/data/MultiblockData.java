@@ -34,6 +34,9 @@ public class MultiblockData {
 
     public static final String BURN_TIME = "burn_time";
     public static final String BURN_COMPLETE_TIME = "burn_complete_time";
+    public static final String FUEL_TIME = "fuel_time";
+    public static final String FUEL_TIME_COMPLETE = "fuel_complete_time";
+    public static final String RECIPE_HEAT_LEVEL = "recipe_heat_level";
 
     public static final String HEAT_LEVEL = "heat_level";
 

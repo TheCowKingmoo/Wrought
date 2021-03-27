@@ -137,6 +137,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     }
 
     public ItemStack getRecipeOutput() {
+        if(itemOuputs.size() == 0) return null;
         return this.itemOuputs.get(0);
     }
 

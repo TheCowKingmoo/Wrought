@@ -3,9 +3,11 @@ package com.thecowking.wrought.tileentity;
 import com.thecowking.wrought.config.HeatConfig;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
+import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
+import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -71,8 +73,12 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public int timeElapsed = 0;
     public int timeComplete = 0;
 
+    public int fuelTimeElapsed = 0;
+    public int fuelTimeComplete = 0;
+
     public int currentHeatLevel = 0;
-    public int maxHeatLevel = 3200; // iron melts at  2800
+    public int currentMaxHeatLevel = 0;
+    public int maxHeatLevel = 9000;
     public int recipeHeatLevel = 0;
 
 
@@ -412,37 +418,15 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
-    protected boolean consumeFuel()  {
+
+
+
+    protected boolean consumeFuel(IWroughtRecipe fuel)  {
         LOGGER.info("consume fuel");
-        ItemStack fuelStack = this.fuelInputSlot.getStackInSlot(0);
-        if(!validFuel(fuelStack))  {
-            LOGGER.info("NOT VALID FUEL");
-            this.status = "Not a valid fuel";
-            return false;
-        }
-        int burnTime = ForgeHooks.getBurnTime(fuelStack);
-
-        if(raiseHeatLevel(burnTime))  {
-            this.fuelInputSlot.getStackInSlot(0).shrink(1);
-        }
+        fuelTimeComplete = fuel.getBurnTime();
+        currentMaxHeatLevel = fuel.getHeat();
+        this.fuelInputSlot.getStackInSlot(0).shrink(1);
         return true;
-    }
-
-    protected boolean validFuel(ItemStack fuelStack)  {
-        LOGGER.info("valid fuel");
-
-        // Check if the recipe only wants specific fuels
-        //if(currentRecipe.getFuel() != Ingredient.EMPTY)  {
-        //    if(currentRecipe.getFuel().test(fuelStack))  {
-        //        return true;
-        //    }
-        //    return false;
-       // }
-        // Check if the itemstack is burnable and not a block
-        if(fuelStack.getBurnTime() != 0 && !((fuelStack.getItem() instanceof BlockItem)))  {
-            return true;
-        }
-        return false;
     }
 
 
@@ -457,22 +441,22 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             this.currentHeatLevel -= 1;
         } else  {
             this.needUpdate = true;
-            this.currentHeatLevel -= this.currentHeatLevel / HeatConfig.heatDissipation.get();
+            // always at least go down by 1 degree
+            int div = Math.min(1, this.currentHeatLevel / HeatConfig.heatDissipation.get());
+            this.currentHeatLevel -= div;
         }
     }
 
 
-    protected boolean raiseHeatLevel(int burnTime)  {
-        //LOGGER.info("raise heat attempt -> " + burnTime);
-
-        //if(this.currentHeatLevel + burnTime > this.maxHeatLevel)  return false;
-        this.currentHeatLevel += burnTime / 10;
+    protected boolean raiseHeatLevel()  {
+        if(currentMaxHeatLevel == 0)  return false;
+        if(currentHeatLevel >= currentMaxHeatLevel)  return false;
+        currentHeatLevel += (1 - this.currentHeatLevel / currentMaxHeatLevel)  * 10;
         return true;
     }
 
     protected boolean heatHighEnough()  {
         if(this.currentHeatLevel < this.recipeHeatLevel)  {
-            if(!consumeFuel())  return false;
             if(this.currentHeatLevel < this.recipeHeatLevel)  {
                 this.status = "Not enough heat";
                 return false;
@@ -538,6 +522,24 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public boolean isPrimarySlotEmpty()  {
         return this.inputSlots.getStackInSlot(0).isEmpty();
+    }
+
+    public IWroughtRecipe getFuelRecipe()  {
+        Set<IRecipe<?>> recipes = RecipeUtil.findRecipesByType(RecipeSerializerInit.FUEL_TYPE, world);
+        LOGGER.info("attempting to find fuel recipes");
+        LOGGER.info("num fuel = " + recipes.size() );
+
+
+        for (IRecipe<?> iRecipe : recipes) {
+            IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
+            LOGGER.info(recipe.getInput(0).getMatchingStacks()[0]);
+
+            if (recipe.matches(new RecipeWrapper(this.fuelInputSlot), this.world)) {
+                LOGGER.info("found fuel");
+                return recipe;
+            }
+        }
+        return null;
     }
 
 
@@ -607,6 +609,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
      */
     public void attemptRunOperation() {
+
         heatDisspation();
         LOGGER.info("backlog");
 
@@ -618,6 +621,12 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if(redstonePowered())  { return; }
         // increment how long current item has cooked
         LOGGER.info("current process");
+
+        // check if fuel needs to be fed to the fire
+        processFuel();
+
+
+        if(!heatHighEnough())  return;
 
         // needs to run before timeElapsed gets incremented
         if(this.hasFuelSlot && !heatHighEnough())  return;
@@ -643,6 +652,28 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
 
     }
+
+    public void processFuel()  {
+        // skip processing as we dont need the heat for this recipe
+        if(recipeHeatLevel < currentHeatLevel)  return;
+
+        needUpdate = true;
+        if(this.fuelTimeElapsed >= this.fuelTimeComplete)  {
+            IWroughtRecipe fuel = getFuelRecipe();
+            if(fuel == null)  {
+                if(this.fuelInputSlot.getStackInSlot(0) == ItemStack.EMPTY)  status = "no fuel detected";
+                else  status = "item in fuel slot is not a valid fuel";
+                return;
+            }
+
+            consumeFuel(fuel);
+            this.fuelTimeElapsed = 0;
+        }  else  {
+            this.fuelTimeElapsed++;
+        }
+        raiseHeatLevel();
+    }
+
 
     /*
         Moves Recipes into processingItemStacks
@@ -706,6 +737,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if(this.hasFuelSlot)  {
             this.fuelInputSlot.deserializeNBT(nbt.getCompound(FUEL_INPUT_SLOTS));
             this.currentHeatLevel = nbt.getInt(HEAT_LEVEL);
+            this.fuelTimeElapsed = nbt.getInt(FUEL_TIME);
+            this.fuelTimeComplete = nbt.getInt(FUEL_TIME_COMPLETE);
+            this.recipeHeatLevel = nbt.getInt(RECIPE_HEAT_LEVEL);
         }
     }
 
@@ -723,6 +757,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if(this.hasFuelSlot)  {
             tag.put(FUEL_INPUT_SLOTS, this.fuelInputSlot.serializeNBT());
             tag.putInt(HEAT_LEVEL, this.currentHeatLevel);
+            tag.putInt(FUEL_TIME, this.fuelTimeElapsed);
+            tag.putInt(FUEL_TIME_COMPLETE, this.fuelTimeComplete);
+            tag.putInt(RECIPE_HEAT_LEVEL, this.recipeHeatLevel);
+
         }
         return tag;
     }

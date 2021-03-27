@@ -32,7 +32,7 @@ public class MoltenMetalFluid  {
     }
 
     private void createFluid()  {
-        WroughtFluidUtil.createFluidBlock(this.id, this.material, this.colour, 1200, 1200, new ResourceLocation(Wrought.MODID, "blocks/molten_still"), new ResourceLocation(Wrought.MODID,"blocks/molten_flow"), new ResourceLocation(Wrought.MODID,"blocks/molten_overlay"));
+        WroughtFluidUtil.createFluidBlock("molten_" + this.id, this.material, this.colour, 1200, 1200, new ResourceLocation(Wrought.MODID, "blocks/molten_still"), new ResourceLocation(Wrought.MODID,"blocks/molten_flow"), new ResourceLocation(Wrought.MODID,"blocks/molten_overlay"), "molten/" + this.id);
     }
 
 }

@@ -17,7 +17,6 @@
 
   "item.wrought.slag_item": "Slag",
   "item.wrought.calcium_carbonate_item": "Calcium Carbonate",
-  "item.wrought.creosote_bucket": "Creosote Bucket",
   "item.wrought.coke_item": "Coke",
   "item.wrought.soot_item": "Soot",
   "item.wrought.ash_item": "Ash",
@@ -26,6 +25,12 @@
   "item.wrought.unfired_refractory_brick_item": "Unfired Refractory Brick",
   "item.wrought.unfired_carbon_brick_item": "Unfired Carbon Brick",
   "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
-  "item.wrought.carbon_brick_item": "Carbon Brick"
+  "item.wrought.carbon_brick_item": "Carbon Brick",
+
+
+  "item.wrought.creosote_bucket": "Creosote Bucket",
+  "item.wrought.molten_iron_bucket": "Molten Iron Bucket",
+  "item.wrought.molten_copper_bucket": "Molten Copper Bucket"
+
 
 }

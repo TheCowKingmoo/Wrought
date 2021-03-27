@@ -33,6 +33,7 @@ public class Wrought
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "wrought";
 
+
     public Wrought() {
         // laod the config
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.server_config);
@@ -46,7 +47,6 @@ public class Wrought
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-
 
 
         // register blocks

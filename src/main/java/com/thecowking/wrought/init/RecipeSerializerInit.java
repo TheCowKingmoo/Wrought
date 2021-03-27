@@ -44,7 +44,6 @@ public class RecipeSerializerInit {
 
 
 
-
     private static class RecipeType<T extends IRecipe<?>> implements IRecipeType<T> {
         @Override
         public String toString() {
@@ -56,9 +55,4 @@ public class RecipeSerializerInit {
         return (T) Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<>());
     }
 
-
-    public static void metalIngotInit()  {
-
-
-    }
 }

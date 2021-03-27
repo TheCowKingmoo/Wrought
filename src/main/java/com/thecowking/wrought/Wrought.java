@@ -64,7 +64,6 @@ public class Wrought
         Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve("wrought-client.toml").toString());
         Config.loadConfig(Config.server_config, FMLPaths.CONFIGDIR.get().resolve("wrought-server.toml").toString());
 
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 

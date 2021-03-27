@@ -6,6 +6,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.datafix.fixes.FurnaceRecipes;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -52,6 +53,8 @@ public class WroughtRecipe implements IWroughtRecipe {
         this.heat = heat;
         this.burnTime = burnTime;
         this.recipeTypeID = recipeTypeID;
+
+
     }
 
     public List<Ingredient> getItemInputs()  {return this.itemInputs;}

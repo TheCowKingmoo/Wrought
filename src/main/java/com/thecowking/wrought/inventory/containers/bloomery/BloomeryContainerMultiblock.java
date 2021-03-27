@@ -1,6 +1,7 @@
 package com.thecowking.wrought.inventory.containers.bloomery;
 
 import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
+import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
 import com.thecowking.wrought.util.RenderHelper;
@@ -48,9 +49,9 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
             LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, SLOTS_0_X, INPUTS_Y));
+                    addSlot(new SlotItemInput(h, numSlot++, SLOTS_0_X, INPUTS_Y, controller));
                     // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, SLOTS_1_X,  INPUTS_Y));
+                    addSlot(new SlotItemInput(h, numSlot++, SLOTS_1_X,  INPUTS_Y, controller));
 
                     // Primary Item Output Slot
                      addSlot(new SlotOutput(h, numSlot++, SLOTS_0_X, OUTPUTS_Y));

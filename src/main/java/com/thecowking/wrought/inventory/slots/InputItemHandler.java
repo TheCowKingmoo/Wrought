@@ -33,8 +33,8 @@ public class InputItemHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-
         //if( slot > tile.numInputSlots)  {
+        LOGGER.info("hello there");
             if(this.tile.itemUsedInRecipe(stack, slot))  {
                 return super.insertItem(slot, stack, simulate);
             }

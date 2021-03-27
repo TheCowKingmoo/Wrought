@@ -155,14 +155,19 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         double heatPercent = multiBlockContainer.getHeatPercentage();
         RenderHelper.drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
+
+
+        //    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
         //draw first tank
+        double firstTankPercent = multiBlockContainer.getTankPercentFull(METAL_TANK_INDEX);
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, METAL_TANK_INDEX);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, firstTankPercent);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
         //draw second tank
+        double secondTankPercent = multiBlockContainer.getTankPercentFull(SLAG_TANK_INDEX);
         RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, SLAG_TANK_INDEX);
+        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, secondTankPercent);
         RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
 
 

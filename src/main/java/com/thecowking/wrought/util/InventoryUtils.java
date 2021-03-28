@@ -55,7 +55,10 @@ public class InventoryUtils {
 
     public static ItemStack fillBucketOrFluidContainer(ItemStack emptyContainer, FluidStack fluidStack) {
         Item item = emptyContainer.getItem();
+        LOGGER.info(emptyContainer.getDisplayName());
         if (item instanceof BucketItem) {
+            LOGGER.info("is bucket");
+            LOGGER.info(fluidStack.getFluid());
             return new ItemStack(fluidStack.getFluid().getFilledBucket());
         }
         return ItemStack.EMPTY;

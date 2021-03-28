@@ -26,6 +26,8 @@ public class FluidInit {
 
         // TODO - better cap for modded ingots
         // Molten Fluids -  provide the color manually
+        new MoltenMetalFluid("slag", Material.LAVA, RenderHelper.convertARGBToInt(100,100, 100,1));
+
         new MoltenMetalFluid("aluminum", Material.LAVA, RenderHelper.convertARGBToInt(228,228, 228,0.25));
         new MoltenMetalFluid("copper", Material.LAVA, RenderHelper.convertARGBToInt(220,176, 0,0.5));
         new MoltenMetalFluid("lead", Material.LAVA, RenderHelper.convertARGBToInt(255,128, 0,0.5));

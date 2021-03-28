@@ -2,6 +2,7 @@ package com.thecowking.wrought.recipes;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import mekanism.api.recipes.inputs.FluidStackIngredient;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;

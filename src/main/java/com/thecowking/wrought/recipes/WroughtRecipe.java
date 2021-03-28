@@ -107,28 +107,21 @@ public class WroughtRecipe implements IWroughtRecipe {
 
     public boolean matches(RecipeWrapper inv, World worldIn) {
         if(inv.getSizeInventory() < 1)  {
-            LOGGER.info("INPUT SIZE FAIL");
             return false;
         }
         if(inv.getStackInSlot(0) == ItemStack.EMPTY) {
-            LOGGER.info("INPUT EMPTY");
             return false;
         }
 
         for(int i = 0; i < getNumInputs(); i++)  {
             if(i > this.itemInputs.size())  {
-                LOGGER.info("SIZE FAILED");
                 return false;
             }
-            LOGGER.info(itemInputs.get(i).getMatchingStacks()[0].getDisplayName() + " and " + inv.getStackInSlot(i));
-
 
             if(!this.itemInputs.get(i).test(inv.getStackInSlot(i)))  {
-                LOGGER.info("MATCH FAILED");
                 return false;
             }
         }
-        LOGGER.info("MATCH RETURN TRUE");
         return true;
     }
 

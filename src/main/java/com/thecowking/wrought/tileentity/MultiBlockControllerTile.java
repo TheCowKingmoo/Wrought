@@ -373,7 +373,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             // go thru all processingItemStacks and move into output slots
             for(int i = 0; i < processingItemStacks.length; i++)  {
                 if(this.processingItemStacks[i] == ItemStack.EMPTY)  {
-                    LOGGER.info("attempted to process empty itemstack");
                     continue;
                 }
                 this.itemBacklogs[i] = outputSlots.internalInsertItem(i, processingItemStacks[i].copy(), false);
@@ -422,7 +421,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
 
     protected boolean consumeFuel(IWroughtRecipe fuel)  {
-        LOGGER.info("consume fuel");
         fuelTimeComplete = fuel.getBurnTime();
         currentMaxHeatLevel = fuel.getHeat();
         this.fuelInputSlot.getStackInSlot(0).shrink(1);
@@ -524,18 +522,14 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return this.inputSlots.getStackInSlot(0).isEmpty();
     }
 
+
+    // TODO combine with regular getRecipe
     public IWroughtRecipe getFuelRecipe()  {
         Set<IRecipe<?>> recipes = RecipeUtil.findRecipesByType(RecipeSerializerInit.FUEL_TYPE, world);
-        LOGGER.info("attempting to find fuel recipes");
-        LOGGER.info("num fuel = " + recipes.size() );
-
 
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-            LOGGER.info(recipe.getInput(0).getMatchingStacks()[0]);
-
             if (recipe.matches(new RecipeWrapper(this.fuelInputSlot), this.world)) {
-                LOGGER.info("found fuel");
                 return recipe;
             }
         }
@@ -545,31 +539,21 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     @Nullable
     public IWroughtRecipe getRecipe() {
-        LOGGER.info("machine get recipe");
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
-        LOGGER.info("num recipes = " + recipes.size());
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-            //LOGGER.info(recipe.getInput(0).getMatchingStacks()[0]);
-
-
             if (recipe.matches(new RecipeWrapper(this.inputSlots), this.world)) {
                 return recipe;
             }
         }
-        LOGGER.info("could not find recipe");
         return null;
     }
 
 
     public boolean itemUsedInRecipe(ItemStack input, int index) {
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
-        LOGGER.info(recipes);
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-            LOGGER.info("testing " + recipe.getInput(index).toString());
-            LOGGER.info(" with " + input.getTranslationKey());
-            LOGGER.info( " slot = " + index  );
             if(recipe.getInput(index).test(input))  {
                 return true;
             }

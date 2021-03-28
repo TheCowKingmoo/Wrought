@@ -64,8 +64,6 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
                     // Add Fuel Slot
                     addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN  + 3 * (SLOT_SIZE + SLOT_SEP), 45));
 
-
-
                     // Add Molten Metal Fluid Item Input Slot
                     addSlot(new SlotInputFluidContainer(h, numSlot++, X_SIZE - SLOT_SIZE - GUI_X_MARGIN + 1, GUI_Y_MARGIN));
                     // Add Molten Slag Fluid Item Input Slot

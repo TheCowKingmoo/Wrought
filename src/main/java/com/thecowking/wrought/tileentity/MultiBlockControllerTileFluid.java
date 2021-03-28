@@ -120,6 +120,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
             this.fluidBacklogs[i] = FluidStack.EMPTY;
             this.outputProcessingFluidStacks[i] = FluidStack.EMPTY;
             this.outputTankCapacities[i] = defaultCapacity;
+            this.fluidItemBacklogs[i] = ItemStack.EMPTY;
         }
 
         this.inputFluidTanks = new InputFluidTank[this.numInputTanks];
@@ -241,6 +242,12 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
     protected void processFluidContainerItem(int index)  {
 
+        if(this.fluidItemBacklogs[index] != ItemStack.EMPTY)  {
+            this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, this.fluidItemBacklogs[index].copy(), false);
+        }
+
+        if(this.fluidItemBacklogs[index] != ItemStack.EMPTY) return;
+
         // only try to process if we have at least one buckets worth
         if(getSingleTank(index).getFluidAmount() < 1000)  { return; }
 
@@ -255,23 +262,32 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
         LazyOptional<IFluidHandlerItem> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
+
         // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
         if(!itemFluidCapability.isPresent())  { return; }
 
         // if we have a bucket
         if(fluidContainer.getItem() instanceof BucketItem)  {
+            LOGGER.info("buckettt");
+
 
             ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if(fluidBucket.isEmpty())  return;
 
-            fluidItemInputSlots.getStackInSlot(index).shrink(1);
+
 
             ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if (filledContainer.isEmpty())  {
+                LOGGER.info("no filled container");
                 return;
             }
 
+            fluidItemInputSlots.getStackInSlot(index).shrink(1);
+
             getSingleTank(index).drain(1000, IFluidHandler.FluidAction.EXECUTE);
+            LOGGER.info("inserting a bucket into output");
+
+
             this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, filledContainer.copy(), false);
             this.needUpdate = true;
 

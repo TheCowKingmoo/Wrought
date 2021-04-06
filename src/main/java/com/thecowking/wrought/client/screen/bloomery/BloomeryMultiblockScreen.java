@@ -3,6 +3,7 @@ package com.thecowking.wrought.client.screen.bloomery;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -18,27 +19,23 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 
-public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerMultiblock> {
+public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainerMultiblock> {
     private static final Logger LOGGER = LogManager.getLogger();
-    final static int INDICATOR_X_OFFSET = 39;
-    final static int INDICATOR_Y_OFFSET = 48;
-    final static int INDICATOR_HEIGHT = 100;
-    final static int INDICATOR_WIDTH = 100;
 
     private int progressBarStartX;
     private int progressBarStartY;
-    private int progressBarWidth = RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
-    private int progressBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN - 2*RenderHelper.SLOT_SIZE - 4 * RenderHelper.SLOT_SEP;
+    private int progressBarWidth = SLOT_SIZE + SLOT_SEP;
+    private int progressBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN - 2*SLOT_SIZE - 4 * SLOT_SEP;
 
     private int statusButtonX;
     private int statusButtonY;
-    private int statusButtonRadius = RenderHelper.SLOT_SIZE;
+    private int statusButtonRadius = SLOT_SIZE;
 
 
     private int heatBarStartX;
     private int heatBarStartY;
-    private int heatBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN ;
-    private int heatBarWidth = RenderHelper.SLOT_SIZE / 2;
+    private int heatBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN ;
+    private int heatBarWidth = SLOT_SIZE / 2;
 
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
@@ -47,22 +44,23 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     public BloomeryMultiblockScreen(BloomeryContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.multiBlockContainer = container;
-        this.xSize = RenderHelper.BLANK_X_SIZE;
-        this.ySize = RenderHelper.BLANK_Y_SIZE;
+        this.xSize = BLANK_X_SIZE;
+        this.ySize = BLANK_Y_SIZE;
 
 
         LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
 
 
-        this.statusButtonX = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
-        this.statusButtonY = RenderHelper.GUI_Y_MARGIN;
+        this.statusButtonX = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;
+        this.statusButtonY = GUI_Y_MARGIN;
 
 
-        this.progressBarStartX = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
-        this.progressBarStartY = RenderHelper.GUI_Y_MARGIN + 2*RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP;
+        this.progressBarStartX = BLANK_X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP;
+        this.progressBarStartY = GUI_Y_MARGIN + 2*SLOT_SIZE + 2*SLOT_SEP;
 
-        this.heatBarStartX = RenderHelper.GUI_X_MARGIN;
-        this.heatBarStartY = RenderHelper.GUI_Y_MARGIN;
+        this.heatBarStartX = GUI_X_MARGIN;
+        this.heatBarStartY = GUI_Y_MARGIN;
+
     }
 
 
@@ -115,16 +113,16 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
 
         // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
+        this.minecraft.getTextureManager().bindTexture(BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
 
 
-        RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
+        slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
         // progress bar
         double cookingPercent = multiBlockContainer.getProgress();
-        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
+        createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
 
 
         double heatPercent = multiBlockContainer.getHeatPercentage();
@@ -136,7 +134,7 @@ public class BloomeryMultiblockScreen extends ContainerScreen<BloomeryContainerM
             color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
         }
 
-        RenderHelper.drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
+        drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
         //draw indicator
         RenderHelper.drawStatusIndicator(xStart() + statusButtonX, yStart() + statusButtonY, statusButtonRadius, getStatusColor());

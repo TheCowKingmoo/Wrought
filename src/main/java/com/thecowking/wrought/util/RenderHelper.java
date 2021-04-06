@@ -30,82 +30,15 @@ public class RenderHelper {
     public static final Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER =
             location -> Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(location);
 
-    public static final ResourceLocation TANK_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/tank_frame.png");
-    public static final ResourceLocation TANK_GAUGE = new ResourceLocation(Wrought.MODID, "textures/gui/tank_gauge.png");
-    public static final ResourceLocation BLANK_GUI_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/background_and_inventory.png");
-    public static final ResourceLocation SLOT_IMAGE = new ResourceLocation(Wrought.MODID, "textures/gui/slot.png");
-    public static final ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
-    public static final ResourceLocation DOWN_ARROW_CUTOUT = new ResourceLocation(Wrought.MODID, "textures/gui/downarrowcutout.png");
-
-    public static final int SLOT_WIDTH_HEIGHT = 18;
-
-
-    public static final int TANK_WIDTH = 18;
-    public static final int TANK_HEIGHT = 56;
-
-
-    public static int GUI_X_MARGIN = 10;
-    public static int SLOT_SIZE = 18;
-    public static int SLOT_SEP = 2;
-    public static int GUI_Y_MARGIN = 20;
-
-    public static int BLANK_X_SIZE = 176;
-    public static int BLANK_Y_SIZE = 240;
-    public static int BLANK_TITLE_HEIGHT = 12;
-    public static int BLANK_ACTUAL_HEIGHT = 118;
-    public static int BLANK_USABLE_HEIGHT = BLANK_ACTUAL_HEIGHT - BLANK_TITLE_HEIGHT;
-
-
-
-
-
-        /*
-        1. Draws a black background
-        2. Draws a box that expands downwards the larger the processTime is.
-            The main gui has an arrow cutout that will go over thi process box and give the appearnce of an arrow.
-     */
-
-    public static void createProgressBar(MatrixStack stack, TextureManager manager, int x, int y, int width, int height, double percent)  {
-        int adjX = x - width / 2;
-        int adjY = y - height / 2;
-
-        int backgroundColor = RenderHelper.convertARGBToInt(0, 0, 0, 1);
-        fillGradient(adjX, adjY, adjX + width, adjY + height, backgroundColor, backgroundColor, 0F);
-
-        int color = RenderHelper.convertARGBToInt(255, 255, 0, 1);
-        fillGradient(adjX, adjY, adjX + width, (int)(adjY + height * percent), color, color, 0F);
-
-        manager.bindTexture(DOWN_ARROW_CUTOUT);
-        AbstractGui.blit(stack, adjX, adjY, 0, 0, width, height, width, height);
-    }
-
-
-    public static void drawHeatBar(MatrixStack stack, TextureManager manager, int x, int y, int width, int height, double percent, int color)  {
-        int backgroundColor = RenderHelper.convertARGBToInt(0, 0, 0, 1);
-        fillGradient(x, y, x + width, y + height, backgroundColor, backgroundColor, 0F);
-        fillGradient(x + 1, y  + height - (int)(percent *  height + 1), x + width - 1, y + height - 1, color, color, 0F);
-    }
 
 
 
 
 
 
-    public static void slotRunner(MatrixStack stack, MultiBlockContainer container, TextureManager manager, int xStart, int yStart)  {
-        for(int i = 36; i < 36 + container.getNumMachineSlots(); i++)  {
-            int x = container.getSlot(i).xPos;
-            int y = container.getSlot(i).yPos;
-            createSlot(stack, x+xStart-1, y+yStart-1, manager);
-        }
-
-    }
 
     // TODO - this will need to be reworked if i ever get all these images into one file
     // TODO - was told that I sohuld use a power of two as well
-    public static void createSlot(MatrixStack stack, int x, int y, TextureManager manager)  {
-        manager.bindTexture(SLOT_IMAGE);
-        AbstractGui.blit(stack, x, y, 0, 0, 18, 18, 18, 18);
-    }
 
     public static TextureAtlasSprite getFluidTexture(FluidStack fluid)  {
         return TEXTURE_GETTER.apply(fluid.getFluid().getAttributes().getStillTexture(fluid));
@@ -174,43 +107,6 @@ public class RenderHelper {
     }
 
 
-    public static void createTankBackGround(MatrixStack stack, int x, int y, TextureManager manager, int width, int height)  {
-        manager.bindTexture(TANK_BACKGROUND);
-        AbstractGui.blit(stack, x, y, 0, 0, width, height, TANK_WIDTH, TANK_HEIGHT);
-    }
-
-    public static void createTankGauge(MatrixStack stack, int x, int y, TextureManager manager, int width, int height)  {
-        manager.bindTexture(TANK_GAUGE);
-        AbstractGui.blit(stack, x, y, 0, 0, width, height, TANK_WIDTH, TANK_HEIGHT);
-    }
-
-    public static FluidStack getFluidInTank(MultiBlockContainerFluid container, int index)  {
-        return container.getFluidController().getFluidInTank(index);
-    }
-    public static int getTanksMaxSize(MultiBlockContainerFluid container, int index)  {
-        return container.getFluidController().getOutputTankMaxSize(index);
-    }
-    public static int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankIndex)  {
-        return (int)(TANK_HEIGHT * container.getFluidController().getPercentageInTank(tankIndex));
-    }
-
-    public static void drawHeatBar()  {
-
-    }
-
-    public static int getStatusColor(String status)  {
-        if(status == "Processing")  {
-            //yellow
-            return RenderHelper.convertARGBToInt(255,255,0,1);
-        } else if( status == "Standing By")  {
-            //green
-            return  RenderHelper.convertARGBToInt(0,255,0,1);
-        }
-        // red
-        return RenderHelper.convertARGBToInt(255,0,0,1);
-    }
-
-
     public static void drawStatusIndicator(int x, int y, int radius, int color)  {
         int black = convertARGBToInt(0,0,0,1);
         RenderHelper.fillGradient(x, y, x+ radius, y + radius, black, black, 0F);
@@ -220,11 +116,7 @@ public class RenderHelper {
         RenderHelper.fillGradient(halfX, y, halfX + 2, y + radius, black, black, 0F);
         RenderHelper.fillGradient(x, halfY, x + radius, halfY + 2, black, black, 0F);
 
-
-
     }
-
-
 
 
     public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {

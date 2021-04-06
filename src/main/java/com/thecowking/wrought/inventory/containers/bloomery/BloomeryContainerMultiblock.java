@@ -1,10 +1,10 @@
 package com.thecowking.wrought.inventory.containers.bloomery;
 
+import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
 import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
-import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,13 +22,13 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
     private BloomeryControllerTile controller;
 
 
-    private int SLOTS_0_X =  RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - 2*RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
-    private int SLOTS_1_X = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE;
-    private int INPUTS_Y = RenderHelper.GUI_Y_MARGIN;
-    private int OUTPUTS_Y = RenderHelper.BLANK_ACTUAL_HEIGHT - RenderHelper.GUI_Y_MARGIN - RenderHelper.SLOT_SIZE;
+    private int SLOTS_0_X =  MultiblockScreen.BLANK_X_SIZE - MultiblockScreen.GUI_X_MARGIN - 2*MultiblockScreen.SLOT_SIZE - MultiblockScreen.SLOT_SEP;
+    private int SLOTS_1_X = MultiblockScreen.BLANK_X_SIZE - MultiblockScreen.GUI_X_MARGIN - MultiblockScreen.SLOT_SIZE;
+    private int INPUTS_Y = MultiblockScreen.GUI_Y_MARGIN;
+    private int OUTPUTS_Y = MultiblockScreen.BLANK_ACTUAL_HEIGHT - MultiblockScreen.GUI_Y_MARGIN - MultiblockScreen.SLOT_SIZE;
 
     // Margin + Tank Width + Sep
-    private int FUEL_X = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
+    private int FUEL_X = MultiblockScreen.GUI_X_MARGIN + MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP;
 
 
     public BloomeryContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {

@@ -3,6 +3,8 @@ package com.thecowking.wrought.client.screen.blast_furnace;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.thecowking.wrought.client.screen.MultiBlockFluidScreen;
+import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.util.RenderHelper;
@@ -24,63 +26,54 @@ import org.lwjgl.opengl.GL11;
 import static com.thecowking.wrought.data.BlastFurnaceData.*;
 
 
-public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceContainerMultiblock> {
-    final static int COOK_BAR_X_OFFSET = 14;
-    final static  int COOK_BAR_Y_OFFSET = 40;
-    final static  int COOK_BAR_ICON_U = 0;   // texture position of white arrow icon [u,v]
-    final static  int COOK_BAR_ICON_V = 207;
-    final static  int COOK_BAR_WIDTH = 17;
-    final static  int COOK_BAR_HEIGHT = 30;
+public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFurnaceContainerMultiblock> {
 
-    final static int INDICATOR_X_OFFSET = 39;
-    final static int INDICATOR_Y_OFFSET = 48;
-    final static int INDICATOR_HEIGHT = 11;
-    final static int INDICATOR_WIDTH = 11;
+
 
     final static int TANK_X_OFFSET = 176 - 18 - 4 - 10;
-    final static int TANK_Y_OFFSET = 19;
+    final static int TANK_Y_OFFSET = 5;
 
 
     final static int METAL_TANK_INDEX = 0;
     final static int SLAG_TANK_INDEX = 1;
 
     public static final int TANK_WIDTH = 18;
-    public static final int TANK_HEIGHT = 56;
+    public static final int TANK_HEIGHT = 70;
 
-    protected BlastFurnaceContainerMultiblock multiBlockContainer;
-    private int heatBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN ;
-    private int heatBarWidth = RenderHelper.SLOT_SIZE / 2;
+    private int heatBarHeight = BLANK_ACTUAL_HEIGHT - 2 * GUI_Y_MARGIN ;
+    private int heatBarWidth = SLOT_SIZE / 2;
     private int heatBarStartX;
     private int heatBarStartY;
 
 
     private int progressBarStartX;
     private int progressBarStartY;
-    private int progressBarWidth = RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
-    private int progressBarHeight = RenderHelper.BLANK_ACTUAL_HEIGHT - 2*RenderHelper.GUI_Y_MARGIN - 2*RenderHelper.SLOT_SIZE - 4 * RenderHelper.SLOT_SEP;
+    private int progressBarWidth = SLOT_SIZE + SLOT_SEP;
+    private int progressBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN - 2*SLOT_SIZE - 4 * SLOT_SEP;
 
     private int statusButtonX;
     private int statusButtonY;
-    private int statusButtonRadius = RenderHelper.SLOT_SIZE;
+    private int statusButtonRadius = SLOT_SIZE;
 
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        this.multiBlockContainer = container;
-        this.xSize = 176;
-        this.ySize = 240;
-        this.heatBarStartX = RenderHelper.GUI_X_MARGIN;
-        this.heatBarStartY = RenderHelper.GUI_Y_MARGIN;
+        this.heatBarStartX = GUI_X_MARGIN;
+        this.heatBarStartY = GUI_Y_MARGIN;
+
+        this.indicatorXOffset = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;;
+        this.indicatorYOffset = GUI_Y_MARGIN;
 
 
-        this.statusButtonX = RenderHelper.GUI_X_MARGIN + RenderHelper.SLOT_SIZE + RenderHelper.SLOT_SEP;
-        this.statusButtonY = RenderHelper.GUI_Y_MARGIN;
+        this.statusButtonX = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;
+        this.statusButtonY = GUI_Y_MARGIN;
 
 
-        this.progressBarStartX = RenderHelper.BLANK_X_SIZE - RenderHelper.GUI_X_MARGIN - RenderHelper.SLOT_SIZE - RenderHelper.SLOT_SEP;
-        this.progressBarStartY = RenderHelper.GUI_Y_MARGIN + 2*RenderHelper.SLOT_SIZE + 2*RenderHelper.SLOT_SEP;
+        this.progressBarStartX = 2* SLOT_SIZE + SLOT_SEP;
+        this.progressBarStartY = GUI_X_MARGIN + 3*SLOT_SIZE + 3*SLOT_SEP + GUI_Y_MARGIN;
     }
 
+    /*
     @Override
     public void render(MatrixStack stack, int x, int y, float partialTicks)  {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -89,29 +82,24 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         this.renderHoveredTooltip(stack, x, y);
     }
 
+     */
+
     /*
         Is called as the mouse moves around
      */
 
     @Override
     protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
+        super.renderHoveredTooltip(stack, x, y);
 
-        // highlights the item the player is hovering over
-        if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-            this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
-
-            // detects when the player is hovering over the tank
-        }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX);
+        if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
+            FluidStack fluidStack = getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX);
             TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + RenderHelper.getTanksMaxSize(multiBlockContainer, METAL_TANK_INDEX));
+            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainerFluid, METAL_TANK_INDEX));
             renderTooltip(stack, displayName, x, y+10);
             renderTooltip(stack, fluidAmount, x, y+27);
             // debug
-        }  else if(x > xStart() + INDICATOR_X_OFFSET && x < xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH && y > yStart() + INDICATOR_Y_OFFSET && y < yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT) {
-            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
-            renderTooltip(stack, displayName, x, y);
-        }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
+        } else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
 
         }  else  {
@@ -119,32 +107,21 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
         }
     }
 
-
-    public int xStart() {
-        return (this.width - this.xSize) / 2;
-    }
-    public int yStart() {
-        return (this.height - this.ySize) / 2;
-    }
-
-
     /*
         Does as the name suggests -> draws the main background to the gui
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
         // Draws the main background
-        this.minecraft.getTextureManager().bindTexture(RenderHelper.BLANK_GUI_BACKGROUND);
+        this.minecraft.getTextureManager().bindTexture(BLANK_GUI_BACKGROUND);
         this.blit(stack, xStart(), yStart(), 0,0, this.xSize, this.ySize);
 
 
-        RenderHelper.slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
+        slotRunner(stack, multiBlockContainer, this.minecraft.getTextureManager(), xStart(), yStart());
 
         // progress bar
         double cookingPercent = multiBlockContainer.getProgress();
-        RenderHelper.createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
-
-
+        createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
 
         int color = 0;
         if(this.multiBlockContainer.enoughHeatToCraft())  {
@@ -153,48 +130,30 @@ public class BlastFurnaceMultiblockScreen extends ContainerScreen<BlastFurnaceCo
             color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
         }
         double heatPercent = multiBlockContainer.getHeatPercentage();
-        RenderHelper.drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
-
-
+        drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
         //    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
         //draw first tank
-        double firstTankPercent = multiBlockContainer.getTankPercentFull(METAL_TANK_INDEX);
-        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, METAL_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, firstTankPercent);
-        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
+        double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
+        int x = xStart() + X_SIZE - SLOT_SIZE  - GUI_X_MARGIN;
+        int y = yStart() + TANK_Y_OFFSET;
+        createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+        RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
+        createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
 
         //draw second tank
-        double secondTankPercent = multiBlockContainer.getTankPercentFull(SLAG_TANK_INDEX);
-        RenderHelper.createTankBackGround(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, RenderHelper.getFluidInTank(multiBlockContainer, SLAG_TANK_INDEX), xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, TANK_WIDTH, TANK_HEIGHT, multiBlockContainer, secondTankPercent);
-        RenderHelper.createTankGauge(stack, xStart() - TANK_WIDTH + X_SIZE - GUI_X_MARGIN - 3 * SLOT_SIZE - 3 * SLOT_SEP, yStart() + TANK_Y_OFFSET, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT);
-
-
+        x = xStart() + X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN;
+        double secondTankPercent = multiBlockContainerFluid.getTankPercentFull(SLAG_TANK_INDEX);
+        createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+        RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, SLAG_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, secondTankPercent);
+        createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         drawStatusIndicator(stack);
-
     }
 
-
-    protected void drawStatusIndicator(MatrixStack stack)  {
-        int color = RenderHelper.getStatusColor(this.container.getStatus());
-        RenderHelper.fillGradient(xStart() + X_SIZE - SLOT_SEP, yStart() + SLOT_SEP, xStart() + INDICATOR_X_OFFSET + INDICATOR_WIDTH, yStart() + INDICATOR_Y_OFFSET + INDICATOR_HEIGHT, color, color, 0F);
-    }
 
     protected ITextComponent getName() {
-        return new TranslationTextComponent("Honey Comb Coke Oven");
+        return new TranslationTextComponent("Blast Furnace");
     }
-
-    /*
-        This draws both title for the screen and the player inventory
-        this had to be overridden as I cannot change the location of the titles otherwise
-     */
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
-        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
-    }
-
 
 
 }

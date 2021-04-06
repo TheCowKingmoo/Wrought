@@ -529,7 +529,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-            if (recipe.matches(new RecipeWrapper(this.fuelInputSlot), this.world)) {
+            if (recipe != null && recipe.matches(new RecipeWrapper(this.fuelInputSlot), this.world)) {
                 return recipe;
             }
         }
@@ -638,6 +638,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     public void processFuel()  {
+        if(!hasFuelSlot) return;
         // skip processing as we dont need the heat for this recipe
         if(recipeHeatLevel < currentHeatLevel)  return;
 

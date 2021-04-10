@@ -36,8 +36,7 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
     final static  int COOK_BAR_HEIGHT = 30;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    final static int TANK_X_OFFSET = 129;
-    final static int TANK_Y_OFFSET = 19;
+
     final static int TANK_WIDTH = 17;
     final static int TANK_HEIGHT = 74;
 
@@ -55,42 +54,9 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
         this.ySize = 240;
         this.indicatorXOffset = 39;
         this.indicatorYOffset = 48;
+        this.tankXOffset= 129;
+        this.tankYOffset = 19;
 
-    }
-
-    /*
-    @Override
-    public void render(MatrixStack stack, int x, int y, float partialTicks)  {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.renderBackground(stack);
-        super.render(stack, x, y, partialTicks);
-        this.renderHoveredTooltip(stack, x, y);
-    }
-
-     */
-
-    /*
-        Is called as the mouse moves around
-     */
-
-    @Override
-    protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
-
-        // highlights the item the player is hovering over
-        if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-            this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
-
-            // detects when the player is hovering over the tank
-        }  else if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = getFluidInTank(multiBlockContainer, 0);
-            TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainer,0));
-            renderTooltip(stack, displayName, x, y+10);
-            renderTooltip(stack, fluidAmount, x, y+27);
-            // debug
-        }  else  {
-            renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
-        }
     }
 
     /*
@@ -105,8 +71,8 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
 
 
         double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(0);
-        int x = xStart() + TANK_X_OFFSET;
-        int y = yStart() + TANK_Y_OFFSET;
+        int x = xStart() + tankXOffset;
+        int y = yStart() + tankYOffset;
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, 0), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);

@@ -650,8 +650,11 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     public void processFuel()  {
+        // no fuel slot
         if(!hasFuelSlot) return;
-        // skip processing as we dont need the heat for this recipe
+        // no item is being processed
+        if(this.processingItemStacks[0] == ItemStack.EMPTY)  return;
+        // skip processing as we already have neough heat for current recipe
         if(recipeHeatLevel < currentHeatLevel)  return;
 
         needUpdate = true;

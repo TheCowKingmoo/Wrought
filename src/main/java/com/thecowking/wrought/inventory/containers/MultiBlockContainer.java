@@ -44,6 +44,7 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
     public boolean enoughHeatToCraft()  {
         return controller.currentHeatLevel >= controller.recipeHeatLevel;
     }
+    public boolean hasHeatBar()  {return this.controller.hasFuelSlot;}
 
 
 

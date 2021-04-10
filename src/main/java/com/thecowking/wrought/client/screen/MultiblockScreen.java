@@ -22,6 +22,15 @@ public class MultiblockScreen <MULTICONTAINER extends MultiBlockContainer> exten
     protected int indicatorYOffset = 0;
     protected int indicatorHeight = 0;
     protected int indicatorWidth = 0;
+    protected int heatBarXOffset;
+    protected int heatBarYOffset;
+    protected int heatBarWidth;
+    protected int heatBarHeight;
+    protected int progressBarXOffset;
+    protected int progressBarYOffset;
+    protected int progressBarWidth;
+    protected int progressBarHeight;
+
 
     public static final int SLOT_WIDTH_HEIGHT = 18;
     public static final int TANK_WIDTH = 18;
@@ -78,6 +87,9 @@ public class MultiblockScreen <MULTICONTAINER extends MultiBlockContainer> exten
             this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
         }  else if(x > xStart() + indicatorXOffset && x < xStart() + indicatorXOffset + indicatorWidth && y > yStart() + indicatorYOffset && y < yStart() + indicatorYOffset + indicatorHeight) {
             TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
+            renderTooltip(stack, displayName, x, y);
+        }  else if(multiBlockContainer.hasHeatBar() && x > xStart() + heatBarXOffset && x < xStart() + heatBarXOffset + heatBarWidth && y > yStart() + heatBarYOffset && y < yStart() + heatBarYOffset + heatBarHeight)  {
+            TranslationTextComponent displayName = new TranslationTextComponent("heat is = " + multiBlockContainer.getCurrentHeatLevel());
             renderTooltip(stack, displayName, x, y);
         }
 
@@ -157,7 +169,11 @@ public class MultiblockScreen <MULTICONTAINER extends MultiBlockContainer> exten
         return RenderHelper.convertARGBToInt(255,0,0,1);
     }
 
-
-
+    public int getHeatColor()  {
+        if(this.multiBlockContainer.enoughHeatToCraft())  {
+            return RenderHelper.convertARGBToInt(255, 128, 0, 1);
+        }
+        return RenderHelper.convertARGBToInt(255, 0, 0, 1);
+    }
 
 }

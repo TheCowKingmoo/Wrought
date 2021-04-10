@@ -22,21 +22,6 @@ import org.lwjgl.opengl.GL11;
 public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainerMultiblock> {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private int progressBarStartX;
-    private int progressBarStartY;
-    private int progressBarWidth = SLOT_SIZE + SLOT_SEP;
-    private int progressBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN - 2*SLOT_SIZE - 4 * SLOT_SEP;
-
-    private int statusButtonX;
-    private int statusButtonY;
-    private int statusButtonRadius = SLOT_SIZE;
-
-
-    private int heatBarStartX;
-    private int heatBarStartY;
-    private int heatBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN ;
-    private int heatBarWidth = SLOT_SIZE / 2;
-
     private ResourceLocation PROGRESS_BAR = new ResourceLocation(Wrought.MODID, "textures/gui/h_c_progress_bar.png");
 
     protected BloomeryContainerMultiblock multiBlockContainer;
@@ -51,15 +36,20 @@ public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainer
         LOGGER.info("w = " + this.width + " x = " + this.xSize + " s = " + this.xStart());
 
 
-        this.statusButtonX = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;
-        this.statusButtonY = GUI_Y_MARGIN;
 
+        this.indicatorXOffset = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;
+        this.indicatorYOffset = GUI_Y_MARGIN;
 
-        this.progressBarStartX = BLANK_X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP;
-        this.progressBarStartY = GUI_Y_MARGIN + 2*SLOT_SIZE + 2*SLOT_SEP;
+        this.progressBarXOffset = BLANK_X_SIZE - GUI_X_MARGIN - SLOT_SIZE - SLOT_SEP;
+        this.progressBarYOffset = GUI_Y_MARGIN + 2*SLOT_SIZE + 2*SLOT_SEP;
 
-        this.heatBarStartX = GUI_X_MARGIN;
-        this.heatBarStartY = GUI_Y_MARGIN;
+        this.progressBarWidth = SLOT_SIZE + SLOT_SEP;
+        this.progressBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN - 2*SLOT_SIZE - 4 * SLOT_SEP;
+
+        this.heatBarXOffset = GUI_X_MARGIN;
+        this.heatBarYOffset = GUI_Y_MARGIN;
+        this.heatBarWidth = SLOT_SIZE / 2;
+        this.heatBarHeight = BLANK_ACTUAL_HEIGHT - 2*GUI_Y_MARGIN ;
 
     }
 
@@ -70,40 +60,6 @@ public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainer
         this.renderBackground(stack);
         super.render(stack, x, y, partialTicks);
         this.renderHoveredTooltip(stack, x, y);
-    }
-
-    /*
-        Is called as the mouse moves around
-     */
-
-    @Override
-    protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
-
-        // highlights the item the player is hovering over
-        if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.getHasStack()) {
-            this.renderTooltip(stack, this.hoveredSlot.getStack(), x, y);
-            // tells user what the status is
-        }  else if(x > xStart() + statusButtonX && x < xStart() + statusButtonX + statusButtonRadius && y > yStart() + statusButtonY && y < yStart() + statusButtonY + statusButtonRadius) {
-            TranslationTextComponent displayName = new TranslationTextComponent(multiBlockContainer.getStatus());
-            renderTooltip(stack, displayName, x, y);
-            // tell user what the item is called
-        }  else if(x > xStart() + heatBarStartX && x < xStart() + heatBarStartX + heatBarWidth && y > yStart() + heatBarStartY && y < yStart() + heatBarStartY + heatBarHeight)  {
-            TranslationTextComponent displayName = new TranslationTextComponent("heat is = " + multiBlockContainer.getCurrentHeatLevel());
-            renderTooltip(stack, displayName, x, y);
-        }  else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
-            renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
-        }  else  {
-            renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
-        }
-    }
-
-
-
-    public int xStart() {
-        return (this.width - this.xSize) / 2;
-    }
-    public int yStart() {
-        return (this.height - this.ySize) / 2;
     }
 
     /*
@@ -122,30 +78,21 @@ public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainer
 
         // progress bar
         double cookingPercent = multiBlockContainer.getProgress();
-        createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarStartX, yStart() + progressBarStartY, progressBarWidth, progressBarHeight, cookingPercent);
+        createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + progressBarXOffset, yStart() + progressBarYOffset, progressBarWidth, progressBarHeight, cookingPercent);
 
 
         double heatPercent = multiBlockContainer.getHeatPercentage();
 
-        int color = 0;
-        if(this.multiBlockContainer.enoughHeatToCraft())  {
-            color = RenderHelper.convertARGBToInt(255, 128, 0, 1);
-        }  else  {
-            color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
-        }
 
-        drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
+        drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarXOffset, yStart() + heatBarYOffset, heatBarWidth, heatBarHeight, heatPercent, getHeatColor());
 
         //draw indicator
-        RenderHelper.drawStatusIndicator(xStart() + statusButtonX, yStart() + statusButtonY, statusButtonRadius, getStatusColor());
-
-
+        drawStatusIndicator(stack);
     }
 
     protected ITextComponent getName() {
         return new TranslationTextComponent("Bloomery");
     }
-
 
     /*
         This draws both title for the screen and the player inventory
@@ -156,19 +103,5 @@ public class BloomeryMultiblockScreen extends MultiblockScreen<BloomeryContainer
         this.font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, (float)(this.playerInventoryTitleY+30), 4210752);
     }
-
-    public int getStatusColor()  {
-        String status = multiBlockContainer.getStatus();
-        if(status == "Processing")  {
-            //yellow
-            return RenderHelper.convertARGBToInt(255,255,0,1);
-        } else if( status == "Standing By")  {
-            //green
-            return  RenderHelper.convertARGBToInt(0,255,0,1);
-        }
-        // red
-        return RenderHelper.convertARGBToInt(255,0,0,1);
-    }
-
 
 }

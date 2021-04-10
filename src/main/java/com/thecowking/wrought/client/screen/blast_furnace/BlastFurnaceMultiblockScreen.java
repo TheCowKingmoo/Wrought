@@ -30,15 +30,9 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
 
 
 
-    final static int TANK_X_OFFSET = 176 - 18 - 4 - 10;
-    final static int TANK_Y_OFFSET = 5;
-
 
     final static int METAL_TANK_INDEX = 0;
     final static int SLAG_TANK_INDEX = 1;
-
-    public static final int TANK_WIDTH = 18;
-    public static final int TANK_HEIGHT = 70;
 
     private int heatBarHeight = BLANK_ACTUAL_HEIGHT - 2 * GUI_Y_MARGIN ;
     private int heatBarWidth = SLOT_SIZE / 2;
@@ -71,6 +65,9 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
 
         this.progressBarStartX = 2* SLOT_SIZE + SLOT_SEP;
         this.progressBarStartY = GUI_X_MARGIN + 3*SLOT_SIZE + 3*SLOT_SEP + GUI_Y_MARGIN;
+
+        this.tankXOffset = 176 - 18 - 4 - 10;
+        this.tankYOffset = 5;
     }
 
     /*
@@ -80,31 +77,6 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         this.renderBackground(stack);
         super.render(stack, x, y, partialTicks);
         this.renderHoveredTooltip(stack, x, y);
-    }
-
-     */
-
-    /*
-        Is called as the mouse moves around
-     */
-
-    @Override
-    protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
-        super.renderHoveredTooltip(stack, x, y);
-
-        if(x > xStart() + TANK_X_OFFSET && x < xStart() + TANK_X_OFFSET + TANK_WIDTH && y > yStart() + TANK_Y_OFFSET && y < yStart() + TANK_Y_OFFSET + TANK_HEIGHT)  {
-            FluidStack fluidStack = getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX);
-            TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-            TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainerFluid, METAL_TANK_INDEX));
-            renderTooltip(stack, displayName, x, y+10);
-            renderTooltip(stack, fluidAmount, x, y+27);
-            // debug
-        } else if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
-            renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y);
-
-        }  else  {
-            renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y);
-        }
     }
 
     /*
@@ -135,8 +107,8 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         //    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
         //draw first tank
         double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
-        int x = xStart() + X_SIZE - SLOT_SIZE  - GUI_X_MARGIN;
-        int y = yStart() + TANK_Y_OFFSET;
+        int x = xStart() + X_SIZE - SLOT_SIZE  - GUI_X_MARGIN;      //TODO - what is this
+        int y = yStart() + tankYOffset;
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);

@@ -82,7 +82,7 @@ public class WroughtRecipe implements IWroughtRecipe {
         return this.itemInputs.get(index).getMatchingStacks()[0];
     }
     public FluidStack getFluidOutput(int index) {
-        return null;
+        return fluidOutputs.get(index);
     }
     public Ingredient getFuel()  {return this.fuel;}
     public int getBurnTime()  {return  this.burnTime;}

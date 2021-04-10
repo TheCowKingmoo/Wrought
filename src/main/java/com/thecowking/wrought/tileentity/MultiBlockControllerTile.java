@@ -6,6 +6,7 @@ import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.slots.*;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
+import com.thecowking.wrought.recipes.WroughtRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
 import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
@@ -330,7 +331,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         }
         tickCounter = 0;
 
-        attemptRunOperation();
+        this.isRunning = attemptRunOperation();
+        machineChangeOperation(this.isRunning);
         finishOperation();
     }
 
@@ -365,7 +367,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
 
     /*
-        Called to check if the processing item(s) have cooked long enough to be finished
+       Moves recipes into processingItemStack
      */
     protected boolean processing()  {
         boolean localClog = false;
@@ -397,7 +399,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public boolean finishedProcessingCurrentOperation()  {
         // Check if there is a previous item and the item has "cooked" long enough
-        if (this.isRunning && this.timeElapsed < this.timeComplete) {
+        if (this.isRunning && this.timeComplete != 0 && !this.processingItemStacks[0].isEmpty() && this.timeElapsed < this.timeComplete) {
             this.needUpdate = true;
             this.timeElapsed++;
             this.status = "Processing";
@@ -408,19 +410,16 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     // should overwrite
-    protected boolean areOutputsFull()  {
+    protected boolean areOutputsFull(IWroughtRecipe recipe)  {
+        if(recipe == null) return true;
         for(int i = 0; i < data.getNumberItemOutputSlots(); i++)  {
-            if(outputSlots.getStackInSlot(i).getCount() >= outputSlots.getStackInSlot(i).getMaxStackSize())  {
-                this.status = "Not enough output room to process current recipe";
+            if(outputSlots.getStackInSlot(i).getCount() + recipe.getOutput(i).getCount() > outputSlots.getStackInSlot(i).getMaxStackSize())  {
+                this.status = "Not enough item output room to process current recipe";
                 return true;
             }
         }
         return false;
     }
-
-
-
-
 
     protected boolean consumeFuel(IWroughtRecipe fuel)  {
         fuelTimeComplete = fuel.getBurnTime();
@@ -468,7 +467,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return true;
     }
 
-
     /*
   Flips states if machine is changing from off -> on or from on -> off
  */
@@ -481,7 +479,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         setOn(online);
         if(online)  {
             sendOutRedstone(15);
-            this.status = "Processing";
+            //this.status = "Processing - M change";
         }  else  {
             sendOutRedstone(0);
         }
@@ -586,7 +584,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
                 this.status = "No Recipe For Current Item";
             }
 
-            machineChangeOperation(false);
 
             return false;
         }
@@ -606,47 +603,41 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     /*
 
      */
-    public void attemptRunOperation() {
-
+    public boolean attemptRunOperation() {
+        // internal heat decays
         heatDisspation();
-        LOGGER.info("backlog");
 
-        // Check if any of the item backlogs is clogged - note that another operation will not happen until tickCount has passed if these fail
-        if(!processAllBackLog())  { return; }
-        // check if redstone is turning machine off
-        LOGGER.info("redstone");
+        // Check if any of the item backlogs is clogged
+        if(!processAllBackLog())  { return false; }
 
-        if(redstonePowered())  { return; }
-        // increment how long current item has cooked
-        LOGGER.info("current process");
+        // turn off if redstone power is applied
+        if(redstonePowered())  { return false; }
 
         // check if fuel needs to be fed to the fire
         processFuel();
 
+        // check if the heat level is high enough for current operation
+        if(this.hasFuelSlot && !heatHighEnough())  return false;
 
-        if(!heatHighEnough())  return;
+        // check if the current operation has cooked long enough
+        // note that this returns true if the time hasn't finished
+        if(!finishedProcessingCurrentOperation()) return true;
 
-        // needs to run before timeElapsed gets incremented
-        if(this.hasFuelSlot && !heatHighEnough())  return;
-        LOGGER.info("enough heat at " + this.currentHeatLevel + " for recipe " + this.recipeHeatLevel);
+        // moves now finished processingItemStacks into OutputSlots
+        if(!processing())  {return false; }
 
-        if(!finishedProcessingCurrentOperation())  { return; }
-        // check to make sure output is not full before starting another operation
-        LOGGER.info("output full check");
-
-        if(areOutputsFull())  {return; }
-        LOGGER.info("processing");
-
-
-        // moves things in processingItemStacks into OutputSlots
-        if(!processing())  {return; }
-        LOGGER.info("RECIPE");
         // New operation and new recipe
         IWroughtRecipe currentRecipe = this.getRecipe();
-        if (!(recipeChecker(currentRecipe))) { return; }
-        LOGGER.info("good recipe");
 
+        // Check that this recipe is valid
+        if (!(recipeChecker(currentRecipe))) { return false; }
+
+        // Check if the outputs have enough space for this recipe
+        if(areOutputsFull(currentRecipe))  {return false; }
+
+        // move recipe into processing item stacks
         mutliBlockOperation(currentRecipe);
+        return true;
     }
 
     public void processFuel()  {
@@ -700,9 +691,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         this.needUpdate = true;
         machineChangeOperation(true);
     }
-
-
-
 
     @Override
     public CompoundNBT getUpdateTag()  {

@@ -81,6 +81,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public int maxHeatLevel = 9000;
     public int recipeHeatLevel = 0;
 
+    private int PRIMARY_INPUT_SLOT = 0;
+
 
 
     protected int needsUpdate = 0;
@@ -454,6 +456,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     protected boolean heatHighEnough()  {
+        // if we dont have a fuel slot we dont care about heat
+        if(!this.hasFuelSlot) return true;
+
         if(this.currentHeatLevel < this.recipeHeatLevel)  {
             if(this.currentHeatLevel < this.recipeHeatLevel)  {
                 this.status = "Not enough heat";
@@ -561,6 +566,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return false;
     }
 
+    public ItemStack itemStackInPrimaryInputSlot()  {
+        return this.inputSlots.getStackInSlot(PRIMARY_INPUT_SLOT);
+    }
+
 
     /*
     Check if a new item has a recipe that the oven can use
@@ -570,7 +579,12 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         if (currentRecipe == null) {
             this.timeElapsed = 0;
             this.timeComplete = 0;
-            this.status = "No Recipe for Item";
+
+            if(itemStackInPrimaryInputSlot() == ItemStack.EMPTY)  {
+                this.status = "Waiting For Items";
+            }  else  {
+                this.status = "No Recipe For Current Item";
+            }
 
             machineChangeOperation(false);
 
@@ -633,8 +647,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         LOGGER.info("good recipe");
 
         mutliBlockOperation(currentRecipe);
-
-
     }
 
     public void processFuel()  {

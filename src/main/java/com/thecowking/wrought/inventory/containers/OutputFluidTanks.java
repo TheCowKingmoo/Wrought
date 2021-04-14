@@ -11,6 +11,11 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 
+/*
+    Class based off of the FluidTank Class
+    Essentially its a wrapper for multiple FluidTanks to expose all those tanks under one FluidHandler
+ */
+
 public class OutputFluidTanks implements IFluidHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 

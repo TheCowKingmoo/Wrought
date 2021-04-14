@@ -3,6 +3,7 @@ package com.thecowking.wrought.data;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -232,8 +234,12 @@ direction that is fed in
     }
 
     public Set<IRecipe<?>> getRecipesByType(World world) {
-        return RecipeUtil.findRecipesByType(RecipeSerializerInit.BLOOMERY_TYPE, world);
+        return RecipeUtil.findRecipesByType(getRecipeType(), world);
     }
 
+    @Override
+    public IRecipeType<IWroughtRecipe> getRecipeType() {
+        return RecipeSerializerInit.BLOOMERY_TYPE;
+    }
 
 }

@@ -4,6 +4,7 @@ import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -23,7 +24,6 @@ import net.minecraft.world.World;
 import java.util.Set;
 
 import static com.thecowking.wrought.init.RegistryHandler.*;
-import static com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile.findRecipesByType;
 
 public class HCCokeOvenData implements IMultiblockData {
     // Members that make up the multi-block
@@ -237,7 +237,11 @@ direction that is fed in
     }
 
     public Set<IRecipe<?>> getRecipesByType(World world) {
-        return RecipeUtil.findRecipesByType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE, world);
+        return RecipeUtil.findRecipesByType(this.getRecipeType(), world);
+    }
+
+    public IRecipeType<IWroughtRecipe> getRecipeType()  {
+        return RecipeSerializerInit.HONEY_COMB_OVEN_TYPE;
     }
 
 

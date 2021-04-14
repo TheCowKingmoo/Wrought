@@ -1,5 +1,6 @@
 package com.thecowking.wrought.data;
 
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.crafting.IRecipe;
@@ -27,6 +28,7 @@ public interface IMultiblockData {
     public BlockPos getRedstoneInBlockPos(BlockPos controllerPos);
     public BlockPos getRedstoneOutBlockPos(BlockPos controllerPos);
     public Set<IRecipe<?>> getRecipesByType(World world);
+    public IRecipeType<IWroughtRecipe> getRecipeType();
 
 
 

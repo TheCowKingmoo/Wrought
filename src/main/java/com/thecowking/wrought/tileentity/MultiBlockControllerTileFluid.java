@@ -49,8 +49,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     private String NUM_OUTPUT_TANKS = "NUM_OUTPUT_TANKS";
     private String TANK_CAP = "TANK_CAP";
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     // Fluid Item Input
     protected InputFluidHandler fluidItemInputSlots;
 
@@ -262,25 +260,18 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
         // if we have a bucket
         if(fluidContainer.getItem() instanceof BucketItem)  {
-            LOGGER.info("bucket");
-
 
             ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if(fluidBucket.isEmpty())  return;
 
-
-
             ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if (filledContainer.isEmpty())  {
-                LOGGER.info("no filled container");
                 return;
             }
 
             fluidItemInputSlots.getStackInSlot(index).shrink(1);
 
             getSingleTank(index).drain(1000, IFluidHandler.FluidAction.EXECUTE);
-            LOGGER.info("inserting a bucket into output");
-
 
             this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, filledContainer.copy(), false);
             this.needUpdate = true;
@@ -311,10 +302,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     protected boolean areOutputsFull(IWroughtRecipe recipe)  {
         if(super.areOutputsFull(recipe)) return true;
         for(int i = 0; i < recipe.getNumFluidOutputs(); i++)  {
-            LOGGER.info(i);
-            LOGGER.info(recipe.getFluidOutput(i));
-            LOGGER.info(recipe.getFluidOutput(i).getAmount());
-            LOGGER.info(getFluidInTank(i).getAmount());
             // check that both are the same fluid and that there is enough room in tank for the output
             if(getFluidInTank(i).getAmount() + recipe.getFluidOutput(i).getAmount() > getOutputTankMaxSize(i))  {
                 this.status = "Not enough fluid output room to process current recipe";

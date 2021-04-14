@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -422,6 +423,8 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     protected boolean consumeFuel(IWroughtRecipe fuel)  {
+        LOGGER.info("consume fuel = " + fuel.getBurnTime());
+
         fuelTimeComplete = fuel.getBurnTime();
         currentMaxHeatLevel = fuel.getHeat();
         this.fuelInputSlot.getStackInSlot(0).shrink(1);
@@ -457,6 +460,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     protected boolean heatHighEnough()  {
         // if we dont have a fuel slot we dont care about heat
         if(!this.hasFuelSlot) return true;
+
+        // don't care if we have no items in
+        if(this.processingItemStacks[0] == ItemStack.EMPTY) return true;
 
         if(this.currentHeatLevel < this.recipeHeatLevel)  {
             if(this.currentHeatLevel < this.recipeHeatLevel)  {
@@ -569,7 +575,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return false;
     }
 
-
+//Optional<FurnaceRecipe> recipe = world.getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(item.getItem()), world);
     public boolean itemUsedInRecipe(ItemStack input, int index) {
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
         for (IRecipe<?> iRecipe : recipes) {
@@ -660,20 +666,23 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     public void processFuel()  {
         // no fuel slot
         if(!hasFuelSlot) return;
+
         // no item is being processed
         if(this.processingItemStacks[0] == ItemStack.EMPTY)  return;
+
         // skip processing as we already have neough heat for current recipe
         if(recipeHeatLevel < currentHeatLevel)  return;
 
         needUpdate = true;
+
         if(this.fuelTimeElapsed >= this.fuelTimeComplete)  {
+
             IWroughtRecipe fuel = getFuelRecipe();
             if(fuel == null)  {
                 if(this.fuelInputSlot.getStackInSlot(0) == ItemStack.EMPTY)  status = "no fuel detected";
                 else  status = "item in fuel slot is not a valid fuel";
                 return;
             }
-
             consumeFuel(fuel);
             this.fuelTimeElapsed = 0;
         }  else  {

@@ -251,11 +251,10 @@ public class MultiBlockHelper {
                                 blockState = correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y));
                             }
 
-
-                            // check place using context -- TODO - some issues with placing direction using pure fake player
+                            // check place using context
+                            // TODO - some issues with placing direction using pure fake player. need a way to rotate fakeplayers direction
                             if(!PlayerUtils.canFakePlayerPlace(fakePlayer, current, blockState)) return;
                             world.setBlockState(current, blockState);
-
 
                             // shrink inv if success
                             player.inventory.mainInventory.get(index).shrink(1);

@@ -17,7 +17,7 @@ public class SlotFuelInput extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nullable ItemStack stack)  {
-        return this.tile.itemUsedInRecipe(stack, this.slotIndex);
+        return this.tile.isValidFuel(stack);
     }
 
 }

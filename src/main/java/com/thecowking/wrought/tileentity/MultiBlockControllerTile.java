@@ -152,7 +152,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
         //fuel
         if(this.hasFuelSlot)  {
-            this.fuelInputSlot = new InputFuelHandler(1, this, null, "fuel");
+            this.fuelInputSlot = new InputFuelHandler(1, this, "fuel");
         }
 
         // processing slots
@@ -550,6 +550,23 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
             }
         }
         return null;
+    }
+
+
+    public boolean isValidFuel(ItemStack input)  {
+        Set<IRecipe<?>> recipes = RecipeUtil.findRecipesByType(RecipeSerializerInit.FUEL_TYPE, world);
+        LOGGER.info("fuel - check if " + input.getTranslationKey() + " is a valid fuel");
+        LOGGER.info("there are " + recipes.size());
+        for (IRecipe<?> iRecipe : recipes) {
+            IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
+            LOGGER.info(recipe.getInput(0).getMatchingStacks()[0].getTranslationKey());
+
+            if(recipe.getInput(0).test(input))  {
+                LOGGER.info("success - " + recipe.getInput(0).getMatchingStacks()[0].getTranslationKey() + " is equiv to " + input.getTranslationKey());
+                return true;
+            }
+        }
+        return false;
     }
 
 

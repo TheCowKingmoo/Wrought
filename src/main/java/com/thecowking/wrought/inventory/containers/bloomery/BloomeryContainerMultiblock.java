@@ -2,6 +2,7 @@ package com.thecowking.wrought.inventory.containers.bloomery;
 
 import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
+import com.thecowking.wrought.inventory.slots.SlotFuelInput;
 import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
@@ -59,7 +60,7 @@ public class BloomeryContainerMultiblock extends MultiBlockContainer {
                     addSlot(new SlotOutput(h, numSlot++, SLOTS_1_X, OUTPUTS_Y));
 
                     // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, FUEL_X, OUTPUTS_Y));
+                    addSlot(new SlotFuelInput(h, numSlot++, FUEL_X, OUTPUTS_Y, controller));
 
                 });
 

@@ -240,14 +240,22 @@ public class MultiBlockHelper {
                             // yank correct blockstate if slab/stairs
                             BlockState blockState = correctBlock.getDefaultState();
                             if(correctBlock instanceof StairsBlock)  {
+                                LOGGER.info("stairs");
+
                                 Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
+                                LOGGER.info("stairdir = " + stairsDirection + " contDir = " + direction);
                                 blockState = correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection);
                             }  else if(correctBlock instanceof SlabBlock)  {
+                                LOGGER.info("slab");
+
                                 blockState = correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y));
                             }
 
-                            // attempt to place using fake player
-                            if(!PlayerUtils.placeBlockUsingPlayer(fakePlayer, current, blockState)) return;
+
+                            // check place using context -- TODO - some issues with placing direction using pure fake player
+                            if(!PlayerUtils.canFakePlayerPlace(fakePlayer, current, blockState)) return;
+                            world.setBlockState(current, blockState);
+
 
                             // shrink inv if success
                             player.inventory.mainInventory.get(index).shrink(1);

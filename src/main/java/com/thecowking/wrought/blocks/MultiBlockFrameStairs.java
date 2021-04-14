@@ -4,6 +4,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -17,6 +18,7 @@ import static com.thecowking.wrought.data.MultiblockData.FORMED;
 import static com.thecowking.wrought.data.MultiblockData.getUnderlyingBlock;
 
 public class MultiBlockFrameStairs extends StairsBlock implements IMultiBlockFrame  {
+
 
     public MultiBlockFrameStairs(BlockState state) {
         super(state, Properties.create(Material.IRON)
@@ -72,6 +74,11 @@ public class MultiBlockFrameStairs extends StairsBlock implements IMultiBlockFra
     @Override
     public void removeFromMultiBlock(BlockState blockState, BlockPos posIn, World worldIn) {
         worldIn.setBlockState(posIn, blockState.with(FORMED, false));
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState();
     }
 
 }

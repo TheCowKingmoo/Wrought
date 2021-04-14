@@ -1,5 +1,6 @@
 package com.thecowking.wrought.data;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
@@ -147,12 +148,12 @@ direction that is fed in
 
 
     public Direction getStairsDirection(BlockPos controllerPos, BlockPos blockPos, Direction controllerDirection, int x, int z)  {
+        Wrought.LOGGER.info("x = " + x + " z = " + z);
         if(x < 2)  {
             return controllerDirection.getOpposite();
         } else if( x > 4)  {
             return controllerDirection;
         } else if(z < 2)  {
-
             if(controllerDirection == Direction.NORTH)  {
                 return controllerDirection.rotateY();
             }  else  {

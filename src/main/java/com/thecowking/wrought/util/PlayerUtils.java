@@ -1,8 +1,10 @@
 package com.thecowking.wrought.util;
 
 import com.mojang.authlib.GameProfile;
+import com.thecowking.wrought.Wrought;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
@@ -10,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.LoggingPrintStream;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -30,8 +33,16 @@ public class PlayerUtils {
         if(!(blockState.getBlock().asItem() instanceof BlockItem))  return false;
         BlockItem itemBlock = (BlockItem) blockState.getBlock().asItem();
 
-        BlockRayTraceResult trace = new BlockRayTraceResult(new Vector3d(0, 0, 0), Direction.UP, pos, false);
+        Direction dir = Direction.UP;
+
+        if(blockState.getBlock() instanceof StairsBlock)  {
+            dir = blockState.get(StairsBlock.FACING);
+        }
+
+        BlockRayTraceResult trace = new BlockRayTraceResult(new Vector3d(pos.getX(), pos.getY(), pos.getZ()), dir, pos, false);
         BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, Hand.MAIN_HAND, trace));
+        Wrought.LOGGER.info(context.getNearestLookingDirection());
+
 
         if(blockState == null)  {
             blockState = blockState.getBlock().getStateForPlacement(context);
@@ -41,6 +52,14 @@ public class PlayerUtils {
 
         if(itemBlock.tryPlace(context).isSuccessOrConsume()) return true;
         return false;
+    }
+
+    public static boolean canFakePlayerPlace(PlayerEntity player, BlockPos pos, BlockState blockState)  {
+        if(!(blockState.getBlock().asItem() instanceof BlockItem))  return false;
+
+        BlockRayTraceResult trace = new BlockRayTraceResult(new Vector3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false);
+        BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, Hand.MAIN_HAND, trace));
+        return context.canPlace();
     }
 
     public static FakePlayer createFakePlayer(ServerWorld world)  {

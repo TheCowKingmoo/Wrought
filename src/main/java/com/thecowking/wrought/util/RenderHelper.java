@@ -133,7 +133,7 @@ public class RenderHelper {
         setGLColorFromInt(color);
 
 
-        fillGradient(x + 1, y  + height - (int)(percent *  height + 1), x + width - 1, y + height - 1, color, color, 0F);
+        fillGradient(x + 1, y  + height - (int)(percent *  height), x + width - 1, y + height, color, color, 0F);
 
 
         drawTiledTexture(x, y + height, getTexture(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack)), width, (int)(height * percent), fluidStack.getAmount() / 1000);

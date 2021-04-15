@@ -50,9 +50,9 @@ public class MultiBlockFluidScreen <MULTICONTAINER extends MultiBlockContainerFl
         // iterate thru every tank
         for(int i = 0; i < this.numTanks; i++)  {
             if(x > xStart() + tankXOffset[i] && x < xStart() + tankXOffset[i] + TANK_WIDTH && y > yStart() + tankYOffset[i] && y < yStart() + tankYOffset[i] + TANK_HEIGHT)  {
-                FluidStack fluidStack = getFluidInTank(multiBlockContainerFluid, 0);
+                FluidStack fluidStack = getFluidInTank(multiBlockContainerFluid, i);
                 TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
-                TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainerFluid,i));
+                TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainerFluid, i));
                 renderTooltip(stack, displayName, x, y+10);
                 renderTooltip(stack, fluidAmount, x, y+27);
                 return;

@@ -48,14 +48,14 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
     private HCCokeOvenContainerMultiblock multiBlockContainer;
 
     public HCCokeOvenScreenMultiblock(HCCokeOvenContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name);
+        super(container, inv, name, 1);
         this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;
         this.indicatorXOffset = 39;
         this.indicatorYOffset = 48;
-        this.tankXOffset= 129;
-        this.tankYOffset = 19;
+        this.tankXOffset[0] = 129;
+        this.tankYOffset[0] = 19;
 
     }
 
@@ -71,8 +71,8 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
 
 
         double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(0);
-        int x = xStart() + tankXOffset;
-        int y = yStart() + tankYOffset;
+        int x = xStart() + tankXOffset[0];
+        int y = yStart() + tankYOffset[0];
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, 0), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);

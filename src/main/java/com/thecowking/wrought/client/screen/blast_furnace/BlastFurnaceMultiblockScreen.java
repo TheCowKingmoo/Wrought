@@ -51,7 +51,7 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
 
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name);
+        super(container, inv, name, 2);
         this.heatBarStartX = GUI_X_MARGIN;
         this.heatBarStartY = GUI_Y_MARGIN;
 
@@ -62,26 +62,19 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         this.statusButtonX = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;
         this.statusButtonY = GUI_Y_MARGIN;
 
+        // idea for the indexed slot is that this will be the middle most input slot
+        this.progressBarStartX = this.multiBlockContainer.xSlot[1] + MultiblockScreen.SLOT_SIZE / 2;
+        this.progressBarStartY = this.multiBlockContainer.ySlot[1] + 2*MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP;
 
-        this.progressBarStartX = 2* SLOT_SIZE + SLOT_SEP;
-        this.progressBarStartY = GUI_X_MARGIN + 3*SLOT_SIZE + 3*SLOT_SEP + GUI_Y_MARGIN;
+        this.tankXOffset[METAL_TANK_INDEX] = this.multiBlockContainer.xSlot[7] - 1;
+        this.tankYOffset[METAL_TANK_INDEX] = this.multiBlockContainer.ySlot[7] - TANK_HEIGHT - MultiblockScreen.SLOT_SEP;
 
-        this.tankXOffset = 176 - 18 - 4 - 10;
-        this.tankYOffset = 5;
+        this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[8] - 1;
+        this.tankYOffset[SLAG_TANK_INDEX] = this.tankYOffset[METAL_TANK_INDEX];
+
+
     }
 
-    /*
-    @Override
-    public void render(MatrixStack stack, int x, int y, float partialTicks)  {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.renderBackground(stack);
-        super.render(stack, x, y, partialTicks);
-        this.renderHoveredTooltip(stack, x, y);
-    }
-
-    /*
-        Does as the name suggests -> draws the main background to the gui
-     */
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY)  {
         // Draws the main background
@@ -107,14 +100,14 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         //    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
         //draw first tank
         double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
-        int x = xStart() + X_SIZE - SLOT_SIZE  - GUI_X_MARGIN;      //TODO - what is this
-        int y = yStart() + tankYOffset;
+        int x = xStart() + tankXOffset[METAL_TANK_INDEX];
+        int y = tankYOffset[METAL_TANK_INDEX];
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
 
         //draw second tank
-        x = xStart() + X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN;
+        x = xStart() + tankXOffset[SLAG_TANK_INDEX];
         double secondTankPercent = multiBlockContainerFluid.getTankPercentFull(SLAG_TANK_INDEX);
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, SLAG_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, secondTankPercent);

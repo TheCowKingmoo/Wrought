@@ -13,6 +13,8 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
 
     protected MultiBlockControllerTile controller;
     protected int numSlot = 0;
+    public int[] xSlot;
+    public int[] ySlot;
 
     protected MultiBlockContainer(@Nullable ContainerType<?> type, int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
         super(type, id, world, controllerPos, playerInventory);

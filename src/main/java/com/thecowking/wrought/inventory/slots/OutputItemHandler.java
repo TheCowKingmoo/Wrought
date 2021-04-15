@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory.slots;
 
+import com.thecowking.wrought.Wrought;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.items.ItemStackHandler;
@@ -17,6 +18,7 @@ public class OutputItemHandler extends ItemStackHandler {
     }
 
     public ItemStack internalInsertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
+        Wrought.LOGGER.info("stacks = " + stacks.toArray().length);
         return super.insertItem(slot, stack, simulate);
     }
 

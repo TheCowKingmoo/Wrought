@@ -69,9 +69,8 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         this.tankXOffset[METAL_TANK_INDEX] = this.multiBlockContainer.xSlot[7] - 1;
         this.tankYOffset[METAL_TANK_INDEX] = this.multiBlockContainer.ySlot[7] - TANK_HEIGHT - MultiblockScreen.SLOT_SEP;
 
-        this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[8] - 1;
+        this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[9] - 1;
         this.tankYOffset[SLAG_TANK_INDEX] = this.tankYOffset[METAL_TANK_INDEX];
-
 
     }
 

@@ -73,20 +73,24 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
                 ySlot[numSlot] = OUTPUTS_Y;
                 addSlot(new SlotFuelInput(h, numSlot, xSlot[numSlot] , ySlot[numSlot++], controller));
 
-                // Bucket Input Slots
+                // Tank 0 Bucket Slots
+                // input
                 xSlot[numSlot] = X_SIZE - SLOT_SIZE - GUI_X_MARGIN + 1;
                 ySlot[numSlot] = OUTPUTS_Y - MultiblockScreen.SLOT_SIZE/2 - MultiblockScreen.SLOT_SEP/2;
                 addSlot(new SlotInputFluidContainer(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
 
-                xSlot[numSlot] = X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN + 1;
-                ySlot[numSlot] = OUTPUTS_Y - MultiblockScreen.SLOT_SIZE/2 - MultiblockScreen.SLOT_SEP/2;
-                addSlot(new SlotInputFluidContainer(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
-
-                //Bucket Output Slots
+                // output
                 xSlot[numSlot] = X_SIZE - SLOT_SIZE  - GUI_X_MARGIN + 1;
                 ySlot[numSlot] = OUTPUTS_Y + MultiblockScreen.SLOT_SIZE/2 + MultiblockScreen.SLOT_SEP/2;
                 addSlot(new SlotOutput(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
 
+                // Tank 1 Bucket Slots
+                // input
+                xSlot[numSlot] = X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN + 1;
+                ySlot[numSlot] = OUTPUTS_Y - MultiblockScreen.SLOT_SIZE/2 - MultiblockScreen.SLOT_SEP/2;
+                addSlot(new SlotInputFluidContainer(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
+
+                // output
                 xSlot[numSlot] = X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN + 1;
                 ySlot[numSlot] = OUTPUTS_Y + MultiblockScreen.SLOT_SIZE/2 + MultiblockScreen.SLOT_SEP/2;
                 addSlot(new SlotOutput(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));

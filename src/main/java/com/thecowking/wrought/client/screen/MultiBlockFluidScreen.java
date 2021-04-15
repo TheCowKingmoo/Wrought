@@ -53,6 +53,7 @@ public class MultiBlockFluidScreen <MULTICONTAINER extends MultiBlockContainerFl
                 FluidStack fluidStack = getFluidInTank(multiBlockContainerFluid, i);
                 TranslationTextComponent displayName = new TranslationTextComponent(fluidStack.getTranslationKey());
                 TranslationTextComponent fluidAmount = new TranslationTextComponent(fluidStack.getAmount() + " / " + getTanksMaxSize(multiBlockContainerFluid, i));
+                renderTooltip(stack, new TranslationTextComponent(String.valueOf(i)), x, 37);
                 renderTooltip(stack, displayName, x, y+10);
                 renderTooltip(stack, fluidAmount, x, y+27);
                 return;

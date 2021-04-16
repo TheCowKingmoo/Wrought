@@ -1,10 +1,10 @@
 {
   "type": "wrought:honey_comb_coke_oven",
   "output_0": {
-    "item": "wrought:coke"
+    "tag": "forge:coke"
   },
   "output_1": {
-    "item": "wrought:soot"
+    "tag": "forge:soot"
   },
   "input_0": {
     "tag": "minecraft:coals"

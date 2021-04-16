@@ -6,6 +6,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.datafix.fixes.FurnaceRecipes;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -52,6 +53,8 @@ public class WroughtRecipe implements IWroughtRecipe {
         this.heat = heat;
         this.burnTime = burnTime;
         this.recipeTypeID = recipeTypeID;
+
+
     }
 
     public List<Ingredient> getItemInputs()  {return this.itemInputs;}
@@ -79,7 +82,7 @@ public class WroughtRecipe implements IWroughtRecipe {
         return this.itemInputs.get(index).getMatchingStacks()[0];
     }
     public FluidStack getFluidOutput(int index) {
-        return null;
+        return fluidOutputs.get(index);
     }
     public Ingredient getFuel()  {return this.fuel;}
     public int getBurnTime()  {return  this.burnTime;}
@@ -104,28 +107,21 @@ public class WroughtRecipe implements IWroughtRecipe {
 
     public boolean matches(RecipeWrapper inv, World worldIn) {
         if(inv.getSizeInventory() < 1)  {
-            LOGGER.info("INPUT SIZE FAIL");
             return false;
         }
         if(inv.getStackInSlot(0) == ItemStack.EMPTY) {
-            LOGGER.info("INPUT EMPTY");
             return false;
         }
 
         for(int i = 0; i < getNumInputs(); i++)  {
             if(i > this.itemInputs.size())  {
-                LOGGER.info("SIZE FAILED");
                 return false;
             }
-            LOGGER.info(itemInputs.get(i).getMatchingStacks()[0].getDisplayName() + " and " + inv.getStackInSlot(i));
-
 
             if(!this.itemInputs.get(i).test(inv.getStackInSlot(i)))  {
-                LOGGER.info("MATCH FAILED");
                 return false;
             }
         }
-        LOGGER.info("MATCH RETURN TRUE");
         return true;
     }
 
@@ -134,6 +130,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     }
 
     public ItemStack getRecipeOutput() {
+        if(itemOuputs.size() == 0) return null;
         return this.itemOuputs.get(0);
     }
 

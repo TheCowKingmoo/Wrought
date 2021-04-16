@@ -1,22 +1,22 @@
 {
   "type": "wrought:blast_furnace",
   "output_0": {
-    "item": "wrought:soot"
+    "tag": "forge:soot"
   },
   "output_1": {
-    "item": "wrought:soot"
+    "tag": "forge:soot"
   },
   "output_2": {
-    "item": "wrought:ash"
+    "tag": "forge:soot"
   },
   "input_0": {
-    "item": "minecraft:iron_ore"
+    "tag": "forge:ores/iron"
   },
   "input_1": {
-    "item": "minecraft:coal"
+    "tag": "forge:carbonate"
   },
   "input_2": {
-    "item": "minecraft:coal"
+    "tag": "forge:carbonate"
   },
   "fluid_output_0": "wrought:molten_iron",
   "fluid_output_1": "minecraft:water",

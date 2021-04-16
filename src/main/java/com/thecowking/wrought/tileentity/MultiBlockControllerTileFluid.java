@@ -1,15 +1,13 @@
 package com.thecowking.wrought.tileentity;
 
-import com.thecowking.wrought.data.HCCokeOvenData;
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.containers.InputFluidTank;
-import com.thecowking.wrought.inventory.containers.OutputFluidTank;
-import com.thecowking.wrought.inventory.slots.FluidItemInputHandler;
+import com.thecowking.wrought.inventory.containers.OutputFluidTanks;
 import com.thecowking.wrought.inventory.slots.FluidItemOutputHandler;
 import com.thecowking.wrought.inventory.slots.InputFluidHandler;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
-import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.util.InventoryUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
@@ -28,14 +26,12 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.thecowking.wrought.data.MultiblockData.*;
@@ -53,8 +49,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     private String FLUID_BACKLOG = "FLUID_BACKLOG";
     private String NUM_OUTPUT_TANKS = "NUM_OUTPUT_TANKS";
     private String TANK_CAP = "TANK_CAP";
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     // Fluid Item Input
     protected InputFluidHandler fluidItemInputSlots;
@@ -76,7 +70,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
     // Output Tank
     protected int numOutputTanks;
-    protected OutputFluidTank[] outputFluidTanks;
+    protected OutputFluidTanks outputFluidTanks;
     protected FluidStack[] fluidBacklogs;
     protected int[] outputTankCapacities;
     private FluidStack[] outputProcessingFluidStacks;
@@ -95,7 +89,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.numOutputTanks = numOutputTanks;
         this.numInputTanks = numInputTanks;
 
-        init(defaultCapacity);
+        initFluidSlots(defaultCapacity);
     }
 
 
@@ -106,20 +100,25 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.allHandlers.add(fluidItemOutputSlots);
     }
 
-    private void init(int defaultCapacity)  {
+    private void initFluidSlots(int defaultCapacity)  {
+        // fluid input slots
         this.fluidItemInputSlots = new InputFluidHandler(this.numOutputTanks, this, null, "fluid_item_input");
+
+        // fluid output slots
         this.fluidItemOutputSlots = new FluidItemOutputHandler(this.numOutputTanks);
+
+
         this.fluidItemBacklogs = new ItemStack[this.numOutputTanks];
-        this.outputFluidTanks = new OutputFluidTank[this.numOutputTanks];
+        this.outputFluidTanks = new OutputFluidTanks(defaultCapacity, numOutputTanks);
         this.fluidBacklogs = new FluidStack[this.numOutputTanks];
         this.outputTankCapacities = new int[this.numOutputTanks];
         this.outputProcessingFluidStacks = new FluidStack[this.numOutputTanks];
 
         for(int i = 0; i < this.numOutputTanks; i++) {
-            this.outputFluidTanks[i] = new OutputFluidTank(defaultCapacity);
             this.fluidBacklogs[i] = FluidStack.EMPTY;
             this.outputProcessingFluidStacks[i] = FluidStack.EMPTY;
             this.outputTankCapacities[i] = defaultCapacity;
+            this.fluidItemBacklogs[i] = ItemStack.EMPTY;
         }
 
         this.inputFluidTanks = new InputFluidTank[this.numInputTanks];
@@ -135,9 +134,9 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     public FluidStack getFluidInTank(int tankIndex)  {return getSingleTank(tankIndex).getFluid();}
     public FluidStack getFluidBackLog(int tankIndex)  {return this.fluidBacklogs[tankIndex];}
     public int getOutputTankMaxSize(int tankIndex)  { return this.outputTankCapacities[tankIndex]; }
-    public OutputFluidTank getSingleTank(int tankIndex)  {return outputFluidTanks[tankIndex];}
+    public FluidTank getSingleTank(int tankIndex)  {return outputFluidTanks.getFluidTank(tankIndex);}
     public double getPercentageInTank(int tankIndex)  { return ((double)getFluidInTank(tankIndex).getAmount() / (double)getOutputTankMaxSize(tankIndex)); }
-    public OutputFluidTank[] getFluidTanks()  {
+    public OutputFluidTanks getFluidTanks()  {
         return this.outputFluidTanks;
     }
 
@@ -145,7 +144,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     public void setFluidBackLog(int tankIndex, FluidStack fluidStack)  { this.fluidBacklogs[tankIndex] = fluidStack; }
 
     public FluidStack insertFluidIntoTank(int tankIndex, FluidStack fluidStack)  {
-        return this.outputFluidTanks[tankIndex].internalFill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
+        return this.outputFluidTanks.internalFill(fluidStack, IFluidHandler.FluidAction.EXECUTE, tankIndex);
     }
 
 
@@ -162,40 +161,19 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         // check if recipe has a fluid output
         for(int i = 0; i < fluidOutputs.size(); i++)  {
             // check to see if that fluids match
-            Fluid fluidInTank = this.outputFluidTanks[i].getFluid().getFluid();
+            Fluid fluidInTank = this.getFluidInTank(i).getFluid().getFluid();
             if (fluidInTank != Fluids.EMPTY && fluidOutputs.get(i).getFluid() != fluidInTank)  {
                 finishOperation();
                 this.status = "Output Fluid does not match fluid in tank";
                 return false;
             }
             // check if tank has space for fluid
-            if(this.outputFluidTanks[i].getFluidAmount() + fluidOutputs.get(i).getAmount() > this.outputFluidTanks[i].getCapacity())  {
+            if(this.outputFluidTanks.getFluidTank(i).getFluidAmount() + fluidOutputs.get(i).getAmount() > this.outputFluidTanks.getFluidTank(i).getCapacity())  {
                 finishOperation();
                 this.status = "Not enough space in tank to process current recipe";
                 return false;
             }
         }  //end loop
-        return true;
-    }
-
-    public boolean processFluid()  {
-        boolean localClog = false;
-        for(int i = 0; i < outputProcessingFluidStacks.length; i++)  {
-            // skip if we are looking at air
-            if(this.outputProcessingFluidStacks[i] == FluidStack.EMPTY)  {continue;}
-            // actual insert
-            this.fluidBacklogs[i] = insertFluidIntoTank(i , outputProcessingFluidStacks[i]);
-            // alert if some sort of clogging happened
-            if(this.fluidBacklogs[i] != FluidStack.EMPTY)  {
-                localClog = true;
-            }
-        }  //end loop
-
-        if(localClog)  {
-            this.status = "Fluid Clogged";
-            this.clogged = true;
-            return false;
-        }
         return true;
     }
 
@@ -241,6 +219,12 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
     protected void processFluidContainerItem(int index)  {
 
+        if(this.fluidItemBacklogs[index] != ItemStack.EMPTY)  {
+            this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, this.fluidItemBacklogs[index].copy(), false);
+        }
+
+        if(this.fluidItemBacklogs[index] != ItemStack.EMPTY) return;
+
         // only try to process if we have at least one buckets worth
         if(getSingleTank(index).getFluidAmount() < 1000)  { return; }
 
@@ -255,6 +239,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
         LazyOptional<IFluidHandlerItem> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 
+
         // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
         if(!itemFluidCapability.isPresent())  { return; }
 
@@ -264,14 +249,15 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
             ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if(fluidBucket.isEmpty())  return;
 
-            fluidItemInputSlots.getStackInSlot(index).shrink(1);
-
             ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
             if (filledContainer.isEmpty())  {
                 return;
             }
 
+            fluidItemInputSlots.getStackInSlot(index).shrink(1);
+
             getSingleTank(index).drain(1000, IFluidHandler.FluidAction.EXECUTE);
+
             this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, filledContainer.copy(), false);
             this.needUpdate = true;
 
@@ -291,9 +277,23 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
 
     @Override
-    public void attemptRunOperation() {
+    public boolean attemptRunOperation() {
         processAllFluidContainerItems();
         super.attemptRunOperation();
+        return true;
+    }
+
+    @Override
+    protected boolean areOutputsFull(IWroughtRecipe recipe)  {
+        if(super.areOutputsFull(recipe)) return true;
+        for(int i = 0; i < recipe.getNumFluidOutputs(); i++)  {
+            // check that both are the same fluid and that there is enough room in tank for the output
+            if(getFluidInTank(i).getAmount() + recipe.getFluidOutput(i).getAmount() > getOutputTankMaxSize(i))  {
+                this.status = "Not enough fluid output room to process current recipe";
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -317,7 +317,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         if(this.isRunning) {
 
             for(int i = 0; i < outputProcessingFluidStacks.length; i++)  {
-                fluidBacklogs[i] = outputFluidTanks[i].internalFill(outputProcessingFluidStacks[i], IFluidHandler.FluidAction.EXECUTE);
+                fluidBacklogs[i] = outputFluidTanks.internalFill(outputProcessingFluidStacks[i], IFluidHandler.FluidAction.EXECUTE, i);
                 outputProcessingFluidStacks[i] = FluidStack.EMPTY;
                 if(fluidBacklogs[i] != FluidStack.EMPTY)  {
                     localClog = true;
@@ -340,13 +340,14 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.numOutputTanks = nbt.getInt(NUM_OUTPUT_TANKS);
         fluidItemInputSlots.deserializeNBT(nbt.getCompound(FLUID_ITEM_INPUT_SLOTS));
         fluidItemOutputSlots.deserializeNBT(nbt.getCompound(FLUID_ITEM_OUTPUT_SLOTS));
+        FluidTank[] tanks = new FluidTank[this.numOutputTanks];
         for(int i = 0; i < this.numOutputTanks; i++)  {
             outputTankCapacities[i] = nbt.getInt(TANK_CAP + i);
-            OutputFluidTank tank = new OutputFluidTank(outputTankCapacities[i]);
-            tank.readFromNBT(nbt.getCompound(MultiblockData.FLUID_TANK + i));
-            outputFluidTanks[i] = tank;
+            tanks[i] = new FluidTank(outputTankCapacities[i]);
+            tanks[i].readFromNBT(nbt.getCompound(MultiblockData.FLUID_TANK + i));
             fluidBacklogs[i] = FluidStack.loadFluidStackFromNBT(nbt.getCompound(FLUID_BACKLOG + i));
         }
+        this.outputFluidTanks = new OutputFluidTanks(tanks);
     }
 
     @Override
@@ -357,7 +358,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         tag.put(FLUID_ITEM_OUTPUT_SLOTS, fluidItemOutputSlots.serializeNBT());
 
         for(int i = 0; i < numOutputTanks; i++)  {
-            tag.put(MultiblockData.FLUID_TANK + i, outputFluidTanks[i].writeToNBT(new CompoundNBT()));
+            tag.put(MultiblockData.FLUID_TANK + i, outputFluidTanks.getFluidTank(i).writeToNBT(new CompoundNBT()));
             tag.put(FLUID_BACKLOG + i, fluidBacklogs[i].writeToNBT(new CompoundNBT()));
             tag.putInt(TANK_CAP + i, outputTankCapacities[i]);
         }
@@ -389,11 +390,12 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
         if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)  {
+
             return LazyOptional.of(() -> getFluidTanks()).cast();
         }
-        if(cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)  {
-            return LazyOptional.of(() -> getFluidTanks()).cast();
-        }
+  //      if(cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)  {
+  //          return LazyOptional.of(() -> getFluidTanks()).cast();
+  //      }
         return super.getCapability(cap, side);
     }
 

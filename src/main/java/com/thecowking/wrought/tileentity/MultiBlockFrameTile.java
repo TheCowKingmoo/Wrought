@@ -5,10 +5,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static com.thecowking.wrought.data.MultiblockData.*;
 
 
@@ -53,6 +60,7 @@ public class MultiBlockFrameTile extends MultiBlockTile {
         LOGGER.info("control pos has been set for frame");
         this.controllerPos = posIn;
     }
+
     public String getJob()  {return this.job;}
 
     /*
@@ -61,7 +69,9 @@ public class MultiBlockFrameTile extends MultiBlockTile {
     public void setJob(String inputJob)  {
         this.job = inputJob;
     }
+
     public void setRedstonePower(int power)  {this.world.setBlockState(this.pos, getBlockState().with(MultiblockData.REDSTONE, power));}
+
     public boolean isRedstonePowered(BlockPos posIn)  {
         LOGGER.info("checking redstone");
         if(MultiblockData.getTileFromPos(this.world, posIn) instanceof MultiBlockFrameTile)  {
@@ -69,6 +79,15 @@ public class MultiBlockFrameTile extends MultiBlockTile {
             if(redstoneNum > 0)  {return true;  }
         }
         return false;
+    }
+
+    public MultiBlockControllerTile frameGetControllerTE()  {
+        if (this.controllerPos == null)  return null;
+        TileEntity te = this.world.getTileEntity(this.controllerPos);
+        if (te instanceof MultiBlockControllerTile) {
+            return (MultiBlockControllerTile) te;
+        }
+        return null;
     }
 
 
@@ -89,6 +108,16 @@ public class MultiBlockFrameTile extends MultiBlockTile {
             tag.putInt(NBT_CZ, frameGetControllerPos().getZ());
         }
         return tag;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        MultiBlockControllerTile controllerTile = frameGetControllerTE();
+        if(controllerTile != null)  {
+            return controllerTile.getCapability(cap, Direction.WEST);
+        }
+        return super.getCapability(cap, side);
     }
 }
 

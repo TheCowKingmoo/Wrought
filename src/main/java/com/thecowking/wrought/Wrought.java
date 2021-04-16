@@ -33,6 +33,7 @@ public class Wrought
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "wrought";
 
+
     public Wrought() {
         // laod the config
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.server_config);
@@ -48,9 +49,11 @@ public class Wrought
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
 
-
         // register blocks
         RegistryHandler.init();
+
+        // register modded items that may or may not be used
+        //RegistryHandler.registerModdedMaterials();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
 
@@ -60,7 +63,6 @@ public class Wrought
 
         Config.loadConfig(Config.client_config, FMLPaths.CONFIGDIR.get().resolve("wrought-client.toml").toString());
         Config.loadConfig(Config.server_config, FMLPaths.CONFIGDIR.get().resolve("wrought-server.toml").toString());
-
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

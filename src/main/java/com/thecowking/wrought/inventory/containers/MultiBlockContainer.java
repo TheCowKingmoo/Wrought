@@ -13,6 +13,8 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
 
     protected MultiBlockControllerTile controller;
     protected int numSlot = 0;
+    public int[] xSlot;
+    public int[] ySlot;
 
     protected MultiBlockContainer(@Nullable ContainerType<?> type, int id, World world, BlockPos controllerPos, PlayerInventory playerInventory) {
         super(type, id, world, controllerPos, playerInventory);
@@ -41,10 +43,11 @@ public class MultiBlockContainer extends PlayerLayoutContainer {
         if(getMaxHeatLevel() == 0)  return 0;
         return (double)getCurrentHeatLevel() / (double)getMaxHeatLevel();
     }
-
     public boolean enoughHeatToCraft()  {
         return controller.currentHeatLevel >= controller.recipeHeatLevel;
     }
+    public boolean hasHeatBar()  {return this.controller.hasFuelSlot;}
+
 
 
 }

@@ -1,0 +1,17 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "tag": "forge:ingots/tin"
+  },
+  "output_1": {
+    "tag": "forge:slag"
+  },
+  "input_0": {
+    "tag": "forge:ores/tin"
+  },
+  "input_1": {
+    "tag": "forge:carbonate"
+  },
+  "heat": 449,
+  "burnTime": 15
+}

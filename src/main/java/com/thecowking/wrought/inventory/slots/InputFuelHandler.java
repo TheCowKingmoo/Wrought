@@ -19,7 +19,7 @@ public class InputFuelHandler extends ItemStackHandler {
     private String id;
 
 
-    public InputFuelHandler(int size, MultiBlockControllerTile tile, InputFuelHandler primary, String id)  {
+    public InputFuelHandler(int size, MultiBlockControllerTile tile, String id)  {
         super(size);
         this.tile = tile;
         this.id = id;
@@ -29,8 +29,8 @@ public class InputFuelHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        if(stack.getBurnTime() != 0)  {
-            return super.insertItem(slot, stack, simulate);
+        if(tile.isValidFuel(stack))  {
+            return super.insertItem(slot, stack, false);
         }
         return stack;
     }

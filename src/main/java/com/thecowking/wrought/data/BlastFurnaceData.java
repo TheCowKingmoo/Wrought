@@ -3,6 +3,7 @@ package com.thecowking.wrought.data;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
+import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.util.RecipeUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -162,7 +163,8 @@ public class BlastFurnaceData implements IMultiblockData {
                     {null, null, null, null, secondaryStairBlock, null, null, null, null},
                     {null, null, null, null, null, null, null, null, null}
             },
-            {       // Level 10 - 5 wide circle - Hollow
+            {       // Level 10 - 5 wide circle - Hollow        this.world.getRecipeManager().getRecipesForType(RecipeSerializerInit.HONEY_COMB_OVEN_TYPE).
+
                     {null, null, null, null, null, null, null, null, null},
                     {null, null, null, null, null, null, null, null, null},
                     {null, null, null, frameBlock, secondaryFrameBlock, frameBlock, null, null, null},
@@ -389,6 +391,12 @@ direction that is fed in
     }
 
     public Set<IRecipe<?>> getRecipesByType(World world) {
-        return RecipeUtil.findRecipesByType(RecipeSerializerInit.BLAST_FURNACE_TYPE, world);
+        return RecipeUtil.findRecipesByType(this.getRecipeType(), world);
     }
+
+    @Override
+    public IRecipeType<IWroughtRecipe> getRecipeType() {
+        return RecipeSerializerInit.BLAST_FURNACE_TYPE;
+    }
+
 }

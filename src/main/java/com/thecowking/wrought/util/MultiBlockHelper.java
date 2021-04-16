@@ -4,10 +4,7 @@ import com.thecowking.wrought.blocks.IMultiBlockFrame;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.MultiBlockFrameTile;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.properties.SlabType;
 import net.minecraft.tileentity.TileEntity;
@@ -15,6 +12,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.FakePlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -218,6 +217,9 @@ public class MultiBlockHelper {
         BlockPos lowCorner = data.findLowsestValueCorner(centerPos, direction, data.getLength(), data.getWidth());
         BlockPos correctLowCorner = new BlockPos(lowCorner.getX(), lowCorner.getY() + 1, lowCorner.getZ());
 
+
+        FakePlayer fakePlayer = PlayerUtils.createFakePlayer((ServerWorld) world);
+
         // checks the central slice part of the structure to ensure the correct blocks exist
         for (int y = 0; y < data.getHeight(); y++) {
             for (int z = 0; z < data.getLength(); z++) {
@@ -234,16 +236,28 @@ public class MultiBlockHelper {
                         // find the index of the item in inventory
                         int index = InventoryUtils.getIndexOfSingleItemInPlayerInventory(player, correctBlock.asItem());
                         if(index != -1)  {
-                            player.inventory.mainInventory.get(index).shrink(1);
-                            // TODO - new method for placing that checks players permissons and other edge cases
+
+                            // yank correct blockstate if slab/stairs
+                            BlockState blockState = correctBlock.getDefaultState();
                             if(correctBlock instanceof StairsBlock)  {
+                                LOGGER.info("stairs");
+
                                 Direction stairsDirection = data.getStairsDirection(controllerPos, current, direction,z,x);
-                                world.setBlockState(current, correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection));
+                                LOGGER.info("stairdir = " + stairsDirection + " contDir = " + direction);
+                                blockState = correctBlock.getDefaultState().with(StairsBlock.FACING, stairsDirection);
                             }  else if(correctBlock instanceof SlabBlock)  {
-                                world.setBlockState(current, correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y)));
-                            }   else  {
-                                world.setBlockState(current, correctBlock.getDefaultState());
+                                LOGGER.info("slab");
+
+                                blockState = correctBlock.getDefaultState().with(SlabBlock.TYPE, data.getSlabDirection(y));
                             }
+
+                            // check place using context
+                            // TODO - some issues with placing direction using pure fake player. need a way to rotate fakeplayers direction
+                            if(!PlayerUtils.canFakePlayerPlace(fakePlayer, current, blockState)) return;
+                            world.setBlockState(current, blockState);
+
+                            // shrink inv if success
+                            player.inventory.mainInventory.get(index).shrink(1);
 
                         }  else  {
                             LOGGER.info("Cannot find item in players inventory");

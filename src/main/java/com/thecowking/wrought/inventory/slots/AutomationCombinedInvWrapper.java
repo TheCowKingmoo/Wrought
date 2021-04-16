@@ -11,7 +11,6 @@ import javax.annotation.Nonnull;
 import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public AutomationCombinedInvWrapper(IItemHandlerModifiable... itemHandler)  {
         super(itemHandler);
@@ -28,8 +27,6 @@ public class AutomationCombinedInvWrapper extends CombinedInvWrapper {
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
 
         slot = getSlotFromIndex(slot, index);
-
-        LOGGER.info(index);
 
         if(handler instanceof FluidItemInputHandler)  {
             return handler.insertItem(slot, stack, simulate);

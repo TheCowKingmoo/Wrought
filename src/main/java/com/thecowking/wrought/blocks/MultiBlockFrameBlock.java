@@ -155,7 +155,7 @@ public class MultiBlockFrameBlock extends Block implements IMultiBlockFrame {
             }
         }
         super.onBlockActivated(state, worldIn, posIn, player, hand, trace);
-        return ActionResultType.SUCCESS;
+        return ActionResultType.FAIL;
     }
 
 

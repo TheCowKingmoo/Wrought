@@ -1,0 +1,17 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "tag": "forge:ingots/osmium"
+  },
+  "output_1": {
+    "tag": "forge:slag"
+  },
+  "input_0": {
+    "tag": "forge:ores/osmium"
+  },
+  "input_1": {
+    "tag": "forge:salt"
+  },
+  "heat": 5491,
+  "burnTime": 15
+}

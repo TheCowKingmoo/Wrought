@@ -53,19 +53,12 @@ import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURANCE_BRICK_CO
 
 public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFluid implements INamedContainerProvider, WroughtMutliblock {
 
-    private static final int NUMBER_INTERNAL_TANKS = 3;
+    private static final int NUMBER_INTERNAL_TANKS = 2;
     private static final int NUMBER_ITEM_INPUT_SLOTS = 3;
     private static final int NUMBER_ITEM_OUTPUT_SLOTS = 3;
 
     private static int DEFAULT_TANK_SIZE = 16000;
     private static boolean NEEDS_FUEL = true;
-
-
-    protected static Block frameBlock = BLAST_BRICK_BLOCK.get();
-    protected static Block secondaryFrameBlock = REFRACTORY_BRICK.get();
-    protected static Block secondaryStairBlock = REFRACTORY_BRICK_STAIR.get();
-    protected static Block secondarySlabBlock = REFRACTORY_BRICK_SLAB.get();
-
 
     private static Block controllerBlock = BLAST_FURANCE_BRICK_CONTROLLER.get();
     private static Block airBlock = Blocks.AIR;

@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class WroughtFluidUtil {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static RegistryObject<FlowingFluidBlock> createFluidBlock(String id, Material material, int colour, int viscosity, int density, ResourceLocation stillTexture, ResourceLocation flowingTexture, ResourceLocation overlay) {
+    public static RegistryObject<FlowingFluidBlock> createFluidBlock(String id, Material material, int colour, int viscosity, int density, ResourceLocation stillTexture, ResourceLocation flowingTexture, ResourceLocation overlay, String tag) {
         MutableSupplier<ForgeFlowingFluid.Source> sourceFluid = new MutableSupplier<ForgeFlowingFluid.Source>(null);
         MutableSupplier<ForgeFlowingFluid.Flowing> flowingFluid = new MutableSupplier<ForgeFlowingFluid.Flowing>(null);
         RegistryObject<FlowingFluidBlock> block = RegistryHandler.BLOCKS.register(id, () -> new FlowingFluidBlock(flowingFluid, Block.Properties.create(material).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops()));
@@ -40,7 +40,7 @@ public class WroughtFluidUtil {
         flowingFluid.update(RegistryHandler.FLUIDS.register(id + "_flowing", () -> new ForgeFlowingFluid.Flowing(fluidProperties)));
 
         // add a tag
-        FluidTags.makeWrapperTag(new ResourceLocation("forge", id).toString());
+        FluidTags.makeWrapperTag(new ResourceLocation("forge", tag).toString());
         //FluidTags.createOptional(block.getId(), fluidProperties)
         return block;
     }

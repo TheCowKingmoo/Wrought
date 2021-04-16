@@ -1,0 +1,8 @@
+{
+  "type": "wrought:fuel",
+  "input_0": {
+    "tag": "minecraft:logs"
+  },
+  "heat": 1200,
+  "burnTime": 3
+}

@@ -8,6 +8,7 @@ import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickSlab;
 import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickStairs;
 import com.thecowking.wrought.blocks.coke_block.CokeBlock;
 import com.thecowking.wrought.blocks.honey_comb_coke_oven.*;
+import com.thecowking.wrought.data.MetalData;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerBuilder;
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
@@ -36,7 +37,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashMap;
+
 public class RegistryHandler {
+
+
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Wrought.MODID);
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Wrought.MODID);
     private static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Wrought.MODID);
@@ -116,6 +121,9 @@ public class RegistryHandler {
     //Ash Item
     public static final RegistryObject<Item> ASH = ITEMS.register("ash_item", AshItem::new);
 
+    //Calcium Carbonate
+    public static final RegistryObject<Item> CALCIUM_CARBONATE = ITEMS.register("calcium_carbonate_item", CalciumCarbonate::new);
+
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
     public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
@@ -178,6 +186,16 @@ public class RegistryHandler {
         World world = inv.player.getEntityWorld();
         return new BlastFurnaceContainerMultiblock(windowId, world, pos, inv);
     }));
+
+    /*
+    public static void registerModdedMaterials()  {
+        for(int i = 0; i < RecipeCompatSetup.moddedMaterials.length; i++)  {
+            ITEMS.register(RecipeCompatSetup.moddedMaterials[i] + "_ingot", ItemBase::new);
+
+        }
+    }
+
+     */
 
 
 }

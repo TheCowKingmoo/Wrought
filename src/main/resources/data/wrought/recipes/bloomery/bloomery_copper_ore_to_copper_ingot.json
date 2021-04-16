@@ -1,0 +1,17 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "tag": "forge:ingots/copper"
+  },
+  "output_1": {
+    "tag": "forge:slag"
+  },
+  "input_0": {
+    "tag": "forge:ores/copper"
+  },
+  "input_1": {
+    "tag": "forge:carbonate"
+  },
+  "heat": 1984,
+  "burnTime": 15
+}

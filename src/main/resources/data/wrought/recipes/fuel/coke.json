@@ -1,0 +1,8 @@
+{
+  "type": "wrought:fuel",
+  "input_0": {
+    "tag": "forge:coke"
+  },
+  "heat": 3500,
+  "burnTime": 10
+}

@@ -4,13 +4,13 @@
     "tag": "forge:ingots/iron"
   },
   "output_1": {
-    "item": "wrought:slag"
+    "tag": "forge:slag"
   },
   "input_0": {
-    "item": "minecraft:iron_ore"
+    "tag": "forge:ores/iron"
   },
   "input_1": {
-    "item": "minecraft:stone"
+    "tag": "forge:carbonate"
   },
   "heat": 2795,
   "burnTime": 15

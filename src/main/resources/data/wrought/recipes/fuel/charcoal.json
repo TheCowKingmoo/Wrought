@@ -1,0 +1,8 @@
+{
+  "type": "wrought:fuel",
+  "input_0": {
+    "item": "minecraft:charcoal"
+  },
+  "heat": 2000,
+  "burnTime": 5
+}

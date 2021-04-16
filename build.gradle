@@ -108,6 +108,7 @@ repositories {
         name = "TehNut's Maven (HWYLA)"
         url "https://maven.tehnut.info"
     }
+    // Mekanism
     maven {
         url 'https://modmaven.dev/'
     }
@@ -126,13 +127,13 @@ dependencies {
     compile 'com.intellij:annotations:+@jar'
 
     //Mekanism - testing cross mod interactions
-    //compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
 
     // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following
-    //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
-    //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
-    //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
-    //runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
 
 }
 

@@ -13,7 +13,12 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashMap;
+
 public class RecipeSerializerInit {
+
+
+
 
     public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Wrought.MODID);
 
@@ -38,6 +43,15 @@ public class RecipeSerializerInit {
             () -> BLOOMERY_RECIPE_SERIALIZER);
 
 
+    public static final ResourceLocation FUEL_RECIPE_TYPE_ID = new ResourceLocation(Wrought.MODID, "fuel");
+    public static IRecipeSerializer<WroughtRecipe> FUEL_RECIPE_SERIALIZER = new WroughtSerializer(1, 0, 0, 0, false, true, FUEL_RECIPE_TYPE_ID);
+    public static final IRecipeType<IWroughtRecipe> FUEL_TYPE = registerType(FUEL_RECIPE_TYPE_ID);
+    public static RegistryObject<IRecipeSerializer<?>> FUEL_SERIALIZER = RECIPE_SERIALIZERS.register("fuel",
+            () -> FUEL_RECIPE_SERIALIZER);
+
+
+
+
 
 
     private static class RecipeType<T extends IRecipe<?>> implements IRecipeType<T> {
@@ -50,4 +64,5 @@ public class RecipeSerializerInit {
     private static <T extends IRecipeType> T registerType(ResourceLocation recipeTypeId) {
         return (T) Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<>());
     }
+
 }

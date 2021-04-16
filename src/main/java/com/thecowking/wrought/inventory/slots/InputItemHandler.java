@@ -16,7 +16,6 @@ import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
 
 
 public class InputItemHandler extends ItemStackHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
     private MultiBlockControllerTile tile;
     private InputItemHandler primary;
     private Set<IRecipe<?>> recipes;
@@ -33,7 +32,6 @@ public class InputItemHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-
         //if( slot > tile.numInputSlots)  {
             if(this.tile.itemUsedInRecipe(stack, slot))  {
                 return super.insertItem(slot, stack, simulate);

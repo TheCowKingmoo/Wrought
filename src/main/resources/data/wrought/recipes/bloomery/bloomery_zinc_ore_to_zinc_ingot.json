@@ -1,0 +1,17 @@
+{
+  "type": "wrought:bloomery",
+  "output_0": {
+    "tag": "forge:ingots/zinc"
+  },
+  "output_1": {
+    "tag": "forge:slag"
+  },
+  "input_0": {
+    "tag": "forge:ores/zinc"
+  },
+  "input_1": {
+    "tag": "forge:carbonate"
+  },
+  "heat": 787,
+  "burnTime": 15
+}

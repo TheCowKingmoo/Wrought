@@ -1,8 +1,10 @@
 package com.thecowking.wrought.inventory.containers.blast_furnace;
 
-import com.thecowking.wrought.data.BlastFurnaceData;
+import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
+import com.thecowking.wrought.inventory.slots.SlotFuelInput;
 import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
+import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,27 +12,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static com.thecowking.wrought.data.BlastFurnaceData.*;
 
 import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURANCE_MULTIBLOCK_CONTAINER;
 
 
 public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
-    private static final Logger LOGGER = LogManager.getLogger();
     private BlastFurnaceBrickControllerTile controller;
 
-    final static int INPUT_OUTPUT_X = 10;
+    private int FUEL_X = MultiblockScreen.GUI_X_MARGIN + MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP;
 
-    final static int SIZE_SLOT = 18;
-
-   // final static int X_WIDTH_OF_SLOT = 18;
-
-
-
-    final static int OUTPUTS_Y = 72;
+    final static int OUTPUTS_Y = MultiblockScreen.BLANK_ACTUAL_HEIGHT - MultiblockScreen.GUI_Y_MARGIN - MultiblockScreen.SLOT_SIZE;
+    final static int INPUTS_Y = MultiblockScreen.GUI_Y_MARGIN;
 
     public BlastFurnaceContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
         super(BLAST_FURANCE_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
@@ -40,42 +33,64 @@ public class BlastFurnaceContainerMultiblock extends MultiBlockContainerFluid {
 
         if(this.controller != null && !(controller.isFormed()))  {
             // basic auto building screen
-            LOGGER.info("get builder screen");
-
 
         }  else  {
-            LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
 
-                    // Add Ore Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN, GUI_Y_MARGIN));
-                    // Add Flux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP, GUI_Y_MARGIN));
-                    // Add Aux Input Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN  + 2 *(SLOT_SIZE + SLOT_SEP), GUI_Y_MARGIN));
+                this.xSlot = new int[11];
+                this.ySlot = new int[11];
 
-                    // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN, OUTPUTS_Y));
-                    // Secondary Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP, OUTPUTS_Y));
-                    // Trinary Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, GUI_X_MARGIN  + 2 *(SLOT_SIZE + SLOT_SEP), OUTPUTS_Y));
+                int x = FUEL_X + 2* MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP;
 
-                    // Add Fuel Slot
-                    addSlot(new SlotItemHandler(h, numSlot++, GUI_X_MARGIN  + 3 * (SLOT_SIZE + SLOT_SEP), 45));
+                // Main Input Slots
+                xSlot[numSlot] = FUEL_X + 2* MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP;
+                ySlot[numSlot] = INPUTS_Y;
+                addSlot(new SlotItemInput(h, numSlot, xSlot[numSlot],  ySlot[numSlot++], controller));
 
+                xSlot[numSlot] = x + (MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP);
+                ySlot[numSlot] = INPUTS_Y;
+                addSlot(new SlotItemInput(h, numSlot, xSlot[numSlot],  ySlot[numSlot++], controller));
 
+                xSlot[numSlot] = x + 2*(MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP);
+                ySlot[numSlot] = INPUTS_Y;
+                addSlot(new SlotItemInput(h, numSlot, xSlot[numSlot],  ySlot[numSlot++], controller));
 
-                    // Add Molten Metal Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, numSlot++, X_SIZE - SLOT_SIZE - GUI_X_MARGIN + 1, GUI_Y_MARGIN));
-                    // Add Molten Slag Fluid Item Input Slot
-                    addSlot(new SlotInputFluidContainer(h, numSlot++, X_SIZE - 3 * SLOT_SIZE - 2*SLOT_SEP - GUI_X_MARGIN + 1, GUI_Y_MARGIN));
+                // Main Output Slots
+                xSlot[numSlot] = x;
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
 
-                    // Add Molten Metal Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, X_SIZE - SLOT_SIZE  - GUI_X_MARGIN + 1, OUTPUTS_Y));
-                    // Add Molten Slag Fluid Item Output Slot
-                    addSlot(new SlotOutput(h, numSlot++, X_SIZE - 3 * SLOT_SIZE - 2*SLOT_SEP - GUI_X_MARGIN + 1, OUTPUTS_Y));
-                });
+                xSlot[numSlot] = x + (MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP);
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+
+                xSlot[numSlot] = x + 2*(MultiblockScreen.SLOT_SIZE + MultiblockScreen.SLOT_SEP);
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+
+                // Fuel Input Slot
+                xSlot[numSlot] = FUEL_X;
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotFuelInput(h, numSlot, xSlot[numSlot] , ySlot[numSlot++], controller));
+
+                // fluid input
+                xSlot[numSlot] = X_SIZE - SLOT_SIZE - GUI_X_MARGIN + 1;
+                ySlot[numSlot] = OUTPUTS_Y - MultiblockScreen.SLOT_SIZE/2 - MultiblockScreen.SLOT_SEP/2;
+                addSlot(new SlotInputFluidContainer(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
+
+                xSlot[numSlot] = X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN + 1;
+                ySlot[numSlot] = OUTPUTS_Y - MultiblockScreen.SLOT_SIZE/2 - MultiblockScreen.SLOT_SEP/2;
+                addSlot(new SlotInputFluidContainer(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
+
+                // fluid output
+                xSlot[numSlot] = X_SIZE - SLOT_SIZE  - GUI_X_MARGIN + 1;
+                ySlot[numSlot] = OUTPUTS_Y + MultiblockScreen.SLOT_SIZE/2 + MultiblockScreen.SLOT_SEP/2;
+                addSlot(new SlotOutput(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
+
+                xSlot[numSlot] = X_SIZE - 2*SLOT_SIZE - SLOT_SEP - GUI_X_MARGIN + 1;
+                ySlot[numSlot] = OUTPUTS_Y + MultiblockScreen.SLOT_SIZE/2 + MultiblockScreen.SLOT_SEP/2;
+                addSlot(new SlotOutput(h, numSlot, xSlot[numSlot], ySlot[numSlot++]));
+            });
 
         }
     }

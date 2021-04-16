@@ -1,6 +1,7 @@
 package com.thecowking.wrought.inventory.containers;
 
 import com.ibm.icu.util.Output;
+import com.thecowking.wrought.Wrought;
 import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -22,7 +23,8 @@ public class OutputFluidTanks implements IFluidHandler {
     private int maxSize = 0;
     private int numTanks;
     private FluidTank[] tanks;
-    private int maxDrain = 1000;
+    private int defaultMaxDrain = 1000;
+    private boolean tanksAreEmpty = true;   // latch for automation exposure so that we don't iterate over every tank every tick
 
     public OutputFluidTanks(int capacity, int numTanks) {
         this.maxSize = capacity;
@@ -38,6 +40,7 @@ public class OutputFluidTanks implements IFluidHandler {
         this.tanks = inputTanks;
     }
 
+
     @Override
     public int getTanks() {
         return numTanks;
@@ -46,6 +49,8 @@ public class OutputFluidTanks implements IFluidHandler {
     public FluidTank getFluidTank(int index)  {
         return this.tanks[index];
     }
+
+    public boolean isTankEmpty(int index)  {return this.tanks[index].isEmpty();}
 
     @NotNull
     @Override
@@ -74,10 +79,12 @@ public class OutputFluidTanks implements IFluidHandler {
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
         for(int i = 0; i < this.numTanks; i++)  {
-            if (resource.isEmpty() || !resource.isFluidEqual(getFluidInTank(i)))  {
+            Wrought.LOGGER.info("index  = " + i);
+            if (resource.isEmpty() || !resource.isFluidEqual(getFluidInTank(i)) || isTankEmpty(i))  {
+                Wrought.LOGGER.info("skip");
                 continue;
             }
-            int drained = maxDrain;
+            int drained = defaultMaxDrain;
             FluidStack fluid = getFluidInTank(i);
             if (fluid.getAmount() < drained)  {
                 drained = fluid.getAmount();
@@ -94,14 +101,24 @@ public class OutputFluidTanks implements IFluidHandler {
         return FluidStack.EMPTY;
     }
 
+    /*
+        This is the one most pipes call
+     */
     @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
+        if(tanksAreEmpty)  return FluidStack.EMPTY;
+
+
         for(int i = 0; i < this.numTanks; i++)  {
+            Wrought.LOGGER.info("index  = " + i);
+            if (isTankEmpty(i))  {
+                Wrought.LOGGER.info("skip");
+                continue;
+            }
             int drained = maxDrain;
             FluidStack fluid = getFluidInTank(i);
-            if (fluid.getAmount() < drained)
-            {
+            if (fluid.getAmount() < drained)  {
                 drained = fluid.getAmount();
             }
             FluidStack stack = new FluidStack(fluid, drained);
@@ -111,6 +128,7 @@ public class OutputFluidTanks implements IFluidHandler {
             }
             if(stack != FluidStack.EMPTY)  return stack;
         }
+        tanksAreEmpty = true;
         return FluidStack.EMPTY;
     }
 
@@ -135,6 +153,7 @@ public class OutputFluidTanks implements IFluidHandler {
 
         if(amountLeft != 0)  {
             //LOGGER.info("insert amoutn left = " + amountLeft);
+            tanksAreEmpty = false;
             return new FluidStack(f, amountLeft);
         }
         return FluidStack.EMPTY;

@@ -390,9 +390,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side) {
         if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)  {
-            for(int i = 0; i < this.numOutputTanks; i++)  {
 
-            }
             return LazyOptional.of(() -> getFluidTanks()).cast();
         }
   //      if(cap == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)  {

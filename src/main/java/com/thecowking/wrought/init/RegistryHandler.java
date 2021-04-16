@@ -3,6 +3,7 @@ package com.thecowking.wrought.init;
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.blocks.blast_furance.*;
 import com.thecowking.wrought.blocks.bloomery.BloomeryControllerBlock;
+import com.thecowking.wrought.blocks.casting_machine.CastingMachineControllerBlock;
 import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickBlock;
 import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickSlab;
 import com.thecowking.wrought.blocks.refractory_brick.RefractoryBrickStairs;
@@ -13,6 +14,8 @@ import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceCon
 import com.thecowking.wrought.inventory.containers.blast_furnace.BlastFurnaceContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerBuilder;
 import com.thecowking.wrought.inventory.containers.bloomery.BloomeryContainerMultiblock;
+import com.thecowking.wrought.inventory.containers.casting_machine.CastingMachineContainerBuilder;
+import com.thecowking.wrought.inventory.containers.casting_machine.CastingMachineContainerMultiblock;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainer;
 import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOvenContainerMultiblock;
 import com.thecowking.wrought.items.blocks.BlockItemBase;
@@ -21,6 +24,7 @@ import com.thecowking.wrought.items.items.*;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.blast_furance.BlastBrickTile;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
+import com.thecowking.wrought.tileentity.casting_machine.CastingMachineControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.HCCokeOvenControllerTile;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
 import com.thecowking.wrought.tileentity.refractory_brick.RefractoryBrickFrameTile;
@@ -154,6 +158,24 @@ public class RegistryHandler {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
         return new BloomeryContainerMultiblock(windowId, world, pos, inv);
+    }));
+
+
+    //Casting Machine Controller
+    public static final RegistryObject<Block> CASTING_MACHINE_CONTROLLER = BLOCKS.register("casting_machine_controller", CastingMachineControllerBlock::new);
+    public static final RegistryObject<Item> CASTING_MACHINE_CONTROLLER_ITEM = ITEMS.register("casting_machine_controller", () -> new BlockItemBase(CASTING_MACHINE_CONTROLLER.get()));
+    public static final RegistryObject<TileEntityType<CastingMachineControllerTile>> CASTING_MACHINE_CONTROLLER_TILE = TILES.register("casting_machine_controller", () -> TileEntityType.Builder.create(CastingMachineControllerTile::new, CASTING_MACHINE_CONTROLLER.get()).build(null));
+
+    public static final RegistryObject<ContainerType<CastingMachineContainerBuilder>> CASTING_MACHINE_CONTAINER = CONTAINERS.register("casting_machine_controller_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new CastingMachineContainerBuilder(windowId, world, pos, inv);
+    }));
+
+    public static final RegistryObject<ContainerType<CastingMachineContainerMultiblock>> CASTING_MACHINE_MULTIBLOCK_CONTAINER = CONTAINERS.register("casting_machine_multiblock_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new CastingMachineContainerMultiblock(windowId, world, pos, inv);
     }));
 
 

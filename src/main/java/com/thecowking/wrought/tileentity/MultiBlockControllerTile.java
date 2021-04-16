@@ -584,10 +584,17 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
+    public boolean hasItemInputSlot()  {
+        if(this.inputSlots == null || this.inputSlots.getSlots() == 0)  return false;
+        return true;
+    }
+
+
     /*
-    Check if a new item has a recipe that the oven can use
+    Check if a new item has a recipe that the multiblock can use
  */
     public boolean recipeChecker(IWroughtRecipe currentRecipe)  {
+        if(!hasItemInputSlot())  return false;
         // check if we have a recipe for item
         if (currentRecipe == null) {
             this.timeElapsed = 0;

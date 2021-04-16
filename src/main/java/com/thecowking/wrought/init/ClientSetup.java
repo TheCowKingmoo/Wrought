@@ -3,6 +3,7 @@ package com.thecowking.wrought.init;
 import com.thecowking.wrought.client.screen.BuilderScreen;
 import com.thecowking.wrought.client.screen.blast_furnace.BlastFurnaceMultiblockScreen;
 import com.thecowking.wrought.client.screen.bloomery.BloomeryMultiblockScreen;
+import com.thecowking.wrought.client.screen.casting_machine.CastingMachineMultiblockScreen;
 import com.thecowking.wrought.client.screen.honey_comb_coke_oven.HCCokeOvenScreenMultiblock;
 import com.thecowking.wrought.data.BloomeryData;
 import com.thecowking.wrought.init.RegistryHandler;
@@ -26,6 +27,8 @@ public class ClientSetup {
         ScreenManager.registerFactory(RegistryHandler.BLAST_FURNACE_BUILDER_CONTAINER.get(), BuilderScreen::new);
         ScreenManager.registerFactory(RegistryHandler.BLOOMERY_MULTIBLOCK_CONTAINER.get(), BloomeryMultiblockScreen::new);
         ScreenManager.registerFactory(RegistryHandler.BLOOMERY_BUILDER_CONTAINER.get(), BuilderScreen::new);
+        ScreenManager.registerFactory(RegistryHandler.CASTING_MACHINE_MULTIBLOCK_CONTAINER.get(), CastingMachineMultiblockScreen::new);
+        ScreenManager.registerFactory(RegistryHandler.CASTING_MACHINE_CONTAINER.get(), BuilderScreen::new);
     }
 
     @SubscribeEvent

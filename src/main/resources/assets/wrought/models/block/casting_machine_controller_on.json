@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "wrought:blocks/casting_machine_controller",
+    "up": "wrought:blocks/casting_machine_controller",
+    "north": "wrought:blocks/casting_machine_controller_front_on",
+    "south": "wrought:blocks/casting_machine_controller",
+    "east": "wrought:blocks/casting_machine_controller",
+    "west": "wrought:blocks/casting_machine_controller"
+  }
+}

@@ -122,7 +122,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         }
 
         this.inputFluidTanks = new InputFluidTank[this.numInputTanks];
-        this.inputProcessingFluidStacks = new FluidStack[this.numOutputTanks];
+        this.inputProcessingFluidStacks = new FluidStack[this.numInputTanks];
 
         for(int i = 0; i < this.numInputTanks; i++) {
             this.inputFluidTanks[i] = new InputFluidTank(defaultCapacity);
@@ -139,6 +139,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     public OutputFluidTanks getFluidTanks()  {
         return this.outputFluidTanks;
     }
+    public boolean hasFluidInputSlot()  { return (this.inputFluidTanks != null && this.inputFluidTanks.length > 0); }
 
     //setters
     public void setFluidBackLog(int tankIndex, FluidStack fluidStack)  { this.fluidBacklogs[tankIndex] = fluidStack; }
@@ -150,7 +151,13 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
     @Override
     public boolean recipeChecker(IWroughtRecipe currentRecipe)  {
-        if(!super.recipeChecker(currentRecipe))  {return false;}
+        // check if we have any input slots
+        if(this.hasItemInputSlot())  {
+            if(!super.recipeChecker(currentRecipe))  {return false;}
+        }  else if(!hasFluidInputSlot())  {
+            return false;
+        }
+
 
         // get the fluid outputs from recipe
         List<FluidStack> fluidOutputs = currentRecipe.getFluidStackOutput();

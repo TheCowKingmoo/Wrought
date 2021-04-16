@@ -13,6 +13,10 @@
   
   "block.wrought.bloomery_controller_block": "Bloomery Controller Block",
   "block.wrought.coke_block": "Block of Coke",
+
+
+  "block.wrought.casting_machine_controller": "Casting Machine Controller",
+
   "screen.wrought.h_c_coke_controller_block": "Honey Comb Coke Furnace Screen",
 
   "item.wrought.slag_item": "Slag",
@@ -26,6 +30,7 @@
   "item.wrought.unfired_carbon_brick_item": "Unfired Carbon Brick",
   "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
   "item.wrought.carbon_brick_item": "Carbon Brick",
+
 
 
   "item.wrought.creosote_bucket": "Creosote Bucket",

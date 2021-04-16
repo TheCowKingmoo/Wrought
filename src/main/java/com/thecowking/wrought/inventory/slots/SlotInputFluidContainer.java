@@ -17,8 +17,6 @@ public class SlotInputFluidContainer extends SlotItemHandler {
     @Override
     public boolean isItemValid(@Nullable ItemStack stack)  {
         LOGGER.info("OI");
-        return true;
-        /*
         //TODO - i know i can just return this - i think i need to add more stuffs
         if(stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent()) {
             LOGGER.info("inserting item into fluid slot");
@@ -26,7 +24,5 @@ public class SlotInputFluidContainer extends SlotItemHandler {
         }
         LOGGER.info("failed to insert into fluid slot");
         return false;
-
-         */
     }
 }

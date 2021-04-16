@@ -1,5 +1,6 @@
 package com.thecowking.wrought.tileentity;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.inventory.containers.InputFluidTank;
@@ -88,7 +89,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.numOutputTanks = numOutputTanks;
         this.numInputTanks = numInputTanks;
 
-        init(defaultCapacity);
+        initFluidSlots(defaultCapacity);
     }
 
 
@@ -99,9 +100,14 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         this.allHandlers.add(fluidItemOutputSlots);
     }
 
-    private void init(int defaultCapacity)  {
+    private void initFluidSlots(int defaultCapacity)  {
+        // fluid input slots
         this.fluidItemInputSlots = new InputFluidHandler(this.numOutputTanks, this, null, "fluid_item_input");
+
+        // fluid output slots
         this.fluidItemOutputSlots = new FluidItemOutputHandler(this.numOutputTanks);
+
+
         this.fluidItemBacklogs = new ItemStack[this.numOutputTanks];
         this.outputFluidTanks = new OutputFluidTanks(defaultCapacity, numOutputTanks);
         this.fluidBacklogs = new FluidStack[this.numOutputTanks];
@@ -168,27 +174,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
                 return false;
             }
         }  //end loop
-        return true;
-    }
-
-    public boolean processFluid()  {
-        boolean localClog = false;
-        for(int i = 0; i < outputProcessingFluidStacks.length; i++)  {
-            // skip if we are looking at air
-            if(this.outputProcessingFluidStacks[i] == FluidStack.EMPTY)  {continue;}
-            // actual insert
-            this.fluidBacklogs[i] = insertFluidIntoTank(i , outputProcessingFluidStacks[i]);
-            // alert if some sort of clogging happened
-            if(this.fluidBacklogs[i] != FluidStack.EMPTY)  {
-                localClog = true;
-            }
-        }  //end loop
-
-        if(localClog)  {
-            this.status = "Fluid Clogged";
-            this.clogged = true;
-            return false;
-        }
         return true;
     }
 

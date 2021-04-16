@@ -57,8 +57,6 @@ import java.util.stream.Collectors;
 import static com.thecowking.wrought.data.MultiblockData.*;
 
 public class MultiBlockControllerTile extends MultiBlockTile implements ITickableTileEntity {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     protected BlockPos redstoneIn;
     protected BlockPos redstoneOut;
 
@@ -423,8 +421,6 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
     protected boolean consumeFuel(IWroughtRecipe fuel)  {
-        LOGGER.info("consume fuel = " + fuel.getBurnTime());
-
         fuelTimeComplete = fuel.getBurnTime();
         currentMaxHeatLevel = fuel.getHeat();
         this.fuelInputSlot.getStackInSlot(0).shrink(1);
@@ -561,14 +557,10 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public boolean isValidFuel(ItemStack input)  {
         Set<IRecipe<?>> recipes = RecipeUtil.findRecipesByType(RecipeSerializerInit.FUEL_TYPE, world);
-        LOGGER.info("fuel - check if " + input.getTranslationKey() + " is a valid fuel");
-        LOGGER.info("there are " + recipes.size());
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-            LOGGER.info(recipe.getInput(0).getMatchingStacks()[0].getTranslationKey());
 
             if(recipe.getInput(0).test(input))  {
-                LOGGER.info("success - " + recipe.getInput(0).getMatchingStacks()[0].getTranslationKey() + " is equiv to " + input.getTranslationKey());
                 return true;
             }
         }

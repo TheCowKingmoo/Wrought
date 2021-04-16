@@ -53,7 +53,7 @@ import static com.thecowking.wrought.init.RegistryHandler.BLAST_FURANCE_BRICK_CO
 
 public class BlastFurnaceBrickControllerTile extends MultiBlockControllerTileFluid implements INamedContainerProvider, WroughtMutliblock {
 
-    private static final int NUMBER_INTERNAL_TANKS = 3;
+    private static final int NUMBER_INTERNAL_TANKS = 2;
     private static final int NUMBER_ITEM_INPUT_SLOTS = 3;
     private static final int NUMBER_ITEM_OUTPUT_SLOTS = 3;
 

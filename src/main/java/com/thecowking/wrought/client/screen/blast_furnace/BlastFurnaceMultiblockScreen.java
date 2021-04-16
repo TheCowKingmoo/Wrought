@@ -69,7 +69,7 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         this.tankXOffset[METAL_TANK_INDEX] = this.multiBlockContainer.xSlot[7] - 1;
         this.tankYOffset[METAL_TANK_INDEX] = this.multiBlockContainer.ySlot[7] - TANK_HEIGHT - MultiblockScreen.SLOT_SEP;
 
-        this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[9] - 1;
+        this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[8] - 1;
         this.tankYOffset[SLAG_TANK_INDEX] = this.tankYOffset[METAL_TANK_INDEX];
 
     }
@@ -96,22 +96,37 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         double heatPercent = multiBlockContainer.getHeatPercentage();
         drawHeatBar(stack, this.minecraft.getTextureManager(), xStart() + heatBarStartX, yStart() + heatBarStartY, heatBarWidth, heatBarHeight, heatPercent, color);
 
-        //    public static void drawFluid(MatrixStack matrixStack, FluidStack fluidStack, int x, int y, int width, int height, MultiBlockContainerFluid container, double percent)  {
-        //draw first tank
-        double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
-        int x = xStart() + tankXOffset[METAL_TANK_INDEX];
-        int y = tankYOffset[METAL_TANK_INDEX];
-        createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
-        RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
-        createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
 
-        //draw second tank
-        x = xStart() + tankXOffset[SLAG_TANK_INDEX];
+        // draw slag tank
+        int x = xStart() + tankXOffset[SLAG_TANK_INDEX];
+        int y = tankYOffset[SLAG_TANK_INDEX];
         double secondTankPercent = multiBlockContainerFluid.getTankPercentFull(SLAG_TANK_INDEX);
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, SLAG_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, secondTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+
+        // draw metals tank
+        double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
+        x = xStart() + tankXOffset[METAL_TANK_INDEX];
+        createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+        RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);
+        createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
+
+
         drawStatusIndicator(stack);
+    }
+
+
+    @Override
+    protected void renderHoveredTooltip(MatrixStack stack, int x, int y) {
+        super.renderHoveredTooltip(stack, x, y);
+        if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
+            renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y - 20);
+
+        }  else  {
+            renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y - 10);
+        }
+
     }
 
 

@@ -2,6 +2,7 @@ package com.thecowking.wrought.inventory.slots;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,15 +15,13 @@ public class FluidItemInputHandler extends ItemStackHandler {
     public FluidItemInputHandler(int size, ItemStack... stacks) {
         super(size);
     }
+
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        if(stack.getItem() != Items.BUCKET)  {
-            LOGGER.info("this isnt a bucket");
-            return stack;
+        if(stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent()) {
+            return super.insertItem(slot, stack, simulate);
         }
-        LOGGER.info("this isnt a bucket");
-
-        return super.insertItem(slot, stack, simulate);
+        return stack;
     }
 }

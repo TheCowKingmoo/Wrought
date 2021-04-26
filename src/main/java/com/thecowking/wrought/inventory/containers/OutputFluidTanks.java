@@ -2,6 +2,7 @@ package com.thecowking.wrought.inventory.containers;
 
 import com.ibm.icu.util.Output;
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.inventory.WroughtTank;
 import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -12,76 +13,23 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 
-/*
-    Class based off of the FluidTank Class
-    Essentially its a wrapper for multiple FluidTanks to expose all those tanks under one FluidHandler
- */
-
-public class OutputFluidTanks implements IFluidHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private int maxSize = 0;
-    private int numTanks;
-    private FluidTank[] tanks;
-    private int defaultMaxDrain = 1000;
-    private boolean tanksAreEmpty = true;   // latch for automation exposure so that we don't iterate over every tank every tick
+public class OutputFluidTanks extends WroughtTank {
 
     public OutputFluidTanks(int capacity, int numTanks) {
-        this.maxSize = capacity;
-        this.numTanks = numTanks;
-        tanks = new FluidTank[numTanks];
-        for(int i = 0; i < numTanks; i++)  {
-            tanks[i] = new FluidTank(capacity);
-        }
+        super(capacity, numTanks);
     }
 
     public OutputFluidTanks(FluidTank[] inputTanks)  {
-        this.numTanks = inputTanks.length;
-        this.tanks = inputTanks;
+        super(inputTanks);
     }
 
-
-    @Override
-    public int getTanks() {
-        return numTanks;
-    }
-
-    public FluidTank getFluidTank(int index)  {
-        return this.tanks[index];
-    }
-
-    public boolean isTankEmpty(int index)  {return this.tanks[index].isEmpty();}
-
-    @NotNull
-    @Override
-    public FluidStack getFluidInTank(int index) {
-        return tanks[index].getFluid();
-    }
-
-    @Override
-    public int getTankCapacity(int index) {
-        return tanks[index].getCapacity();
-    }
-
-    // output tank so we never accept
-    @Override
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-        return false;
-    }
-
-    // output tank so we never accept
-    @Override
-    public int fill(FluidStack resource, FluidAction action)
-    {return 0;}
-
+    // expose draining to the world
 
     @NotNull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
         for(int i = 0; i < this.numTanks; i++)  {
-            Wrought.LOGGER.info("index  = " + i);
             if (resource.isEmpty() || !resource.isFluidEqual(getFluidInTank(i)) || isTankEmpty(i))  {
-                Wrought.LOGGER.info("skip");
                 continue;
             }
             int drained = defaultMaxDrain;
@@ -111,9 +59,7 @@ public class OutputFluidTanks implements IFluidHandler {
 
 
         for(int i = 0; i < this.numTanks; i++)  {
-            Wrought.LOGGER.info("index  = " + i);
             if (isTankEmpty(i))  {
-                Wrought.LOGGER.info("skip");
                 continue;
             }
             int drained = maxDrain;
@@ -132,30 +78,4 @@ public class OutputFluidTanks implements IFluidHandler {
         return FluidStack.EMPTY;
     }
 
-    protected void onContentsChanged()  {
-
-    }
-
-
-    public int getCapacityInBuckets()  {
-        return this.maxSize / 1000;
-    }
-
-
-    public FluidStack internalFill(FluidStack resource, FluidAction action, int tankIndex)  {
-        if(resource == FluidStack.EMPTY)  {return FluidStack.EMPTY;}
-        int amountToFill = resource.getAmount();
-        //LOGGER.info("amount to insert = " + resource.getAmount());
-        Fluid f = resource.getFluid();
-
-        int amountFilled = tanks[tankIndex].fill(resource, action);
-        int amountLeft = amountToFill - amountFilled;
-
-        if(amountLeft != 0)  {
-            //LOGGER.info("insert amoutn left = " + amountLeft);
-            tanksAreEmpty = false;
-            return new FluidStack(f, amountLeft);
-        }
-        return FluidStack.EMPTY;
-    }
 }

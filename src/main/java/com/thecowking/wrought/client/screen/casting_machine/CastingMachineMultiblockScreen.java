@@ -63,10 +63,10 @@ public class CastingMachineMultiblockScreen extends MultiBlockFluidScreen<Castin
             color = RenderHelper.convertARGBToInt(255, 0, 0, 1);
         }
 
-        // draw slag tank
+        // draw input tank
         int x = xStart() + tankXOffset[0];
         int y = tankYOffset[0];
-        double secondTankPercent = multiBlockContainerFluid.getTankPercentFull(0);
+        double secondTankPercent = multiBlockContainerFluid.getInputTankPercentFull(0);
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, 0), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, secondTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);

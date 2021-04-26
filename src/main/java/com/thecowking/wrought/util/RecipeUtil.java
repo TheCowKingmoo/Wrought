@@ -1,5 +1,6 @@
 package com.thecowking.wrought.util;
 
+import com.thecowking.wrought.Wrought;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class RecipeUtil {
     public static Set<IRecipe<?>> findRecipesByType(IRecipeType<?> typeIn, World world) {
+
         return world != null ? world.getRecipeManager().getRecipes().stream()
                 .filter(recipe -> recipe.getType() == typeIn).collect(Collectors.toSet()) : Collections.emptySet();
     }

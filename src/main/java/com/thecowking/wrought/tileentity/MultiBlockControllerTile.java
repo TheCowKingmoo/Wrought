@@ -1,5 +1,6 @@
 package com.thecowking.wrought.tileentity;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.config.HeatConfig;
 import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
@@ -557,9 +558,9 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     public boolean isValidFuel(ItemStack input)  {
         Set<IRecipe<?>> recipes = RecipeUtil.findRecipesByType(RecipeSerializerInit.FUEL_TYPE, world);
+        Wrought.LOGGER.info("ControllerTile - num fuel reipces = " + recipes.size());
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-
             if(recipe.getInput(0).test(input))  {
                 return true;
             }

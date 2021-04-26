@@ -70,7 +70,7 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
         createProgressBar(stack, this.minecraft.getTextureManager(), xStart() + COOK_BAR_X_OFFSET, yStart() + COOK_BAR_Y_OFFSET, COOK_BAR_WIDTH, COOK_BAR_HEIGHT, cookingPercent);
 
 
-        double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(0);
+        double firstTankPercent = multiBlockContainerFluid.getOutputTankPercentFull(0);
         int x = xStart() + tankXOffset[0];
         int y = yStart() + tankYOffset[0];
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);

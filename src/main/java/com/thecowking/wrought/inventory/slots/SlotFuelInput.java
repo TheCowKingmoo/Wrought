@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory.slots;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -17,6 +18,7 @@ public class SlotFuelInput extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nullable ItemStack stack)  {
+        Wrought.LOGGER.info("SlotFuelInput - is valid for input " + stack.getTranslationKey() + " == " +  this.tile.isValidFuel(stack));
         return this.tile.isValidFuel(stack);
     }
 

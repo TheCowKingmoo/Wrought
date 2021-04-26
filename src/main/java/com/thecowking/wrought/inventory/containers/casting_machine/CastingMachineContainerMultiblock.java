@@ -6,7 +6,6 @@ import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.slots.SlotFuelInput;
 import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
-import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
 import com.thecowking.wrought.tileentity.casting_machine.CastingMachineControllerTile;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
@@ -16,7 +15,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.thecowking.wrought.init.RegistryHandler.BLOOMERY_MULTIBLOCK_CONTAINER;
+import static com.thecowking.wrought.init.RegistryHandler.CASTING_MACHINE_MULTIBLOCK_CONTAINER;
 
 
 public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid {
@@ -32,7 +31,7 @@ public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid 
 
 
     public CastingMachineContainerMultiblock(int windowId, World world, BlockPos pos, PlayerInventory playerInventory) {
-        super(BLOOMERY_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
+        super(CASTING_MACHINE_MULTIBLOCK_CONTAINER.get(), windowId, world, pos, playerInventory);
 
         TileEntity tileEntity = world.getTileEntity(pos);
         this.controller = (CastingMachineControllerTile)tileEntity;
@@ -41,16 +40,17 @@ public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid 
 
         if(this.controller != null && !(controller.isFormed()))  {
             // basic auto building screen
-            LOGGER.info("get builder screen");
-
 
         }  else  {
+            this.xSlot = new int[1];
+            this.ySlot = new int[1];
 
-            LOGGER.info("get multiblock");
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Primary Item Output Slot
-                     addSlot(new SlotOutput(h, numSlot++, SLOTS_0_X, OUTPUTS_Y));
-                });
+                xSlot[numSlot] = SLOTS_0_X;
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+            });
         }
     }
 

@@ -32,15 +32,6 @@ public class CastingMachineData implements IMultiblockData {
     private static Block controllerBlock = CASTING_MACHINE_CONTROLLER.get();
     private static Block airBlock = Blocks.AIR;
 
-
-    public static int GUI_X_MARGIN = 10;
-    public static int SLOT_SIZE = 18;
-    public static int SLOT_SEP = 2;
-    public static int GUI_Y_MARGIN = 20;
-    public final static int X_SIZE = 176;
-    public final static int Y_SIZE = 240;
-
-
     private final Block[][][] posArray =  {
             {
                     {frameBlock, frameBlock, frameBlock},
@@ -48,9 +39,9 @@ public class CastingMachineData implements IMultiblockData {
                     {frameBlock, frameBlock, frameBlock}
             },
             {
-                    {frameBlock, frameBlock, frameBlock},
+                    {frameBlock, controllerBlock, frameBlock},
                     {frameBlock, airBlock, frameBlock},
-                    {frameBlock, controllerBlock, frameBlock}
+                    {frameBlock, frameBlock, frameBlock}
             },
             {
                     {frameBlock, frameBlock, frameBlock},
@@ -77,7 +68,7 @@ public class CastingMachineData implements IMultiblockData {
     public Block[][][] getPosArray() { return this.posArray; }
     public Block getBlockMember(int x, int y, int z)  {return this.posArray[x][y][z];}
     public int getControllerYIndex()  {
-        return 1;
+        return 2;
     }
 
 
@@ -96,13 +87,13 @@ direction that is fed in
         int zCoord = controllerPos.getZ();
         switch(inputDirection)  {
             case NORTH:
-                return new BlockPos(xCoord, yCoord, zCoord + 2);
+                return new BlockPos(xCoord, yCoord, zCoord + 1);
             case SOUTH:
-                return new BlockPos(xCoord, yCoord, zCoord - 2);
+                return new BlockPos(xCoord, yCoord, zCoord - 1);
             case WEST:
-                return new BlockPos(xCoord  + 2, yCoord, zCoord);
+                return new BlockPos(xCoord  + 1, yCoord, zCoord);
             case EAST:
-                return new BlockPos(xCoord  - 2, yCoord, zCoord);
+                return new BlockPos(xCoord  - 1, yCoord, zCoord);
         }
         return null;
     }
@@ -115,39 +106,11 @@ direction that is fed in
         South = +Z
      */
     public Direction getStairsDirection(BlockPos controllerPos, BlockPos blockPos, Direction controllerDirection, int x, int z)  {
-        BlockPos centerBlock = calcCenterBlock(controllerDirection, controllerPos);
-        int calcX = blockPos.getX() - centerBlock.getX();
-        int calcZ = blockPos.getZ() - centerBlock.getZ();
-        // Care more about West-East
-        if(Math.abs(calcX) > Math.abs(calcZ))  {
-            if(calcX > 0)  {
-                //Point East
-                return Direction.WEST;
-            }  else  {
-                //Point West
-                return Direction.EAST;
-
-            }
-
-        // Care more about North_south
-        }  else  {
-            if(calcZ > 0)  {
-                //Point South
-                return Direction.NORTH;
-
-            }  else  {
-                //Point North
-                return Direction.SOUTH;
-            }
-        }
+        return null;
     }
 
     public SlabType getSlabDirection(int y)  {
-        if(y < 6)  {
-            return SlabType.TOP;
-        }
-        return SlabType.BOTTOM;
-
+        return null;
     }
 
     public INamedContainerProvider getContainerProvider(World world, BlockPos controllerPos, boolean isFormed) {

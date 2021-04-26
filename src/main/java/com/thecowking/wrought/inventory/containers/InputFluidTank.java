@@ -1,38 +1,17 @@
 package com.thecowking.wrought.inventory.containers;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import com.thecowking.wrought.inventory.WroughtTank;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
 
 
-public class InputFluidTank extends FluidTank {
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private int maxSize = 0;
-
-    public InputFluidTank(int capacity) {
-
-        super(capacity);
-        this.maxSize = capacity;
+public class InputFluidTank extends WroughtTank {
+    public InputFluidTank(int capacity, int numTanks)  {
+        super(capacity, numTanks);
+    }
+    public InputFluidTank(FluidTank[] inputTanks)  {
+        super(inputTanks);
     }
 
-    public int getCapacityInBuckets()  {
-        return this.maxSize / 1000;
-    }
+    // TODO - override filling and valid fluid
 
-
-    // Override Draining Methods to prevent outside automation from draining it
-    @Override
-    public FluidStack drain(FluidStack resource, FluidAction action)  {
-        return FluidStack.EMPTY;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, FluidAction action) {
-        return FluidStack.EMPTY;
-    }
 }

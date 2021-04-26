@@ -28,7 +28,11 @@ public class MultiblockData {
     public static final String JOB_ENERGY_IN = "E_IN";
     public static final String JOB_REDSTONE_IN = "R_IN";
     public static final String JOB_REDSTONE_OUT = "R_OUT";
-    public static final String FLUID_TANK = "fluid_tank_";
+    public static final String OUTPUT_FLUID_TANK = "output_fluid_tank_";
+    public static final String INPUT_FLUID_TANK = "input_fluid_tank_";
+
+    public static final String INPUT_TANK_CAP = "INPUT_TANK_CAP";
+    public static final String OUTPUT_TANK_CAP = "OUTPUT_TANK_CAP";
 
     public static final String STATUS = "status";
 

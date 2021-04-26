@@ -100,13 +100,13 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
         // draw slag tank
         int x = xStart() + tankXOffset[SLAG_TANK_INDEX];
         int y = tankYOffset[SLAG_TANK_INDEX];
-        double secondTankPercent = multiBlockContainerFluid.getTankPercentFull(SLAG_TANK_INDEX);
+        double secondTankPercent = multiBlockContainerFluid.getOutputTankPercentFull(SLAG_TANK_INDEX);
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, SLAG_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, secondTankPercent);
         createTankBackGround(stack, x, y, DEFAULT_TANK_GAUGE, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
 
         // draw metals tank
-        double firstTankPercent = multiBlockContainerFluid.getTankPercentFull(METAL_TANK_INDEX);
+        double firstTankPercent = multiBlockContainerFluid.getOutputTankPercentFull(METAL_TANK_INDEX);
         x = xStart() + tankXOffset[METAL_TANK_INDEX];
         createTankBackGround(stack, x, y, DEFAULT_TANK_BACKGROUND, this.minecraft.getTextureManager(), TANK_WIDTH, TANK_HEIGHT, TANK_WIDTH, TANK_HEIGHT);
         RenderHelper.drawFluid(stack, getFluidInTank(multiBlockContainerFluid, METAL_TANK_INDEX), x, y, TANK_WIDTH, TANK_HEIGHT, multiBlockContainerFluid, firstTankPercent);

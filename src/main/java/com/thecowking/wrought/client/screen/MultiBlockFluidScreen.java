@@ -42,7 +42,7 @@ public class MultiBlockFluidScreen <MULTICONTAINER extends MultiBlockContainerFl
         return container.getFluidController().getOutputTankMaxSize(index);
     }
     public int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankHeight, int tankIndex)  {
-        return (int)(tankHeight * container.getFluidController().getPercentageInTank(tankIndex));
+        return (int)(tankHeight * container.getFluidController().getPercentageInOutputTank(tankIndex));
     }
 
     @Override

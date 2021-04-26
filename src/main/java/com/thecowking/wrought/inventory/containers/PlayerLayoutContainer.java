@@ -88,9 +88,6 @@ public class PlayerLayoutContainer extends Container {
             // this is going from mainInv to the machine
             if (index < player.inventory.mainInventory.size()) {
 
-
-
-
                 if (!mergeItemStack(slotStack, player.inventory.mainInventory.size(), this.inventorySlots.size(), true)) {
                     Wrought.LOGGER.info("index < containerSlots  !mergeItemStack");
                     return ItemStack.EMPTY;

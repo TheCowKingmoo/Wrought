@@ -20,5 +20,7 @@ public class MultiBlockContainerFluid extends MultiBlockContainer {
 
 
     public MultiBlockControllerTileFluid getFluidController()  { return (MultiBlockControllerTileFluid)this.fluidController; }
-    public double getTankPercentFull(int index)  { return this.fluidController.getPercentageInTank(index);}
+    public double getOutputTankPercentFull(int index)  { return this.fluidController.getPercentageInOutputTank(index);}
+    public double getInputTankPercentFull(int index)  { return this.fluidController.getPercentageInInputTank(index);}
+
 }

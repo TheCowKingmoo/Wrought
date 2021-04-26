@@ -51,7 +51,7 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
 
 
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name, 2);
+        super(container, inv, name, 0, 2);
         this.heatBarStartX = GUI_X_MARGIN;
         this.heatBarStartY = GUI_Y_MARGIN;
 

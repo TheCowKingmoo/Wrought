@@ -55,11 +55,13 @@ public class OutputFluidTanks extends WroughtTank {
     @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
+        Wrought.LOGGER.info("Drain!");
         if(tanksAreEmpty)  return FluidStack.EMPTY;
-
+        Wrought.LOGGER.info("not empty");
 
         for(int i = 0; i < this.numTanks; i++)  {
             if (isTankEmpty(i))  {
+                Wrought.LOGGER.info("skip empty");
                 continue;
             }
             int drained = maxDrain;

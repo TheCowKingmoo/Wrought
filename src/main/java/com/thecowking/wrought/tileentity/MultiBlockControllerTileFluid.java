@@ -137,23 +137,18 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     }
 
     // getters
-    public FluidStack getFluidInTank(int tankIndex)  {return getSingleTank(tankIndex).getFluid();}
+    public FluidStack getFluidInOutputTank(int tankIndex)  {return getOutputTank(tankIndex).getFluid();}
+    public FluidStack getFluidInInputTank(int tankIndex)  {return getInputTank(tankIndex).getFluid();}
+
     public FluidStack getFluidBackLog(int tankIndex)  {return this.fluidBacklogs[tankIndex];}
     public int getOutputTankMaxSize(int tankIndex)  { return this.outputTankCapacities[tankIndex]; }
     public int getInputTankMaxSize(int tankIndex)  { return this.inputTankCapacities[tankIndex]; }
 
+    public FluidTank getOutputTank(int tankIndex)  {return outputFluidTanks.getFluidTank(tankIndex);}
+    public FluidTank getInputTank(int tankIndex)  {return inputFluidTanks.getFluidTank(tankIndex);}
 
-
-
-    public FluidTank getSingleTank(int tankIndex)  {return outputFluidTanks.getFluidTank(tankIndex);}
-
-
-
-    public double getPercentageInOutputTank(int tankIndex)  { return ((double)getFluidInTank(tankIndex).getAmount() / (double)getOutputTankMaxSize(tankIndex)); }
-    public double getPercentageInInputTank(int tankIndex)  { return ((double)getFluidInTank(tankIndex).getAmount() / (double)getInputTankMaxSize(tankIndex)); }
-
-
-
+    public double getPercentageInOutputTank(int tankIndex)  { return ((double)getFluidInOutputTank(tankIndex).getAmount() / (double)getOutputTankMaxSize(tankIndex)); }
+    public double getPercentageInInputTank(int tankIndex)  { return ((double)getFluidInInputTank(tankIndex).getAmount() / (double)getInputTankMaxSize(tankIndex)); }
 
     public OutputFluidTanks getFluidTanks()  {
         return this.outputFluidTanks;
@@ -188,7 +183,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         // check if recipe has a fluid output
         for(int i = 0; i < fluidOutputs.size(); i++)  {
             // check to see if that fluids match
-            Fluid fluidInTank = this.getFluidInTank(i).getFluid().getFluid();
+            Fluid fluidInTank = this.getFluidInOutputTank(i).getFluid();
             if (fluidInTank != Fluids.EMPTY && fluidOutputs.get(i).getFluid() != fluidInTank)  {
                 finishOperation();
                 this.status = "Output Fluid does not match fluid in tank";
@@ -253,7 +248,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         if(this.fluidItemBacklogs[index] != ItemStack.EMPTY) return;
 
         // only try to process if we have at least one buckets worth
-        if(getSingleTank(index).getFluidAmount() < 1000)  { return; }
+        if(getOutputTank(index).getFluidAmount() < 1000)  { return; }
 
         // only process if there is an item to process
         if(this.fluidItemInputSlots.getStackInSlot(index).isEmpty())  { return; }
@@ -273,17 +268,17 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         // if we have a bucket
         if(fluidContainer.getItem() instanceof BucketItem)  {
 
-            ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
+            ItemStack fluidBucket = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getOutputTank(index).getFluid());
             if(fluidBucket.isEmpty())  return;
 
-            ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getSingleTank(index).getFluid());
+            ItemStack filledContainer = InventoryUtils.fillBucketOrFluidContainer(fluidContainer, getOutputTank(index).getFluid());
             if (filledContainer.isEmpty())  {
                 return;
             }
 
             fluidItemInputSlots.getStackInSlot(index).shrink(1);
 
-            getSingleTank(index).drain(1000, IFluidHandler.FluidAction.EXECUTE);
+            getOutputTank(index).drain(1000, IFluidHandler.FluidAction.EXECUTE);
 
             this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, filledContainer.copy(), false);
             this.needUpdate = true;
@@ -291,7 +286,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
             // we have some sort of container
         }  else  {
             IFluidHandlerItem fluidItemHandler = itemFluidCapability.resolve().get();
-            FluidStack back = FluidUtil.tryFluidTransfer(fluidItemHandler, getSingleTank(index), getSingleTank(index).getFluid(), true);
+            FluidStack back = FluidUtil.tryFluidTransfer(fluidItemHandler, getOutputTank(index), getOutputTank(index).getFluid(), true);
             if (back.isEmpty())  {
                 ItemStack f = fluidItemInputSlots.getStackInSlot(index).copy();
                 fluidItemInputSlots.getStackInSlot(index).shrink(1);
@@ -315,7 +310,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         if(super.areOutputsFull(recipe)) return true;
         for(int i = 0; i < recipe.getNumFluidOutputs(); i++)  {
             // check that both are the same fluid and that there is enough room in tank for the output
-            if(getFluidInTank(i).getAmount() + recipe.getFluidOutput(i).getAmount() > getOutputTankMaxSize(i))  {
+            if(getFluidInOutputTank(i).getAmount() + recipe.getFluidOutput(i).getAmount() > getOutputTankMaxSize(i))  {
                 this.status = "Not enough fluid output room to process current recipe";
                 return true;
             }

@@ -17,17 +17,26 @@ public class MultiBlockFluidScreen <MULTICONTAINER extends MultiBlockContainerFl
     protected MultiBlockContainerFluid multiBlockContainerFluid;
     protected int[] tankXOffset;
     protected int[] tankYOffset;
+    protected int numInputTanks;
+    protected int numOutputTanks;
     protected int numTanks;
+
 
     public ResourceLocation DEFAULT_TANK_BACKGROUND = new ResourceLocation(Wrought.MODID, "textures/gui/tank_frame.png");
     public ResourceLocation DEFAULT_TANK_GAUGE = new ResourceLocation(Wrought.MODID, "textures/gui/tank_gauge.png");
 
-    public MultiBlockFluidScreen(MULTICONTAINER screenContainer, PlayerInventory inv, ITextComponent titleIn, int numTanks) {
+    public MultiBlockFluidScreen(MULTICONTAINER screenContainer, PlayerInventory inv, ITextComponent titleIn, int numInputTanks, int numOutputTanks) {
         super(screenContainer, inv, titleIn);
         this.multiBlockContainerFluid = screenContainer;
-        this.numTanks = numTanks;
+        this.numInputTanks = numInputTanks;
+        this.numOutputTanks = numOutputTanks;
+        this.numTanks = numInputTanks + numOutputTanks;
         this.tankXOffset = new int[numTanks];
         this.tankYOffset = new int[numTanks];
+    }
+
+    private boolean isOutput(int index)  {
+        return index > this.numInputTanks - 1;
     }
 
     public void createTankBackGround(MatrixStack stack, int x, int y, ResourceLocation tankBackground, TextureManager manager, int width, int height, int tankWidth, int tankHeight)  {
@@ -36,13 +45,18 @@ public class MultiBlockFluidScreen <MULTICONTAINER extends MultiBlockContainerFl
     }
 
     public FluidStack getFluidInTank(MultiBlockContainerFluid container, int index)  {
-        return container.getFluidController().getFluidInTank(index);
+        if(isOutput(index)) return container.getFluidController().getFluidInOutputTank(index - this.numInputTanks);
+        return container.getFluidController().getFluidInInputTank(index);
     }
+
     public int getTanksMaxSize(MultiBlockContainerFluid container, int index)  {
-        return container.getFluidController().getOutputTankMaxSize(index);
+        if(isOutput(index)) return container.getFluidController().getOutputTankMaxSize(index - this.numInputTanks);
+        return container.getFluidController().getInputTankMaxSize(index);
     }
-    public int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankHeight, int tankIndex)  {
-        return (int)(tankHeight * container.getFluidController().getPercentageInOutputTank(tankIndex));
+
+    public int getFluidInTanksHeight(MultiBlockContainerFluid container, int tankHeight, int index)  {
+        if(isOutput(index)) return (int)(tankHeight * container.getFluidController().getPercentageInOutputTank(index - this.numInputTanks));
+        return (int)(tankHeight * container.getFluidController().getPercentageInInputTank(index));
     }
 
     @Override

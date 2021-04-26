@@ -48,7 +48,7 @@ public class HCCokeOvenScreenMultiblock extends MultiBlockFluidScreen<HCCokeOven
     private HCCokeOvenContainerMultiblock multiBlockContainer;
 
     public HCCokeOvenScreenMultiblock(HCCokeOvenContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name, 1);
+        super(container, inv, name, 0, 1);
         this.multiBlockContainer = container;
         this.xSize = 176;
         this.ySize = 240;

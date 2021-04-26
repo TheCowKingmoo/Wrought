@@ -34,8 +34,20 @@ public abstract class WroughtTank implements IFluidHandler {
     }
 
     public WroughtTank(FluidTank[] tanks)  {
+        this.tanksAreEmpty = true;
         this.numTanks = tanks.length;
         this.tanks = tanks;
+        setIfTanksAreEmpty();
+    }
+
+    private void setIfTanksAreEmpty()  {
+        tanksAreEmpty = true;
+        for(int i = 0; i < numTanks; i++)  {
+            if(!tanks[i].isEmpty())  {
+                tanksAreEmpty = false;
+                i = numTanks;
+            }
+        }
     }
 
     public boolean isTankEmpty(int index)  {return this.tanks[index].isEmpty();}

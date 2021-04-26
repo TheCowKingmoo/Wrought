@@ -25,7 +25,7 @@ public class CastingMachineMultiblockScreen extends MultiBlockFluidScreen<Castin
 
 
     public CastingMachineMultiblockScreen(CastingMachineContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name, 2);
+        super(container, inv, name, 2, 0);
 
         this.indicatorXOffset = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;;
         this.indicatorYOffset = GUI_Y_MARGIN;

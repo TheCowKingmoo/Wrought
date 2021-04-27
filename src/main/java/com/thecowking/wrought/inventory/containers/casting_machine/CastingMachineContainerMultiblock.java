@@ -4,9 +4,11 @@ import com.thecowking.wrought.client.screen.MultiblockScreen;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainer;
 import com.thecowking.wrought.inventory.containers.MultiBlockContainerFluid;
 import com.thecowking.wrought.inventory.slots.SlotFuelInput;
+import com.thecowking.wrought.inventory.slots.SlotInputFluidContainer;
 import com.thecowking.wrought.inventory.slots.SlotItemInput;
 import com.thecowking.wrought.inventory.slots.SlotOutput;
 import com.thecowking.wrought.tileentity.casting_machine.CastingMachineControllerTile;
+import com.thecowking.wrought.util.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +23,9 @@ import static com.thecowking.wrought.init.RegistryHandler.CASTING_MACHINE_MULTIB
 public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid {
     private static final Logger LOGGER = LogManager.getLogger();
     private CastingMachineControllerTile controller;
+
+
+    private int NUMBER_SLOTS = 3;
 
 
     private int SLOTS_0_X =  MultiblockScreen.BLANK_X_SIZE - MultiblockScreen.GUI_X_MARGIN - 2*MultiblockScreen.SLOT_SIZE - MultiblockScreen.SLOT_SEP;
@@ -42,13 +47,21 @@ public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid 
             // basic auto building screen
 
         }  else  {
-            this.xSlot = new int[1];
-            this.ySlot = new int[1];
+            this.xSlot = new int[NUMBER_SLOTS];
+            this.ySlot = new int[NUMBER_SLOTS];
 
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                     // Primary Item Output Slot
                 xSlot[numSlot] = SLOTS_0_X;
                 ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+                // Fluid Item Input Slot
+                xSlot[numSlot] = 0;
+                ySlot[numSlot] = 0;
+                addSlot(new SlotInputFluidContainer(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+                // Fluid Item Output Slot
+                xSlot[numSlot] = 0;
+                ySlot[numSlot] = MultiblockScreen.SLOT_SEP + MultiblockScreen.SLOT_SIZE;
                 addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
             });
         }

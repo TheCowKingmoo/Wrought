@@ -103,11 +103,10 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     }
 
     private void initFluidSlots(int defaultCapacity)  {
-        // fluid input slots
-        this.fluidItemInputSlots = new InputFluidHandler(this.numOutputTanks, this, null, "fluid_item_input");
-
-        // fluid output slots
-        this.fluidItemOutputSlots = new FluidItemOutputHandler(this.numOutputTanks);
+        // fluid item input slots
+        this.fluidItemInputSlots = new InputFluidHandler(this.numOutputTanks + this.numInputTanks, this, null, "fluid_item_input");
+        // fluid item output slots
+        this.fluidItemOutputSlots = new FluidItemOutputHandler(this.numOutputTanks + this.numInputTanks);
 
 
         this.fluidItemBacklogs = new ItemStack[this.numOutputTanks];
@@ -146,6 +145,14 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
     public FluidTank getOutputTank(int tankIndex)  {return outputFluidTanks.getFluidTank(tankIndex);}
     public FluidTank getInputTank(int tankIndex)  {return inputFluidTanks.getFluidTank(tankIndex);}
+
+    /*
+        As the fluid item input / output are in the same wrapper, i need to be able to tell
+        if the slot is attached to an output or an input tank so that i can allow/deny items
+     */
+    public boolean isSlotAttachedToOutputTank(int index)  {
+        return index > this.numInputTanks-1;
+    }
 
     public double getPercentageInOutputTank(int tankIndex)  { return ((double)getFluidInOutputTank(tankIndex).getAmount() / (double)getOutputTankMaxSize(tankIndex)); }
     public double getPercentageInInputTank(int tankIndex)  { return ((double)getFluidInInputTank(tankIndex).getAmount() / (double)getInputTankMaxSize(tankIndex)); }

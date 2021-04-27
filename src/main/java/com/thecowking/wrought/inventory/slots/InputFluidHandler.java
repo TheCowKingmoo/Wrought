@@ -1,9 +1,18 @@
 package com.thecowking.wrought.inventory.slots;
 
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,27 +27,41 @@ import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
 
 public class InputFluidHandler extends ItemStackHandler {
     private static final Logger LOGGER = LogManager.getLogger();
-    private MultiBlockControllerTile tile;
+    private MultiBlockControllerTileFluid tile;
     private InputFluidHandler primary;
     private Set<IRecipe<?>> recipes;
     private String id;
 
 
-    public InputFluidHandler(int size, MultiBlockControllerTile tile, InputFluidHandler primary, String id)  {
+    public InputFluidHandler(int size, MultiBlockControllerTileFluid tile, InputFluidHandler primary, String id)  {
         super(size);
         this.tile = tile;
         this.primary = primary;
         this.id = id;
+    }
 
+
+    public ItemStack insertItemForInputTank(int slot, @Nonnull ItemStack stack, boolean simulate)  {
+        FluidStack containerFluidStack = FluidUtil.getFluidContained(stack).get();
+        if(containerFluidStack == null || containerFluidStack.getFluid() == Fluids.EMPTY)  return stack;
+        Fluid tankFluid = tile.getFluidInInputTank(slot).getFluid();
+        if(tankFluid != Fluids.EMPTY && tankFluid != containerFluidStack.getFluid())  return stack;
+        return super.insertItem(slot, stack, simulate);
+    }
+
+    public ItemStack insertItemForOutputTank(int slot, @Nonnull ItemStack stack, boolean simulate)  {
+        FluidStack containerFluidStack = FluidUtil.getFluidContained(stack).get();
+        if(containerFluidStack == null || containerFluidStack.getFluid() == Fluids.EMPTY)  return super.insertItem(slot, stack, simulate);
+        return stack;
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        if(stack.getItem() != Items.BUCKET)  {
-            return stack;
-        }
-        return super.insertItem(slot, stack, simulate);
+        // empty + check if it can hold fluids
+        if(stack == null || stack.isEmpty() || FluidUtil.getFluidHandler(stack) == null) return stack;
+        if(tile.isSlotAttachedToOutputTank(slot)) return insertItemForOutputTank(slot, stack, simulate);
+        return insertItemForInputTank(slot, stack, simulate);
     }
 
 

@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -112,7 +113,8 @@ public class BuilderScreen extends ContainerScreen<BuilderContainer> {
             }
             // write the number of needed blocks to place in world
             startMessageY = startMessageY + MESSAGE_Y_SEPERATION;
-            drawString(stack, fontrenderer, e.getKey().getTranslationKey() + " x " + e.getValue(), startMessageX + 4,
+
+            drawString(stack, fontrenderer, e.getKey().getTranslatedName().getString() + " x " + e.getValue(), startMessageX + 4,
                     startMessageY, color);
         }
         buildButton.setShowButton(goodToGo);

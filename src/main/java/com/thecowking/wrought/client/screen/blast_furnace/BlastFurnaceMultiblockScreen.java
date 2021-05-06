@@ -49,7 +49,6 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
     private int statusButtonY;
     private int statusButtonRadius = SLOT_SIZE;
 
-
     public BlastFurnaceMultiblockScreen(BlastFurnaceContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name, 0, 2);
         this.heatBarStartX = GUI_X_MARGIN;
@@ -71,7 +70,6 @@ public class BlastFurnaceMultiblockScreen extends MultiBlockFluidScreen<BlastFur
 
         this.tankXOffset[SLAG_TANK_INDEX] = this.multiBlockContainer.xSlot[8] - 1;
         this.tankYOffset[SLAG_TANK_INDEX] = this.tankYOffset[METAL_TANK_INDEX];
-
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.thecowking.wrought.util.InventoryUtils.findRecipesByType;
@@ -40,18 +41,26 @@ public class InputFluidHandler extends ItemStackHandler {
         this.id = id;
     }
 
-
+    /*
+        As this is for an input fluid tank slot we want the item being put in to have some sort of fluid that is going to
+        be transferred to the tank
+     */
     public ItemStack insertItemForInputTank(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        FluidStack containerFluidStack = FluidUtil.getFluidContained(stack).get();
-        if(containerFluidStack == null || containerFluidStack.getFluid() == Fluids.EMPTY)  return stack;
+        Optional<FluidStack> op = FluidUtil.getFluidContained(stack);
+
+        if(op == null || !(op.isPresent()) || op.get().getFluid() == Fluids.EMPTY)  return stack;
         Fluid tankFluid = tile.getFluidInInputTank(slot).getFluid();
-        if(tankFluid != Fluids.EMPTY && tankFluid != containerFluidStack.getFluid())  return stack;
+        if(tankFluid != Fluids.EMPTY && tankFluid != op.get().getFluid())  return stack;
         return super.insertItem(slot, stack, simulate);
     }
 
+    /*
+        As this is for an output fluid tank slot we want the item being put in to have no fluids
+        TODO - change this to also add in a tank that has some of the correct fluid already in it
+     */
     public ItemStack insertItemForOutputTank(int slot, @Nonnull ItemStack stack, boolean simulate)  {
-        FluidStack containerFluidStack = FluidUtil.getFluidContained(stack).get();
-        if(containerFluidStack == null || containerFluidStack.getFluid() == Fluids.EMPTY)  return super.insertItem(slot, stack, simulate);
+        Optional<FluidStack> op = FluidUtil.getFluidContained(stack);
+        if(op == null || !(op.isPresent()) || op.get().getFluid() == Fluids.EMPTY)  return super.insertItem(slot, stack, simulate);
         return stack;
     }
 

@@ -25,7 +25,7 @@ public class CastingMachineMultiblockScreen extends MultiBlockFluidScreen<Castin
 
 
     public CastingMachineMultiblockScreen(CastingMachineContainerMultiblock container, PlayerInventory inv, ITextComponent name) {
-        super(container, inv, name, 2, 0);
+        super(container, inv, name, 1, 0);
 
         this.indicatorXOffset = GUI_X_MARGIN + SLOT_SIZE + SLOT_SEP;;
         this.indicatorYOffset = GUI_Y_MARGIN;
@@ -80,7 +80,6 @@ public class CastingMachineMultiblockScreen extends MultiBlockFluidScreen<Castin
         super.renderHoveredTooltip(stack, x, y);
         if(this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null)  {
             renderTooltip(stack, new TranslationTextComponent(String.valueOf(this.hoveredSlot.slotNumber)) , x, y - 20);
-
         }  else  {
             renderTooltip(stack, new TranslationTextComponent("x = " + x + " y = " + y) , x, y - 10);
         }

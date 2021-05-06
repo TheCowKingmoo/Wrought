@@ -1,5 +1,6 @@
 package com.thecowking.wrought.inventory;
 
+import com.thecowking.wrought.Wrought;
 import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;

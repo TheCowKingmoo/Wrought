@@ -14,6 +14,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -27,12 +28,15 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.thecowking.wrought.data.MultiblockData.*;
 
@@ -169,16 +173,23 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         return this.outputFluidTanks.internalFill(fluidStack, IFluidHandler.FluidAction.EXECUTE, tankIndex);
     }
 
-
     @Override
     public boolean recipeChecker(IWroughtRecipe currentRecipe)  {
-        if(currentRecipe == null) return false;
+        if(currentRecipe == null) {
+            Wrought.LOGGER.info("fluid recipe is null");
+            return false;
+        }
+
         // check if we have any input slots
         if(this.hasItemInputSlot())  {
-            if(!super.recipeChecker(currentRecipe))  {return false;}
+            if(!super.recipeChecker(currentRecipe))  {
+                return false;
+            }
         }  else if(!hasFluidInputSlot())  {
             return false;
         }
+
+
 
 
         // get the fluid outputs from recipe
@@ -186,6 +197,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
         if(fluidOutputs.size() > this.numOutputTanks)  {return false;}
         if( fluidOutputs == null)  {return false;}
+
 
         // check if recipe has a fluid output
         for(int i = 0; i < fluidOutputs.size(); i++)  {
@@ -208,8 +220,8 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
 
     @Override
-    protected boolean processAllBackLog()  {
-        if(!super.processAllBackLog())  {
+    protected boolean proccessInputsOutputs()  {
+        if(!super.proccessInputsOutputs())  {
             return false;
         }
         for(int i = 0; i < fluidBacklogs.length; i++)  {
@@ -241,12 +253,61 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
 
 
     protected void processAllFluidContainerItems()  {
-        for(int i = 0; i < this.numOutputTanks; i++)  {
-            processFluidContainerItem(i);
+        int i = 0;
+        while(i < this.numOutputTanks)  {
+            processFluidOutputContainerItem(i++);
+        }
+        while(i < this.numInputTanks)  {
+            processFluidInputContainerItem(i++);
         }
     }
 
-    protected void processFluidContainerItem(int index)  {
+    /*
+        Used when we have an input tank with slots attached to it
+        so that we can move a buckets fluid into the internal tank
+     */
+
+    protected void processFluidInputContainerItem(int index)  {
+        // not a fluid item input slot
+        if(!this.hasFluidInputSlot())  return;
+
+        // only try to process if we ahve room for ones bucket worth
+        if(getInputTank(index).getFluidAmount() + 1000 > getInputTank(index).getCapacity())  { return; }
+
+        // only process if there is an item to process
+        if(this.fluidItemInputSlots.getStackInSlot(index).isEmpty())  { return; }
+
+        // get the item in the fluid item input slot
+        ItemStack fluidContainer = fluidItemInputSlots.getStackInSlot(index);
+
+        LazyOptional<IFluidHandlerItem> itemFluidCapability = fluidContainer.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+
+        // check to see if somehow a non fluid container got in -> this check is also in SlotInputFluid
+        if(!itemFluidCapability.isPresent())  { return; }
+
+        IFluidHandlerItem fluidItemHandler = itemFluidCapability.resolve().get();
+
+
+        if(fluidItemHandler.getTanks() < 1)  return;
+
+        // check that that intput tanks current fluid is either equal to empty or to whats in the container
+        if(this.getInputTank(index).getFluid().getFluid() != Fluids.EMPTY && this.getInputTank(index).getFluid().getFluid() != fluidItemHandler.getFluidInTank(0).getFluid()) return;
+
+
+        FluidStack back = FluidUtil.tryFluidTransfer(getInputTank(index), fluidItemHandler, fluidItemHandler.getFluidInTank(0), true);
+        if (back.isEmpty())  {
+
+            ItemStack f = fluidItemHandler.getContainer().copy();
+            fluidItemInputSlots.getStackInSlot(index).shrink(1);
+            fluidItemOutputSlots.internalInsertItem(index, f, false);
+            this.needUpdate = true;
+        }
+    }
+
+    /*
+        Used when we have an output tank where we want to fill an empty bucket with the output tanks fluid
+     */
+    protected void processFluidOutputContainerItem(int index)  {
 
         if(this.fluidItemBacklogs[index] != ItemStack.EMPTY)  {
             this.fluidItemBacklogs[index] = fluidItemOutputSlots.internalInsertItem(index, this.fluidItemBacklogs[index].copy(), false);
@@ -303,7 +364,26 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         }
     }
 
-
+    /*
+        Override to allow for checks to include fluid input tanks as recipes
+     */
+    @Override
+    @Nullable
+    public IWroughtRecipe getRecipe() {
+        if(hasFluidInputSlot())  {
+            Wrought.LOGGER.info("has fluid in slots");
+            Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
+            for (IRecipe<?> iRecipe : recipes) {
+                IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
+                Wrought.LOGGER.info(recipe.getItemOutputs().get(0).getDisplayName());
+                if (recipe.matches(this.inputFluidTanks, this.world, this)) {
+                    return recipe;
+                }
+            }
+            return null;
+        }
+        return super.getRecipe();
+    }
 
     @Override
     public boolean attemptRunOperation() {
@@ -325,14 +405,18 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         return false;
     }
 
-
-
     @Override
     public void mutliBlockOperation(IWroughtRecipe currentRecipe)  {
         super.mutliBlockOperation(currentRecipe);
         if(currentRecipe == null)  {return;}
 
         List<FluidStack> fluidOutputs = currentRecipe.getFluidOutputs();
+
+        // consume all inputs that are needed
+        for(int i = 0; i < currentRecipe.getNumFluidInputs(); i++)  {
+            // TODO - shrink by dynamic num
+            getInputTank(i).drain(1000, IFluidHandler.FluidAction.EXECUTE);
+        }
 
         for(int i = 0; i < fluidOutputs.size(); i++)  {
             this.outputProcessingFluidStacks[i] = fluidOutputs.get(i);
@@ -344,7 +428,6 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         boolean localClog = !super.processing();    // a bit counter intuatiuve but if the item has a clog it returns false
 
         if(this.isRunning) {
-
             for(int i = 0; i < outputProcessingFluidStacks.length; i++)  {
                 fluidBacklogs[i] = outputFluidTanks.internalFill(outputProcessingFluidStacks[i], IFluidHandler.FluidAction.EXECUTE, i);
                 outputProcessingFluidStacks[i] = FluidStack.EMPTY;
@@ -444,6 +527,7 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
   //      }
         return super.getCapability(cap, side);
     }
+
 
 
 

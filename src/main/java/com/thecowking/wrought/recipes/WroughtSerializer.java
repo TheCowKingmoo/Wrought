@@ -12,6 +12,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
@@ -45,24 +46,12 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
     @Override
     public WroughtRecipe read(ResourceLocation recipeId, JsonObject json) {
 
-        /*
-        ArrayList<ItemStack> itemOutputs = new ArrayList<>();
-        for(int i = 0; i < this.numOutputs; i++)  {
-            String searchString = "output_" + i;
-            ItemStack current = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, searchString), true);
-            itemOutputs.add(current);
-        }
-
-         */
-
-
         ArrayList<Ingredient> itemOutputs = new ArrayList<>();
         for(int i = 0; i < this.numOutputs; i++)  {
             String searchString = "output_" + i;
             Ingredient current = Ingredient.deserialize(JSONUtils.getJsonObject(json, searchString));
             itemOutputs.add(current);
         }
-
 
         ArrayList<Ingredient> itemInputs  = new ArrayList<>();
         for(int i = 0; i < this.numInputs; i++)  {
@@ -80,13 +69,13 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
             fluidOutputs.add(currentStack);
         }
 
-        ArrayList<FluidStack> fluidInputs = new ArrayList<>();
+        ArrayList<Ingredient> fluidInputs = new ArrayList<>();
         for(int i = 0; i < this.numFluidInputs; i++)  {
             String searchString = "fluid_input_" + i;
             ResourceLocation currentFluid = new ResourceLocation(JSONUtils.getString(json, searchString));
             int currentAmount = JSONUtils.getInt(json, "amount_" + searchString);
             FluidStack currentStack = getFluidStackFromID(currentFluid, currentAmount);
-            fluidInputs.add(currentStack);
+            fluidInputs.add(Ingredient.fromStacks(FluidUtil.getFilledBucket(currentStack)));
         }
 
         Ingredient fuel = Ingredient.EMPTY;
@@ -121,9 +110,9 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
             fluidOutputs.add(buffer.readFluidStack());
         }
 
-        ArrayList<FluidStack> fluidInputs = new ArrayList<>();
+        ArrayList<Ingredient> fluidInputs = new ArrayList<>();
         for(int i = 0; i < this.numFluidInputs; i++)  {
-            fluidInputs.add(buffer.readFluidStack());
+            fluidInputs.add(Ingredient.read(buffer));
         }
 
         Ingredient fuel = Ingredient.EMPTY;
@@ -154,9 +143,9 @@ public class WroughtSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> 
             buffer.writeFluidStack(fluidOutputs.get(i));
         }
 
-        List<FluidStack> fluidInputs = recipe.getFluidInputs();
+        List<Ingredient> fluidInputs = recipe.getFluidInputs();
         for(int i = 0; i < fluidOutputs.size(); i++)  {
-            buffer.writeFluidStack(fluidOutputs.get(i));
+            fluidInputs.get(i).write(buffer);
         }
         buffer.writeInt(recipe.getHeat());
         buffer.writeInt(recipe.getBurnTime());

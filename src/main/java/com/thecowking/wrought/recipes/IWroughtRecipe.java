@@ -1,12 +1,16 @@
 package com.thecowking.wrought.recipes;
 
 import com.thecowking.wrought.Wrought;
+import com.thecowking.wrought.inventory.containers.InputFluidTank;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
+import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
@@ -35,7 +39,7 @@ public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
     public int getNumFluidInputs();
 
     public List<FluidStack> getFluidOutputs();
-    public List<FluidStack> getFluidInputs();
+    public List<Ingredient> getFluidInputs();
 
     public Ingredient getInput(int index);
     public ItemStack getOutput(int index);
@@ -47,4 +51,6 @@ public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
 
 
     Ingredient getInput();
+
+    boolean matches(InputFluidTank inputFluidTanks, World world, MultiBlockControllerTile multiBlockControllerTileFluid);
 }

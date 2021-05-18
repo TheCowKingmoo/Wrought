@@ -337,7 +337,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
     }
 
 
-    protected boolean processAllBackLog()  {
+    protected boolean proccessInputsOutputs()  {
         for(int i = 0; i < itemBacklogs.length; i++)  {
             if(!(processItemBackLog(i)))  {
                 return false;
@@ -618,33 +618,37 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         return false;
     }
 
-
-
-
-    //TODO - cut down lag by making state machine based off of insertion
-
     /*
-
+        The main driver of machine operations
+        This method will check all conditions to allow/deny a new operation from running
      */
     public boolean attemptRunOperation() {
         // internal heat decays
         heatDisspation();
 
+        Wrought.LOGGER.info("run processAllBackLog");
         // Check if any of the item backlogs is clogged
-        if(!processAllBackLog())  { return false; }
+        if(!proccessInputsOutputs())  { return false; }
 
+        Wrought.LOGGER.info("run redstone");
         // turn off if redstone power is applied
         if(redstonePowered())  { return false; }
 
+        Wrought.LOGGER.info("run fuel");
         // check if fuel needs to be fed to the fire
         processFuel();
+
 
         // check if the heat level is high enough for current operation
         if(this.hasFuelSlot && !heatHighEnough())  return false;
 
+        Wrought.LOGGER.info("run processCurrentOp");
+
         // check if the current operation has cooked long enough
         // note that this returns true if the time hasn't finished
         if(!finishedProcessingCurrentOperation()) return true;
+
+        Wrought.LOGGER.info("run processing");
 
         // moves now finished processingItemStacks into OutputSlots
         if(!processing())  {return false; }
@@ -652,11 +656,17 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         // New operation and new recipe
         IWroughtRecipe currentRecipe = this.getRecipe();
 
+        Wrought.LOGGER.info("run recipeCheck");
+
         // Check that this recipe is valid
         if (!(recipeChecker(currentRecipe))) { return false; }
 
+        Wrought.LOGGER.info("run run outputsFull");
+
         // Check if the outputs have enough space for this recipe
         if(areOutputsFull(currentRecipe))  {return false; }
+
+        Wrought.LOGGER.info("run operation");
 
         // move recipe into processing item stacks
         mutliBlockOperation(currentRecipe);

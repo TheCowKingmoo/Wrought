@@ -1,5 +1,6 @@
 package com.thecowking.wrought.recipes;
 
+import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.inventory.WroughtTank;
 import com.thecowking.wrought.inventory.containers.InputFluidTank;
 import com.thecowking.wrought.inventory.slots.InputItemHandler;
@@ -37,6 +38,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     protected List<ItemStack> itemOuputs;
     protected List<FluidStack> fluidOutputs;
     protected List<Ingredient> fluidInputs;
+    protected List<Ingredient> inputWrapper;
     protected int heat;
 
     protected Ingredient fuel;                  // if this is empty than any burnable thing will do
@@ -68,12 +70,20 @@ public class WroughtRecipe implements IWroughtRecipe {
         this.burnTime = burnTime;
         this.recipeTypeID = recipeTypeID;
 
+        inputWrapper = new ArrayList<>();
+        for(int i = 0; i < itemInputs.size(); i++)  {
+            inputWrapper.add(itemInputs.get(i));
+        }
+        for(int i = 0; i < fluidInputs.size(); i++)  {
+            inputWrapper.add(fluidInputs.get(i));
+        }
 
     }
 
     public List<Ingredient> getItemInputs()  {return this.itemInputs;}
     public List<ItemStack> getItemOutputs() { return this.itemOuputs; }
-    public int getNumInputs() {return itemInputs.size(); }
+    public int getNumItemInputs() {return itemInputs.size(); }
+    public int getNumInputs() {return inputWrapper.size(); }
     public int getNumOutputs() { return itemOuputs.size(); }
     public int getNumFluidInput()  {return fluidInputs.size();}
 
@@ -91,10 +101,7 @@ public class WroughtRecipe implements IWroughtRecipe {
     public List<Ingredient> getFluidInputs()  {return this.fluidInputs;}
 
     public Ingredient getInput(int index) {
-        if(index >= this.itemInputs.size())  {
-            return this.fluidInputs.get(index);
-        }
-        return this.itemInputs.get(index);
+        return inputWrapper.get(index);
     }
 
 
@@ -129,32 +136,54 @@ public class WroughtRecipe implements IWroughtRecipe {
 
     public boolean matches(RecipeWrapper inv, World worldIn) {
         if(inv.getSizeInventory() < 1)  {
+            Wrought.LOGGER.info("inv too small");
             return false;
         }
+        /*
         if(inv.getStackInSlot(0) == ItemStack.EMPTY) {
+            Wrought.LOGGER.info("inv is empty");
             return false;
         }
 
+         */
+
         for(int i = 0; i < getNumInputs(); i++)  {
-            if(i > this.itemInputs.size())  {
+            if(i > this.inputWrapper.size())  {
+                Wrought.LOGGER.info("i too big");
                 return false;
             }
 
-            if(!this.itemInputs.get(i).test(inv.getStackInSlot(i)))  {
+            if(!this.inputWrapper.get(i).test(inv.getStackInSlot(i)))  {
+                Wrought.LOGGER.info("did not match");
+
                 return false;
             }
         }
         return true;
     }
 
+    /*
+        Here we combine any input slots with input tanks into one wrapper. the ordering goes item input + fluid inputs
+        this means when indexing any fluid related tanks we need to subtract the size of the item inputs
+     */
+    public boolean matches(InputFluidTank inputFluidTanks, InputItemHandler itemInputs, World worldIn, MultiBlockControllerTile tileIn)  {
+        Wrought.LOGGER.info("inputTanks size = " + inputFluidTanks.getTanks());
+        Wrought.LOGGER.info("inputSlots size = " + itemInputs.getSlots());
 
-    public boolean matches(InputFluidTank inputFluidTanks, World worldIn, MultiBlockControllerTile tileIn)  {
-        InputItemHandler tempWrapper = new InputItemHandler(inputFluidTanks.getTanks(), tileIn, null, "fluid_input");
-        for(int i = 0; i < inputFluidTanks.getTanks(); i++)  {
-            FluidStack currentFluidStack = inputFluidTanks.getFluidInTank(i);
+
+        InputItemHandler tempWrapper = new InputItemHandler(inputFluidTanks.getTanks() + itemInputs.getSlots(), tileIn, null, "fluid_input");
+        Wrought.LOGGER.info("tempWrapper size = " + tempWrapper.getSlots());
+
+        for(int i = 0; i < itemInputs.getSlots(); i++)  {
+            tempWrapper.insertItem(i, itemInputs.getStackInSlot(i), false);
+        }
+        for(int i = itemInputs.getSlots(); i < itemInputs.getSlots() + inputFluidTanks.getTanks(); i++)  {
+            FluidStack currentFluidStack = inputFluidTanks.getFluidInTank(i - itemInputs.getSlots());
             ItemStack bucketOfFluidStack = FluidUtil.getFilledBucket(currentFluidStack);
             tempWrapper.insertItem(i, bucketOfFluidStack, false);
         }
+
+
         return this.matches(new RecipeWrapper(tempWrapper), worldIn);
     }
 

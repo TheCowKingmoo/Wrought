@@ -21,6 +21,9 @@ import com.thecowking.wrought.inventory.containers.honey_comb_coke_oven.HCCokeOv
 import com.thecowking.wrought.items.blocks.BlockItemBase;
 import com.thecowking.wrought.items.blocks.CokeBlockItem;
 import com.thecowking.wrought.items.items.*;
+import com.thecowking.wrought.items.items.casts.CastGearItem;
+import com.thecowking.wrought.items.items.casts.CastIngotItem;
+import com.thecowking.wrought.items.items.casts.CastPlateItem;
 import com.thecowking.wrought.tileentity.blast_furance.BlastFurnaceBrickControllerTile;
 import com.thecowking.wrought.tileentity.blast_furance.BlastBrickTile;
 import com.thecowking.wrought.tileentity.bloomery.BloomeryControllerTile;
@@ -128,6 +131,13 @@ public class RegistryHandler {
     //Calcium Carbonate
     public static final RegistryObject<Item> CALCIUM_CARBONATE = ITEMS.register("calcium_carbonate_item", CalciumCarbonate::new);
 
+
+    // Casts
+    public static final RegistryObject<Item> CAST_GEAR_ITEM = ITEMS.register("cast_gear_item", CastGearItem::new);
+    public static final RegistryObject<Item> CAST_INGOT_ITEM = ITEMS.register("cast_ingot_item", CastIngotItem::new);
+    public static final RegistryObject<Item> CAST_PLATE_ITEM = ITEMS.register("cast_plate_item", CastPlateItem::new);
+
+
     //Coke Block
     public static final RegistryObject<Block> COKE_BLOCK = BLOCKS.register("coke_block", CokeBlock::new);
     public static final RegistryObject<Item> COKE_BLOCK_ITEM = ITEMS.register("coke_block", () -> new CokeBlockItem(COKE_BLOCK.get()));
@@ -208,6 +218,10 @@ public class RegistryHandler {
         World world = inv.player.getEntityWorld();
         return new BlastFurnaceContainerMultiblock(windowId, world, pos, inv);
     }));
+
+
+
+
 
     /*
     public static void registerModdedMaterials()  {

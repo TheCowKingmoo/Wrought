@@ -25,7 +25,7 @@ public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid 
     private CastingMachineControllerTile controller;
 
 
-    private int NUMBER_SLOTS = 3;
+    private int NUMBER_SLOTS = 4;
 
 
     private int SLOTS_0_X =  MultiblockScreen.BLANK_X_SIZE - MultiblockScreen.GUI_X_MARGIN - 2*MultiblockScreen.SLOT_SIZE - MultiblockScreen.SLOT_SEP;
@@ -51,14 +51,23 @@ public class CastingMachineContainerMultiblock extends MultiBlockContainerFluid 
             this.ySlot = new int[NUMBER_SLOTS];
 
             controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-                    // Primary Item Output Slot
+
+
+                // Primary Item Input Slot - basically for casts
+                xSlot[numSlot] = SLOTS_0_X / 2;
+                ySlot[numSlot] = OUTPUTS_Y;
+                addSlot(new SlotItemInput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++], controller));
+
+                // Primary Item Output Slot
                 xSlot[numSlot] = SLOTS_0_X;
                 ySlot[numSlot] = OUTPUTS_Y;
                 addSlot(new SlotOutput(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+
                 // Fluid Item Input Slot
                 xSlot[numSlot] = 0;
                 ySlot[numSlot] = 0;
                 addSlot(new SlotInputFluidContainer(h, numSlot,  xSlot[numSlot], ySlot[numSlot++]));
+
                 // Fluid Item Output Slot
                 xSlot[numSlot] = 0;
                 ySlot[numSlot] = MultiblockScreen.SLOT_SEP + MultiblockScreen.SLOT_SIZE;

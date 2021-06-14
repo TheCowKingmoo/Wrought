@@ -2,6 +2,7 @@ package com.thecowking.wrought.recipes;
 
 import com.thecowking.wrought.Wrought;
 import com.thecowking.wrought.inventory.containers.InputFluidTank;
+import com.thecowking.wrought.inventory.slots.InputItemHandler;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTile;
 import com.thecowking.wrought.tileentity.MultiBlockControllerTileFluid;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,7 @@ public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
     public List<Ingredient> getItemInputs();
     public List<ItemStack> getItemOutputs();
     public int getNumInputs();
+    public int getNumItemInputs();
     public int getNumOutputs();
     public int getNumFluidOutputs();
     public int getNumFluidInputs();
@@ -52,5 +54,5 @@ public interface IWroughtRecipe extends IRecipe<RecipeWrapper> {
 
     Ingredient getInput();
 
-    boolean matches(InputFluidTank inputFluidTanks, World world, MultiBlockControllerTile multiBlockControllerTileFluid);
+    boolean matches(InputFluidTank inputFluidTanks, InputItemHandler inputItems, World world, MultiBlockControllerTile multiBlockControllerTileFluid);
 }

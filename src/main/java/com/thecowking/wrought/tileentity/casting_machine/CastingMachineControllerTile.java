@@ -25,7 +25,7 @@ import static com.thecowking.wrought.init.RegistryHandler.CASTING_MACHINE_CONTRO
 public class CastingMachineControllerTile extends MultiBlockControllerTileFluid implements INamedContainerProvider, WroughtMutliblock {
 
     public CastingMachineControllerTile() {
-        super(CASTING_MACHINE_CONTROLLER_TILE.get(), 0, 1, false, new CastingMachineData(), 0, 1, 16000);
+        super(CASTING_MACHINE_CONTROLLER_TILE.get(), 1, 1, false, new CastingMachineData(), 0, 1, 16000);
         this.status = "Standing By";
         this.everything = LazyOptional.of(() -> new CombinedInvWrapper(this.inputSlots, this.outputSlots, this.fluidItemInputSlots, this.fluidItemOutputSlots));
         this.automation = LazyOptional.of(() -> new AutomationCombinedInvWrapper(this.inputSlots, this.outputSlots, this.fluidItemInputSlots, this.fluidItemOutputSlots));

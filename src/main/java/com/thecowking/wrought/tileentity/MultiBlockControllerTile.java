@@ -6,6 +6,7 @@ import com.thecowking.wrought.data.IMultiblockData;
 import com.thecowking.wrought.data.MultiblockData;
 import com.thecowking.wrought.init.RecipeSerializerInit;
 import com.thecowking.wrought.inventory.slots.*;
+import com.thecowking.wrought.items.items.casts.CastItem;
 import com.thecowking.wrought.recipes.IWroughtRecipe;
 import com.thecowking.wrought.recipes.WroughtRecipe;
 import com.thecowking.wrought.tileentity.honey_comb_coke_oven.CokeBrickTile;
@@ -545,6 +546,7 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
 
     @Nullable
     public IWroughtRecipe getRecipe() {
+        Wrought.LOGGER.info("get item recipe");
         Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
         for (IRecipe<?> iRecipe : recipes) {
             IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
@@ -715,9 +717,14 @@ public class MultiBlockControllerTile extends MultiBlockTile implements ITickabl
         this.timeComplete = currentRecipe.getBurnTime();
 
         // consume all inputs that are needed
-        for(int i = 0; i < currentRecipe.getNumInputs(); i++)  {
-            // TODO - shrink by dynamic num
-            this.inputSlots.getStackInSlot(i).shrink(1);
+        for(int i = 0; i < currentRecipe.getNumItemInputs(); i++)  {
+
+            // do not consume if the item is a cast - TODO make it work with all mods casts
+            if(!(this.inputSlots.getStackInSlot(i).getItem() instanceof CastItem))  {
+                // actual process that consumes the input item
+                // TODO - shrink by dynamic num
+                this.inputSlots.getStackInSlot(i).shrink(1);
+            }
         }
 
         // insert outputs into processing

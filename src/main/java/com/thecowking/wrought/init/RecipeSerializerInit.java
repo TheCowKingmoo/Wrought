@@ -51,7 +51,7 @@ public class RecipeSerializerInit {
 
 
     public static final ResourceLocation CASTING_MACHINE_TYPE_ID = new ResourceLocation(Wrought.MODID, "casting_machine");
-    public static IRecipeSerializer<WroughtRecipe> CASTING_MACHINE_RECIPE_SERIALIZER = new WroughtSerializer(0, 1, 1, 0, false, false, CASTING_MACHINE_TYPE_ID);
+    public static IRecipeSerializer<WroughtRecipe> CASTING_MACHINE_RECIPE_SERIALIZER = new WroughtSerializer(1, 1, 1, 0, false, false, CASTING_MACHINE_TYPE_ID);
     public static final IRecipeType<IWroughtRecipe> CASTING_MACHINE_TYPE = registerType(CASTING_MACHINE_TYPE_ID);
     public static RegistryObject<IRecipeSerializer<?>> CASTING_MACHINE_SERIALIZER = RECIPE_SERIALIZERS.register("casting_machine",
             () -> CASTING_MACHINE_RECIPE_SERIALIZER);

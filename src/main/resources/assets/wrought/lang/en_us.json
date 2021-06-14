@@ -31,11 +31,12 @@
   "item.wrought.unfired_coke_brick_item": "Unfired Coke Brick",
   "item.wrought.carbon_brick_item": "Carbon Brick",
 
-
+  "item.wrought.cast_gear_item": "Gear Cast",
+  "item.wrought.cast_ingot_item": "Ingot Cast",
+  "item.wrought.cast_plate_item": "Plate Cast",
 
   "item.wrought.creosote_bucket": "Creosote Bucket",
   "item.wrought.molten_iron_bucket": "Molten Iron Bucket",
   "item.wrought.molten_copper_bucket": "Molten Copper Bucket"
-
 
 }

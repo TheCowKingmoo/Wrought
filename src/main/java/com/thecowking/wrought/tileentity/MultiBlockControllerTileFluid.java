@@ -181,15 +181,9 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
         }
 
         // check if we have any input slots
-        if(this.hasItemInputSlot())  {
-            if(!super.recipeChecker(currentRecipe))  {
-                return false;
-            }
-        }  else if(!hasFluidInputSlot())  {
-            return false;
+        if(this.hasItemInputSlot() && !hasFluidInputSlot())  {
+            return super.recipeChecker(currentRecipe);
         }
-
-
 
 
         // get the fluid outputs from recipe
@@ -370,13 +364,20 @@ public class MultiBlockControllerTileFluid extends MultiBlockControllerTile {
     @Override
     @Nullable
     public IWroughtRecipe getRecipe() {
+        Wrought.LOGGER.info("check for fluid input recipes");
         if(hasFluidInputSlot())  {
-            Wrought.LOGGER.info("has fluid in slots");
+            Wrought.LOGGER.info("has fluid input slots");
             Set<IRecipe<?>> recipes = data.getRecipesByType(this.world);
+
+            Wrought.LOGGER.info("num recipes = " + recipes.size());
+
+
             for (IRecipe<?> iRecipe : recipes) {
                 IWroughtRecipe recipe = (IWroughtRecipe) iRecipe;
-                Wrought.LOGGER.info(recipe.getItemOutputs().get(0).getDisplayName());
-                if (recipe.matches(this.inputFluidTanks, this.world, this)) {
+                for(int i = 0; i < recipe.getItemInputs().size(); i++)  {
+                    Wrought.LOGGER.info(recipe.getItemInputs().get(i).getMatchingStacks()[0]);
+                }
+                if (recipe.matches(this.inputFluidTanks, this.inputSlots, this.world, this)) {
                     return recipe;
                 }
             }

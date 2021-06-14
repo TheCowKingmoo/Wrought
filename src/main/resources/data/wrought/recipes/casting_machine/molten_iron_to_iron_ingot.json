@@ -3,6 +3,9 @@
   "output_0": {
     "item": "minecraft:iron_ingot"
   },
+  "input_0": {
+    "item": "wrought:cast_ingot_item"
+  },
   "fluid_input_0": "wrought:molten_iron",
   "amount_fluid_input_0": 1000,
   "burnTime": 1
